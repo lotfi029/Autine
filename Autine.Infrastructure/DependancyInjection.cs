@@ -1,5 +1,8 @@
-﻿using Autine.Infrastructure.Identity.Authentication;
+﻿using Autine.Application.Interfaces.AIApi;
+using Autine.Infrastructure.Abstractions;
+using Autine.Infrastructure.Identity.Authentication;
 using Autine.Infrastructure.Services;
+using Autine.Infrastructure.Services.AIApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +24,17 @@ public static class DependancyInjection
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFileService, FileService>();
+        
+        services.AddHttpClient();
+        services.AddHttpContextAccessor();
+        services.AddScoped<IBaseService, BaseService>();
+        services.AddScoped<IAIAuthService, AIAuthService>();
+
+        services.AddOptions<ApiSettings>()
+            .BindConfiguration(ApiSettings.Section)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
         return services;
     }
     private static IServiceCollection AddDbConfig(this IServiceCollection services, IConfiguration configuration)
