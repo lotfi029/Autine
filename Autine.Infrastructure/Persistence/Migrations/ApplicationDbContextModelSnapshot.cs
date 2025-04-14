@@ -22,6 +22,43 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Autine.Domain.Entities.Bot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Context")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Bots");
+                });
+
             modelBuilder.Entity("Autine.Domain.Entities.PatientSupervisor", b =>
                 {
                     b.Property<string>("SupervisorId")
@@ -346,6 +383,15 @@ namespace Autine.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Autine.Domain.Entities.Bot", b =>
+                {
+                    b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
+                        .WithMany("Bots")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Autine.Domain.Entities.PatientSupervisor", b =>
                 {
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
@@ -414,6 +460,8 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("Bots");
+
                     b.Navigation("Patients");
 
                     b.Navigation("SupervisoredPatients");

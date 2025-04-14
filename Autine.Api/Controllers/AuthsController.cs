@@ -1,11 +1,12 @@
 ﻿using Autine.Api.Abstractions;
 using Autine.Application.Contracts.Auth;
-using Autine.Application.Features.ConfirmEmail;
-using Autine.Application.Features.ForgotPassword;
-using Autine.Application.Features.Login;
-using Autine.Application.Features.ReConfirmEmail;
-using Autine.Application.Features.Register;
-using Autine.Application.Features.ResetPassword;
+using Autine.Application.Features.Auth.ConfirmEmail;
+using Autine.Application.Features.Auth.ForgotPassword;
+using Autine.Application.Features.Auth.Login;
+using Autine.Application.Features.Auth.ReConfirmEmail;
+using Autine.Application.Features.Auth.Register;
+using Autine.Application.Features.Auth.RegisterSupervisor;
+using Autine.Application.Features.Auth.ResetPassword;
 
 
 namespace Autine.Api.Controllers;
@@ -23,6 +24,20 @@ public class AuthsController(ISender _sender) : ControllerBase
     public async Task<IActionResult> Register([FromForm] RegisterRequest request, CancellationToken cancellationToken)
     {
         var command = new RegisterCommand(request);
+
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpPost("supervisor-register")]
+    [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> SupervisorRegister([FromForm] CreateSupervisorRequest request, CancellationToken cancellationToken)
+    {
+        var command = new RegisterSupervisorCommand(request);
 
         var result = await _sender.Send(command, cancellationToken);
 

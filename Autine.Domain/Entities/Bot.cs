@@ -2,13 +2,12 @@
 
 public class Bot
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Context { get; set; }
-    public string Bio { get; set; }
-    public string CreatorId { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
+    public string Name { get; set; } = string.Empty;
+    public string Context { get; set; } = string.Empty;
+    public string Bio { get; set; } = string.Empty;
+    public string CreatorId { get; set; } = string.Empty;
+    public bool IsPublic { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public User Creator { get; set; }
-    public virtual ICollection<BotPatient>? BotPatients { get; set; } = new List<BotPatient>();
+    //public virtual ICollection<BotPatient>? BotPatients { get; set; } = new List<BotPatient>();
 }

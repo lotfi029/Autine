@@ -11,6 +11,7 @@ public class AIAuthService(
 {
     private readonly ApiSettings _apiSetting = apiSetting.Value;
 
+
     public async Task<Result> RegisterAsync(AIRegisterRequest request, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request (
@@ -21,6 +22,12 @@ public class AIAuthService(
         => await baseService.SendAsync(
             new Request (
                 $"{_apiSetting.AIApi}/auth/supervisor/register",
+                Data: request
+        ), ct);
+    public async Task<Result> AddPatientAsync(string username, AIRegisterRequest request, CancellationToken ct = default)
+    => await baseService.SendAsync(
+            new Request(
+                $"{_apiSetting.AIApi}/auth/supervisor/user/add?username={username}&session_id={1}",
                 Data: request
         ), ct);
 }

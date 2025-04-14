@@ -1,9 +1,7 @@
 ﻿using Autine.Application.Contracts.Auth;
-using Autine.Application.Interfaces;
 using Autine.Infrastructure.Identity.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
-
 
 namespace Autine.Infrastructure.Services;
 public class AuthService(
@@ -48,38 +46,62 @@ public class AuthService(
 
         return Result.Success(response);
     }
+    
     public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
-        if (await _context.Users.AnyAsync(e => e.Email == request.Email || e.UserName == request.UserName, cancellationToken))
-            return Result.Failure<RegisterResponse>(UserErrors.DuplicatedEmail);
+        var user = await RegisterValidationAsync(request, ct: cancellationToken);
 
-        var user = request.Adapt<ApplicationUser>();
-        user.Bio ??= string.Empty;
-        if (request.ProfilePic is not null)
-        {
-            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, cancellationToken);
+        if (user.IsFailure)
+            return user.Error;
 
-            if (imagePath.IsFailure)
-                return Result.Failure<RegisterResponse>(imagePath.Error);
+        var code = await GenerateEmailConfirmationCodeAync(user.Value);
 
-            user.ProfilePicture = imagePath.Value;
-        }
-        var result = await _userManager.CreateAsync(user, request.Password);
-
-        if (!result.Succeeded)
-        {
-            var error = result.Errors.First();
-
-            return Result.Failure<RegisterResponse>(Error.BadRequest(error.Code, error.Description));
-        }
-        
-
-        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var response = new RegisterResponse(code, user.Id);
+        var response = new RegisterResponse(code, user.Value.Id);
 
         return Result.Success(response);
     }
+    public async Task<Result<RegisterResponse>> RegisterSupervisorAsync(CreateSupervisorRequest request, CancellationToken cancellationToken = default)
+    {
+
+        var registerRequest = request.Adapt<RegisterRequest>();
+
+        var user = await RegisterValidationAsync(registerRequest,ct: cancellationToken);
+
+        if (user.IsFailure)
+            return user.Error;
+
+        var addToRoleResult = await _userManager.AddToRoleAsync(user.Value!, request.SuperviorRole);
+
+        if (!addToRoleResult.Succeeded)
+        {
+            var error = addToRoleResult.Errors.First();
+            return Result.Failure<RegisterResponse>(Error.BadRequest(error.Code, error.Description));
+        }
+
+        var code = await GenerateEmailConfirmationCodeAync(user.Value);
+
+        var response = new RegisterResponse(code, user.Value.Id);
+
+        return Result.Success(response);
+    }
+    public async Task<Result<string>> RegisterPatient(RegisterRequest request, CancellationToken ct = default)
+    {
+        var result = await RegisterValidationAsync(request,true, ct: ct);
+
+        if (result.IsFailure)
+            return result.Error;
+
+        var addToRoleResult = await _userManager.AddToRolesAsync(result.Value, [DefaultRoles.Patient.Name, DefaultRoles.User.Name]);
+
+        if (!addToRoleResult.Succeeded)
+        {
+            var error = addToRoleResult.Errors.First();
+            return Error.BadRequest(error.Code, error.Description);
+        }
+
+        return Result.Success(result.Value.Id);
+    }
+    
     public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request)
     {
         if (await _userManager.FindByIdAsync(request.UserId) is not { } user)
@@ -97,15 +119,13 @@ public class AuthService(
             result = IdentityResult.Failed(_userManager.ErrorDescriber.InvalidToken());
         }
 
-
         if (!result.Succeeded)
         {
             var error = result.Errors.First();
             return Error.BadRequest(error.Code, error.Description);
         }
 
-        if (!(await _userManager.IsInRoleAsync(user, DefaultRoles.Parent.Name) || await _userManager.IsInRoleAsync(user, DefaultRoles.Doctor.Name)))
-            await _userManager.AddToRoleAsync(user, DefaultRoles.User.Name);
+        await _userManager.AddToRoleAsync(user, DefaultRoles.User.Name);
 
         return Result.Success();
     }
@@ -170,5 +190,39 @@ public class AuthService(
         }
 
         return Result.Success();
+    }
+    private async Task<string> GenerateEmailConfirmationCodeAync(ApplicationUser user)
+    {
+        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        return code;
+    }
+    private async Task<Result<ApplicationUser>> RegisterValidationAsync(RegisterRequest request, bool IsConfirmed = false, CancellationToken ct = default)
+    {
+        if (await _context.Users.AnyAsync(e => e.Email == request.Email || e.UserName == request.UserName, ct))
+            return UserErrors.DuplicatedEmail;
+
+        var user = request.Adapt<ApplicationUser>();
+        user.EmailConfirmed = IsConfirmed;
+        user.Bio ??= string.Empty;
+        if (request.ProfilePic is not null)
+        {
+            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, ct);
+
+            if (imagePath.IsFailure)
+                return imagePath.Error;
+
+            user.ProfilePicture = imagePath.Value;
+        }
+        var result = await _userManager.CreateAsync(user, request.Password);
+
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+
+            return Error.BadRequest(error.Code, error.Description);
+        }
+
+        return Result.Success(user);
     }
 }

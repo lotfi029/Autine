@@ -1,6 +1,8 @@
 ﻿using Autine.Application.Interfaces.AIApi;
+using Autine.Domain.Interfaces;
 using Autine.Infrastructure.Abstractions;
 using Autine.Infrastructure.Identity.Authentication;
+using Autine.Infrastructure.Repositories;
 using Autine.Infrastructure.Services;
 using Autine.Infrastructure.Services.AIApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,6 +26,7 @@ public static class DependancyInjection
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         services.AddHttpClient();
         services.AddHttpContextAccessor();

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Autine.Application.Contracts.Auth;
+﻿namespace Autine.Application.Contracts.Auth;
 public record RegisterRequest (
     string FirstName,
     string LastName,
@@ -14,3 +12,4 @@ public record RegisterRequest (
     string City,
     DateTime DateOfBirth
 );
+

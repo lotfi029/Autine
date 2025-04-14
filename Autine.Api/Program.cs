@@ -16,18 +16,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//app.MapPost("auth/login", async (HttpContext context, IAuthService authService) =>
-//{
-//    var request = await context.Request.ReadFromJsonAsync<LoginRequest>();
-
-//    var result = await authService.GetTokenAsync(request!);
-
-//    if (result.IsFailure)
-//        return Results.BadRequest(result.Error);
-
-//    return Results.Ok(result.Value);
-//});
-
 app.MapControllers();
 
 app.Run();
