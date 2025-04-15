@@ -13,4 +13,5 @@ public class ApplicationUser : IdentityUser
     public ICollection<PatientSupervisor> Patients { get; set; } = [];
     public ICollection<PatientSupervisor> SupervisoredPatients { get; set; } = [];
     public ICollection<Bot> Bots { get; set; } = [];
+    public virtual ICollection<BotPatient> BotPatients { get; set; } = [];
 }

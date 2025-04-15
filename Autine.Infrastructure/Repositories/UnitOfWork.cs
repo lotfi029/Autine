@@ -1,4 +1,6 @@
-﻿namespace Autine.Infrastructure.Repositories;
+﻿using Autine.Application.Contracts.User;
+
+namespace Autine.Infrastructure.Repositories;
 
 public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 {
@@ -7,12 +9,15 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 
     public IRepository<T> GetRepository<T>() where T : class
         => new Repository<T>(_context);
-    
+    //public IUserRepository<T> GetUserRepository<T>() where T : class
+    //    => new resp;
     public IPatientRespository Patients
         => new PatientRepository(_context);
-
     public IBotRepository Bots
         => new BotRepository(_context);
+
+    public IBotPatientRepository BotPatients 
+        => new BotPatientRepository(_context);
 
     private bool _disposed = false;
 
@@ -37,4 +42,6 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
             _disposed = true;
         }
     }
+
+
 }

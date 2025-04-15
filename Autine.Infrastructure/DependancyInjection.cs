@@ -1,5 +1,4 @@
 ﻿using Autine.Application.Interfaces.AIApi;
-using Autine.Domain.Interfaces;
 using Autine.Infrastructure.Abstractions;
 using Autine.Infrastructure.Identity.Authentication;
 using Autine.Infrastructure.Repositories;
@@ -25,6 +24,8 @@ public static class DependancyInjection
     private static IServiceCollection RegisterToDI(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
@@ -32,6 +33,7 @@ public static class DependancyInjection
         services.AddHttpContextAccessor();
         services.AddScoped<IBaseService, BaseService>();
         services.AddScoped<IAIAuthService, AIAuthService>();
+        services.AddScoped<IAIModelService, AIModelService>();
 
         services.AddOptions<ApiSettings>()
             .BindConfiguration(ApiSettings.Section)

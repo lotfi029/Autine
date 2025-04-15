@@ -1,5 +1,4 @@
 ﻿using Autine.Domain.Abstractions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Autine.Api.Abstractions;
 public static class ResultExtensions

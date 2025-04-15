@@ -1,7 +1,7 @@
 ﻿using Autine.Application.Interfaces.AIApi;
 using Autine.Domain.Interfaces;
 
-namespace Autine.Application.Features.Patient.Add;
+namespace Autine.Application.Features.Patient.Commads.Add;
 public class AddPatientCommandHandler(
     IUnitOfWork unitOfWork, 
     IAuthService authService, 
@@ -9,11 +9,16 @@ public class AddPatientCommandHandler(
 {
     public async Task<Result> Handle(AddPatientCommand request, CancellationToken ct)
     {
+        var authResult = await authService.RegisterPatient(request.Request, ct);
+
+        if (authResult.IsFailure)
+            return authResult.Error;
+
 
         var aIResult = await aIAuthService.AddPatientAsync(
             request.UserId, new(
                 request.Request.Email,
-                request.Request.UserName,
+                authResult.Value,
                 request.Request.Password,
                 request.Request.FirstName,
                 request.Request.LastName,
@@ -24,15 +29,7 @@ public class AddPatientCommandHandler(
         if (aIResult.IsFailure)
             return aIResult.Error;
 
-        var authResult = await authService.RegisterPatient(request.Request, ct);
-        if (authResult.IsFailure)
-            return authResult.Error;
-        
-        
-        if (await unitOfWork.Patients.CheckExistAsync(e => e.SupervisorId == request.UserId && e.PatientId == authResult.Value, ct))
-            return Error.Conflict("Patient.DuplicatedPatient", "this patient is already supervised by you.");
-
-        await unitOfWork.Patients.Add(
+        await unitOfWork.Patients.AddAsync(
             new()
             {
                 IsSupervised = true,

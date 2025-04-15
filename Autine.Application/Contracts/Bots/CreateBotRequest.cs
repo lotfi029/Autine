@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Bot;
+﻿namespace Autine.Application.Contracts.Bots;
 
 public record CreateBotRequest(
     string Name,

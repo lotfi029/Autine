@@ -12,10 +12,10 @@ public class Repository<T> : IRepository<T> where T : class
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dbSet = _context.Set<T>();
     }
-    public async Task<Guid> Add(T entity, CancellationToken ct = default)
+    public async Task<Guid> AddAsync(T entity, CancellationToken ct = default)
     {
         await _dbSet.AddAsync(entity, ct);
-
+        await _context.SaveChangesAsync(ct);
         return Guid.Empty;
     }
     public async Task AddRange(IEnumerable<T> entities, CancellationToken ct = default)
@@ -62,7 +62,7 @@ public class Repository<T> : IRepository<T> where T : class
 
         return await query.FirstOrDefaultAsync(ct) ?? null!;
     }
-    public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> predicate, string? includes = null, bool tracked = false, CancellationToken ct = default)
+    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, string? includes = null, bool tracked = false, CancellationToken ct = default)
     {
         var query = getIQeryable(predicate, includes, tracked);
 

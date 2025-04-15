@@ -1,4 +1,4 @@
 ﻿namespace Autine.Domain.Interfaces;
-public interface IUserRepository
+public interface IUserRepository<T> : IRepository<T> where T : class
 {
 }
