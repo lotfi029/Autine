@@ -1,5 +1,5 @@
 ﻿namespace Autine.Domain.Interfaces;
-public interface IPatientRespository : IRepository<PatientSupervisor>
+public interface IPatientRespository : IRepository<Patient>
 {
     
 }

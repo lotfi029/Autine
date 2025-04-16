@@ -1,7 +1,4 @@
-﻿using Autine.Application.Interfaces.AIApi;
-using Autine.Domain.Interfaces;
-
-namespace Autine.Application.Features.Patient.Commads.Add;
+﻿namespace Autine.Application.Features.Patient.Commads.Add;
 public class AddPatientCommandHandler(
     IUnitOfWork unitOfWork, 
     IAuthService authService, 

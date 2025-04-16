@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 namespace Autine.Infrastructure.Persistence;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
-    public DbSet<PatientSupervisor> Patients { get; set; }
+    public DbSet<Patient> Patients { get; set; }
     public DbSet<Bot> Bots { get; set; }
     public DbSet<BotPatient> BotPatients { get; set; }
     //public DbSet<ChatMessage> ChatMessage { get; set; }

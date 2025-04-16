@@ -1,8 +1,8 @@
 ﻿namespace Autine.Infrastructure.Persistence.Configurations;
 
-public class PatientConfiguration : IEntityTypeConfiguration<PatientSupervisor>
+public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 {
-    public void Configure(EntityTypeBuilder<PatientSupervisor> builder)
+    public void Configure(EntityTypeBuilder<Patient> builder)
     {
         builder.HasKey(e => new { e.SupervisorId, e.PatientId });
 
@@ -12,7 +12,7 @@ public class PatientConfiguration : IEntityTypeConfiguration<PatientSupervisor>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<ApplicationUser>()
-            .WithMany(e => e.SupervisoredPatients)
+            .WithMany(e => e.Supervisors)
             .HasForeignKey(e => e.PatientId)
             .OnDelete(DeleteBehavior.Restrict);
 

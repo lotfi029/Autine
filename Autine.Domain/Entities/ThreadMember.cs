@@ -1,16 +1,8 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace Autine.Domain.Entities;
 
-namespace Autine.Domain.Entities;
-
-public class ThreadMember
+public class ThreadMember : Entity
 {
-    public int Id { get; set; }
-    //fk to userapp
-    public string UserId { get; set; }  
-    //fk to thread
-    public int ThreadId { get; set; }
-    [JsonIgnore]
-    public virtual ChatThread Thread { get; set; } = null!;
-    public virtual User User { get; set; } = null!;
-
+    public string UserId { get; set; } = string.Empty;
+    public Guid ThreadId { get; set; }
+    public virtual Patient Thread { get; set; } = null!;
 }

@@ -14,5 +14,4 @@ public class BotPatientConfiguration : IEntityTypeConfiguration<BotPatient>
                .WithMany(p => p.BotPatients)
                .HasForeignKey(pb => pb.PatientId);
     }
-
 }
