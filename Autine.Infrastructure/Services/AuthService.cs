@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.Auth;
+using Autine.Application.Contracts.Auths;
 using Autine.Infrastructure.Identity.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;

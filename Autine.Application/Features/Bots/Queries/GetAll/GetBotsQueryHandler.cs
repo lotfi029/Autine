@@ -5,7 +5,7 @@ public class GetBotsQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetBots
 {
     public async Task<Result<ICollection<BotResponse>>> Handle(GetBotsQuery request, CancellationToken cancellationToken)
     {
-        var bots = await unitOfWork.Bots.GetAllAsync(e => e.CreatorId == request.UserId, ct: cancellationToken);
+        var bots = await unitOfWork.Bots.GetAllAsync(e => e.CreatedBy == request.UserId, ct: cancellationToken);
 
         if (!bots.Any())
             return BotErrors.BotNotFound;

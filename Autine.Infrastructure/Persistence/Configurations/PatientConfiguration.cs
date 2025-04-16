@@ -8,7 +8,7 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 
         builder.HasOne<ApplicationUser>()
             .WithMany(e => e.Patients)
-            .HasForeignKey(e => e.SupervisorId)
+            .HasForeignKey(e => e.CreatedBy)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<ApplicationUser>()

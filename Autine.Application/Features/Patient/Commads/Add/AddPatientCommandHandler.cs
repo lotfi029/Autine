@@ -2,9 +2,9 @@
 public class AddPatientCommandHandler(
     IUnitOfWork unitOfWork, 
     IAuthService authService, 
-    IAIAuthService aIAuthService) : ICommandHandler<AddPatientCommand>
+    IAIAuthService aIAuthService) : ICommandHandler<AddPatientCommand, Guid>
 {
-    public async Task<Result> Handle(AddPatientCommand request, CancellationToken ct)
+    public async Task<Result<Guid>> Handle(AddPatientCommand request, CancellationToken ct)
     {
         var authResult = await authService.RegisterPatient(request.Request, ct);
 
@@ -26,16 +26,14 @@ public class AddPatientCommandHandler(
         if (aIResult.IsFailure)
             return aIResult.Error;
 
-        await unitOfWork.Patients.AddAsync(
+        var patientId = await unitOfWork.Patients.AddAsync(
             new()
             {
                 IsSupervised = true,
-                SupervisorId = request.UserId,
                 PatientId = authResult.Value,
+                ThreadTitle = string.Empty
             }, ct);
 
-        await unitOfWork.CommitChangesAsync(ct);
-
-        return Result.Success();
+        return Result.Success(patientId);
     }
 }

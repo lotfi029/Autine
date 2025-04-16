@@ -40,7 +40,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatorId")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -54,7 +54,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("CreatedBy");
 
                     b.ToTable("Bots");
                 });
@@ -83,6 +83,10 @@ namespace Autine.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("IsSupervised")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -92,19 +96,15 @@ namespace Autine.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("SupervisorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ThreadTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("SupervisorId");
+                    b.HasIndex("PatientId");
 
                     b.ToTable("Patients");
                 });
@@ -118,7 +118,11 @@ namespace Autine.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ThreadId")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
@@ -127,11 +131,11 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ThreadId");
+                    b.HasIndex("PatientId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ThreadMember");
+                    b.ToTable("ThreadMembers");
                 });
 
             modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>
@@ -442,7 +446,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
                         .WithMany("Bots")
-                        .HasForeignKey("CreatorId")
+                        .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -467,14 +471,14 @@ namespace Autine.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
                 {
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
-                        .WithMany("Supervisors")
-                        .HasForeignKey("PatientId")
+                        .WithMany("Patients")
+                        .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
-                        .WithMany("Patients")
-                        .HasForeignKey("SupervisorId")
+                        .WithMany("Supervisors")
+                        .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -483,7 +487,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Autine.Domain.Entities.Patient", "Patient")
                         .WithMany("Members")
-                        .HasForeignKey("ThreadId")
+                        .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

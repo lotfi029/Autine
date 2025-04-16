@@ -12,6 +12,6 @@ public class ThreadMemberConfigurations : IEntityTypeConfiguration<ThreadMember>
 
         builder.HasOne(e => e.Patient)
                .WithMany(t => t.Members)
-               .HasForeignKey(m => m.ThreadId);
+               .HasForeignKey(m => m.PatientId);
     }
 }

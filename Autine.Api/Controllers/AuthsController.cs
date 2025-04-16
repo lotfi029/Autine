@@ -1,5 +1,5 @@
 ﻿using Autine.Api.Abstractions;
-using Autine.Application.Contracts.Auth;
+using Autine.Application.Contracts.Auths;
 using Autine.Application.Features.Auth.ConfirmEmail;
 using Autine.Application.Features.Auth.ForgotPassword;
 using Autine.Application.Features.Auth.Login;

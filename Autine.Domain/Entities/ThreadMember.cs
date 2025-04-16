@@ -1,8 +1,8 @@
 ﻿namespace Autine.Domain.Entities;
 
-public class ThreadMember : Entity
+public class ThreadMember : AuditableEntity
 {
     public string UserId { get; set; } = string.Empty;
-    public Guid ThreadId { get; set; }
+    public Guid PatientId { get; set; }
     public virtual Patient Patient { get; set; } = default!;
 }

@@ -1,4 +1,5 @@
-﻿using Autine.Application.Contracts.Patient;
+﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.Contracts.Patient;
 using Autine.Application.Features.Patient.Commads.Add;
 using Autine.Application.Features.Patient.Queries.GetAll;
 

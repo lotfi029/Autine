@@ -5,7 +5,7 @@ public class GetPatientsQueryHandler(IUserService userService) : IQueryHandler<G
 {
     public async Task<Result<ICollection<PatientResponse>>> Handle(GetPatientsQuery request, CancellationToken cancellationToken)
     {
-        var respons = await userService.GetPatientsAsync(request.userId, cancellationToken);
+        var respons = await userService.GetPatientsAsync(request.UserId, cancellationToken);
 
         if (!respons.Any())
             return UserErrors.UserNotFound;

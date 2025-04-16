@@ -8,7 +8,7 @@ public class BotConfigurations : IEntityTypeConfiguration<Bot>
 
         builder.HasOne<ApplicationUser>()
            .WithMany(u => u.Bots)
-           .HasForeignKey(b => b.CreatorId)
+           .HasForeignKey(b => b.CreatedBy)
            .OnDelete(DeleteBehavior.Restrict);
 
         //builder.HasOne(b => b.Patient)

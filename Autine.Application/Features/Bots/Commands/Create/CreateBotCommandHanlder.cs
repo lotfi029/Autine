@@ -28,7 +28,7 @@ public class CreateBotCommandHanlder(
             Context = request.Request.Context,
             Bio = request.Request.Bio,
             IsPublic = isAdmin.IsSuccess,
-            CreatorId = request.UserId,
+            CreatedBy = request.UserId,
         }, cancellationToken);
 
         return modelId;

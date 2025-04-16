@@ -11,7 +11,7 @@ public class UserService(ApplicationDbContext context) : IUserService
     public async Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, CancellationToken ct = default)
         => await context.Patients
             .Where(e =>
-                e.SupervisorId == userId
+                e.CreatedBy == userId
             )
             .Join(
                 context.Users,

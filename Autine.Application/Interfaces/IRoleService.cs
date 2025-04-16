@@ -3,5 +3,5 @@ public interface IRoleService
 {
     Task<Result> CheckUserInRoleAsync(string userId, string roleName);
     Task<Result> UserIsAdminAsync(string userId);
-    Task<Result> UserIsSupervisorAsync(string userId);
+    Task<bool> UserIsSupervisorAsync(string userId); 
 }

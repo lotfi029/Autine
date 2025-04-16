@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Auth;
+﻿using Autine.Application.Contracts.Auths;
 
 namespace Autine.Application.Interfaces;
 public interface IAuthService

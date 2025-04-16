@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Auth;
+﻿namespace Autine.Application.Contracts.Auths;
 public class EmailOptions
 {
     public static readonly string SectionName = "EmailSettings";

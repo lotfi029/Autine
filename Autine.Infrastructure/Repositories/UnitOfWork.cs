@@ -13,11 +13,14 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
     //    => new resp;
     public IPatientRespository Patients
         => new PatientRepository(_context);
+    public IThreadMemberRepository ThreadMembers 
+        => new ThreadMemberRepository(_context);
     public IBotRepository Bots
         => new BotRepository(_context);
 
     public IBotPatientRepository BotPatients 
         => new BotPatientRepository(_context);
+
 
     private bool _disposed = false;
 

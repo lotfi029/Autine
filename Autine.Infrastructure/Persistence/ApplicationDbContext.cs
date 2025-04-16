@@ -1,18 +1,21 @@
 ﻿using Autine.Infrastructure.Persistence.Configurations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Security.Claims;
 
 
 namespace Autine.Infrastructure.Persistence;
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+public class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options,
+    IHttpContextAccessor httpContextAccessor) : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Bot> Bots { get; set; }
     public DbSet<BotPatient> BotPatients { get; set; }
+    public DbSet<ThreadMember> ThreadMembers { get; set; }
     //public DbSet<ChatMessage> ChatMessage { get; set; }
     //public DbSet<Chat> Chat { get; set; }
-    //public DbSet<ThreadMember> ThreadMembers { get; set; }
     //public DbSet<ThreadMessage> ThreadMessages { get; set; }
-    //public DbSet<ChatThread> ChatThreads { get; set; }
     //public DbSet<BotMessage> BotMessages { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -27,5 +30,26 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             fk.DeleteBehavior = DeleteBehavior.Restrict;
 
         base.OnModelCreating(builder);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<AuditableEntity>();
+
+        var currentUserId = httpContextAccessor.HttpContext?.User?
+            .FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+
+        foreach (var entry in entries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.CreatedBy = currentUserId;
+                    break;
+            }
+        }
+
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

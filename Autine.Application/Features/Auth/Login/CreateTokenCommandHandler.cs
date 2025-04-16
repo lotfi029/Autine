@@ -1,5 +1,5 @@
 ﻿using Autine.Application.Abstractions.Messaging;
-using Autine.Application.Contracts.Auth;
+using Autine.Application.Contracts.Auths;
 using Autine.Application.Interfaces;
 
 namespace Autine.Application.Features.Auth.Login;

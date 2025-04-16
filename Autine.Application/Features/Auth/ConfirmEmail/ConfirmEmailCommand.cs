@@ -1,2 +1,4 @@
-﻿namespace Autine.Application.Features.Auth.ConfirmEmail;
+﻿using Autine.Application.Contracts.Auths;
+
+namespace Autine.Application.Features.Auth.ConfirmEmail;
 public record ConfirmEmailCommand(ConfirmEmailRequest Reqeust) : ICommand;

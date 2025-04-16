@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Contracts.Auth;
+﻿using Autine.Application.Contracts.Auths;
+
+namespace Autine.Application.Contracts.Auth;
 
 public sealed class ConfirmEmailRequestValidator : AbstractValidator<ConfirmEmailRequest>
 {

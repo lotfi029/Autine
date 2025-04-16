@@ -55,7 +55,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         return await _dbSet.FindAsync(keyValues, ct) ?? null!;
     }
-    public async Task<T> Get(Expression<Func<T, bool>> predicate, string? includes = null, bool tracked = false, CancellationToken ct = default)
+    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, string? includes = null, bool tracked = false, CancellationToken ct = default)
     {
 
         var query = getIQeryable(predicate, includes, tracked);

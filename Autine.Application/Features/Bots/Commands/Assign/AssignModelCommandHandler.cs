@@ -9,7 +9,7 @@ public class AssignModelCommandHandler(
         if (await unitOfWork.Bots.FindByIdAsync(cancellationToken, [request.BotId]) is not { } bot)
             return BotErrors.BotNotFound;
 
-        if (bot.CreatorId != request.UserId)
+        if (bot.CreatedBy != request.UserId)
             return BotErrors.BotNotFound;
 
         if (!await userService.CheckUserExist(request.PatientId, cancellationToken))

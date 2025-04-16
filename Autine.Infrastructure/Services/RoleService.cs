@@ -1,8 +1,4 @@
-﻿//namespace Autine.Infrastructure.Persistence.Configurations;
-
-using Microsoft.EntityFrameworkCore.Infrastructure;
-
-namespace Autine.Infrastructure.Services;
+﻿namespace Autine.Infrastructure.Services;
 public class RoleService(
     UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager) : IRoleService
@@ -30,13 +26,13 @@ public class RoleService(
         return RoleErrors.UserNotFound;
     }
 
-    public async Task<Result> UserIsSupervisorAsync(string userId)
+    public async Task<bool> UserIsSupervisorAsync(string userId)
     {
         if (await userManager.FindByIdAsync(userId) is not { } user)
-            return UserErrors.UserNotFound;
-        if (await userManager.IsInRoleAsync(user, DefaultRoles.Parent.Name) 
+            return false;
+        if (await userManager.IsInRoleAsync(user, DefaultRoles.Parent.Name)
             || await userManager.IsInRoleAsync(user, DefaultRoles.Doctor.Name))
-            return Result.Success();
-        return RoleErrors.UserNotFound;
+            return true;
+        return false;
     }
 }
