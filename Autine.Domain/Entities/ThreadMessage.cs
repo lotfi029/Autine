@@ -7,6 +7,6 @@ public class ThreadMessage
     public DateTime SentDate { get; set; } = DateTime.UtcNow;
     public int ThreadId { get; set; }  
     public string SenderId { get; set; } = string.Empty;
-    public virtual ChatThread Thread { get; set; } = null!;
+    //public virtual ChatThread Thread { get; set; } = null!;
     public virtual User Sender { get; set; } = null!;
 }

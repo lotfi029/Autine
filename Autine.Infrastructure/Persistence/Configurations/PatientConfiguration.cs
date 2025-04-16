@@ -4,7 +4,7 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 {
     public void Configure(EntityTypeBuilder<Patient> builder)
     {
-        builder.HasKey(e => new { e.SupervisorId, e.PatientId });
+        builder.HasKey(e => e.Id);
 
         builder.HasOne<ApplicationUser>()
             .WithMany(e => e.Patients)

@@ -14,8 +14,6 @@ public class User
     //public ICollection<Chat> UserChats { get; set; } = [];
     //public virtual ICollection<ChatThread>? OwnedThreads { get; set; } = new List<ChatThread>();
     //public virtual ChatThread? PatientThread { get; set; }
-    //public virtual ICollection<ThreadMember>? ThreadMember { get; set; } = new List<ThreadMember>();
     //public virtual ICollection<ThreadMessage>? ThreadMessages { get; set; } = new List<ThreadMessage>();
-    //public virtual ICollection<Bot> CreatedBots { get; set; } = new List<Bot>();
     
 }

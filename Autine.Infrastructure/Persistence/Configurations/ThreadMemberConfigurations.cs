@@ -10,9 +10,8 @@ public class ThreadMemberConfigurations : IEntityTypeConfiguration<ThreadMember>
                .WithMany(u => u.ThreadMember)
                .HasForeignKey(m => m.UserId);
 
-        builder.HasOne<Patient>()
+        builder.HasOne(e => e.Patient)
                .WithMany(t => t.Members)
-               .HasForeignKey(m => m.ThreadId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .HasForeignKey(m => m.ThreadId);
     }
 }

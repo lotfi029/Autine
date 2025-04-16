@@ -4,5 +4,5 @@ public class ThreadMember : Entity
 {
     public string UserId { get; set; } = string.Empty;
     public Guid ThreadId { get; set; }
-    public virtual Patient Thread { get; set; } = null!;
+    public virtual Patient Patient { get; set; } = default!;
 }
