@@ -16,6 +16,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         await _dbSet.AddAsync(entity, ct);
         await _context.SaveChangesAsync(ct);
+
         return Guid.Empty;
     }
     public async Task AddRange(IEnumerable<T> entities, CancellationToken ct = default)

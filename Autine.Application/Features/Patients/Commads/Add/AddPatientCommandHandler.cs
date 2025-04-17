@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Features.Patient.Commads.Add;
+﻿namespace Autine.Application.Features.Patients.Commads.Add;
 public class AddPatientCommandHandler(
     IUnitOfWork unitOfWork, 
     IAuthService authService, 
@@ -26,14 +26,23 @@ public class AddPatientCommandHandler(
         if (aIResult.IsFailure)
             return aIResult.Error;
 
-        var patientId = await unitOfWork.Patients.AddAsync(
+        var patient = new Patient()
+        {
+
+            IsSupervised = true,
+            PatientId = authResult.Value,
+            ThreadTitle = $"{request.Request.FirstName} {request.Request.LastName}"
+        };
+
+        await unitOfWork.Patients.AddAsync(patient, ct);
+
+        await unitOfWork.ThreadMembers.AddAsync(
             new()
             {
-                IsSupervised = true,
-                PatientId = authResult.Value,
-                ThreadTitle = string.Empty
+                PatientId = patient.Id,
+                UserId = request.UserId
             }, ct);
 
-        return Result.Success(patientId);
+        return Result.Success(patient.Id);
     }
 }

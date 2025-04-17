@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.Thread;
+using Autine.Application.Features.Thread.Queries.GetAll;
 using Autine.Application.Features.ThreadMember.Commands.Add;
 using Autine.Application.Features.ThreadMember.Commands.Remove;
 using Autine.Application.Features.ThreadMember.Queries.Get;
@@ -11,7 +12,7 @@ namespace Autine.Api.Controllers;
 [Produces("application/json")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
-public class ThreadMembersController(ISender sender) : ControllerBase
+public class ThreadsController(ISender sender) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
@@ -61,7 +62,7 @@ public class ThreadMembersController(ISender sender) : ControllerBase
     public async Task<IActionResult> GetThreadMembers([FromRoute] Guid patientId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
-        var query = new GetThreadMembersQuery(userId, patientId);
+        var query = new GetThreadsQuery(userId);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)
@@ -72,8 +73,7 @@ public class ThreadMembersController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetThreadMember([FromRoute] Guid patientId, [FromRoute] Guid id, CancellationToken ct)
     {
-        var userId = User.GetUserId()!;
-        var query = new GetThreadMemberQuery(userId, id);
+        var query = new GetThreadMemberQuery(id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

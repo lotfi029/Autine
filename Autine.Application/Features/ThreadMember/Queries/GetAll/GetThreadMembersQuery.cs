@@ -1,4 +1,4 @@
 ﻿using Autine.Application.Contracts.Thread;
 
 namespace Autine.Application.Features.ThreadMember.Queries.GetAll;
-public record GetThreadMembersQuery(string UserId, Guid PatientId) : IQuery<IEnumerable<ThreadResponse>>;
+public record GetThreadMembersQuery(string UserId, Guid PatientId) : IQuery<IEnumerable<ThreadMemberResponse>>;

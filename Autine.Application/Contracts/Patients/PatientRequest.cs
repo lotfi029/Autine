@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Patient;
+﻿namespace Autine.Application.Contracts.Patients;
 
 public record PatientRequest(
     string FirstName,

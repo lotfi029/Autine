@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Patient;
+﻿namespace Autine.Application.Contracts.Patients;
 public record PatientResponse (
     string Id,
     string FirstName,
@@ -8,6 +8,5 @@ public record PatientResponse (
     DateTime BirthOfDate,
     string Gender,
     string Country,
-    string City,
-    bool IsSupervised
+    string City
     );

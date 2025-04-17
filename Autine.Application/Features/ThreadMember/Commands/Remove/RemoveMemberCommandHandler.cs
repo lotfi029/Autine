@@ -6,7 +6,7 @@ public class RemoveMemberCommandHandler(IUnitOfWork unitOfWork) : ICommandHandle
         if (await unitOfWork.ThreadMembers.FindByIdAsync(cancellationToken, [request.ThreadMemberId]) is not { } threadMember)
             return PatientErrors.PatientsNotFound;
 
-        if (threadMember.CreatedBy != request.UserId)
+        if (threadMember.UserId != request.UserId || threadMember.CreatedBy != request.UserId) 
             return ThreadMemberErrors.ThreadMemberNotFound;
 
         unitOfWork.ThreadMembers.Delete(threadMember);

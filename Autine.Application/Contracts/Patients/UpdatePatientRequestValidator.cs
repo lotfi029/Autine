@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Patient;
+﻿namespace Autine.Application.Contracts.Patients;
 
 public sealed class UpdatePatientRequestValidator : AbstractValidator<UpdatePatientRequest>
 {

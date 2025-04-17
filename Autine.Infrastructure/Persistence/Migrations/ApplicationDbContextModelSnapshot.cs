@@ -56,7 +56,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.ToTable("Bots");
+                    b.ToTable("Bots", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.BotPatient", b =>
@@ -71,7 +71,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("BotPatients");
+                    b.ToTable("BotPatients", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
@@ -106,7 +106,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.ThreadMember", b =>
@@ -135,7 +135,7 @@ namespace Autine.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ThreadMembers");
+                    b.ToTable("ThreadMembers", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>
