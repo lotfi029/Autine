@@ -5,19 +5,10 @@ public class GetThreadQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetTh
 {
     public async Task<Result<ThreadResponse>> Handle(GetThreadQuery request, CancellationToken cancellationToken)
     {
-        var threadMember = await unitOfWork.ThreadMembers
-            .GetAllAsync(e => e.PatientId == request.Id, ct: cancellationToken);
+        var thread = await unitOfWork.Patients.GetThreadByIdAsync(request.UserId, request.Id, cancellationToken);
 
-        if (threadMember is null || threadMember.Any())
+        if (thread is null)
             return PatientErrors.PatientsNotFound;
-
-        if (!threadMember.Select(e => e.UserId).Contains(request.UserId))
-            return PatientErrors.PatientsNotFound;
-
-
-        if(await unitOfWork.Patients.GetAsync(e => e.Id == request.Id, ct: cancellationToken) is not { } thread)
-            return PatientErrors.PatientsNotFound;
-
 
         var response = new ThreadResponse
         (
@@ -26,7 +17,7 @@ public class GetThreadQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetTh
             SupervisorId: thread.CreatedBy,
             PatientId: thread.PatientId,
             CraetedAt: thread.CreatedAt,
-            ThreadMembers: [.. threadMember
+            ThreadMembers: [.. thread.Members
                 .Select(e => new ThreadMemberResponse
                 (
                     Id: e.Id,

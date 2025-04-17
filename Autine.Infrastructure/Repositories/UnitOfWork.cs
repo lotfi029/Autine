@@ -1,6 +1,4 @@
-﻿using Autine.Application.Contracts.User;
-
-namespace Autine.Infrastructure.Repositories;
+﻿namespace Autine.Infrastructure.Repositories;
 
 public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 {

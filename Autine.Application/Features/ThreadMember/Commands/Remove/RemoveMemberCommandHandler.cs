@@ -4,10 +4,10 @@ public class RemoveMemberCommandHandler(IUnitOfWork unitOfWork) : ICommandHandle
     public async Task<Result> Handle(RemoveMemberCommand request, CancellationToken cancellationToken)
     {
         if (await unitOfWork.ThreadMembers.FindByIdAsync(cancellationToken, [request.ThreadMemberId]) is not { } threadMember)
-            return PatientErrors.PatientsNotFound;
-
-        if (threadMember.UserId != request.UserId || threadMember.CreatedBy != request.UserId) 
             return ThreadMemberErrors.ThreadMemberNotFound;
+
+        if (threadMember.CreatedBy != request.UserId) 
+            return ThreadMemberErrors.InvalidThreadMember;
 
         unitOfWork.ThreadMembers.Delete(threadMember);
 

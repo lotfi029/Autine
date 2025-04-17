@@ -1,9 +1,9 @@
 ﻿using Autine.Application.Contracts.Thread;
+using Autine.Application.Features.Thread.Queries.Get;
 using Autine.Application.Features.Thread.Queries.GetAll;
 using Autine.Application.Features.ThreadMember.Commands.Add;
 using Autine.Application.Features.ThreadMember.Commands.Remove;
 using Autine.Application.Features.ThreadMember.Queries.Get;
-using Autine.Application.Features.ThreadMember.Queries.GetAll;
 
 namespace Autine.Api.Controllers;
 [Route("api/{patientId:guid}/[controller]")]
@@ -32,7 +32,7 @@ public class ThreadsController(ISender sender) : ControllerBase
 
         return result.IsSuccess
             ? CreatedAtAction(
-                nameof(GetThreadMember),
+                nameof(GetThread),
                 new { patientId, id = result.Value },
                 null
             )
@@ -59,7 +59,7 @@ public class ThreadsController(ISender sender) : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ThreadMemberResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThreadMembers([FromRoute] Guid patientId, CancellationToken ct)
+    public async Task<IActionResult> GetAllThreads([FromRoute] Guid patientId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var query = new GetThreadsQuery(userId);
@@ -71,9 +71,10 @@ public class ThreadsController(ISender sender) : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ThreadMemberResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThreadMember([FromRoute] Guid patientId, [FromRoute] Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetThread([FromRoute] Guid patientId, [FromRoute] Guid id, CancellationToken ct)
     {
-        var query = new GetThreadMemberQuery(id);
+        var userId = User.GetUserId()!;
+        var query = new GetThreadQuery(userId, id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)
