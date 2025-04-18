@@ -1,7 +1,6 @@
 ﻿namespace Autine.Application.Features.Bots.Commands.Assign;
 public class AssignModelCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserService userService,
     IAIModelService aIModelService) : ICommandHandler<AssignModelCommand>
 {
     public async Task<Result> Handle(AssignModelCommand request, CancellationToken cancellationToken)
@@ -12,10 +11,10 @@ public class AssignModelCommandHandler(
         if (bot.CreatedBy != request.UserId)
             return BotErrors.BotNotFound;
 
-        if (!await userService.CheckUserExist(request.PatientId, cancellationToken))
-            return UserErrors.UserNotFound;
+        if(await unitOfWork.Patients.FindByIdAsync(cancellationToken, [request.PatientId]) is not { } patient)
+            return PatientErrors.PatientsNotFound;
 
-        var result = await aIModelService.AssignModelAsync(request.UserId, bot.Name, request.PatientId, cancellationToken);
+        var result = await aIModelService.AssignModelAsync(request.UserId, bot.Name, patient.PatientId, cancellationToken);
 
         if (result.IsFailure)
             return result;

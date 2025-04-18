@@ -3,7 +3,9 @@
 namespace Autine.Domain.Interfaces;
 public interface IRepository<T> where T : class
 {
+
     Task<Guid> AddAsync(T entity, CancellationToken ct = default);
+    Task AddRangeAsync(IEnumerable<T> entities, CancellationToken ct = default);
     void Update(T entity);
     void Delete(T entity);
     Task DeleteByIdAsync(CancellationToken ct = default, params object[] keyValues);

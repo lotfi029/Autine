@@ -3,5 +3,6 @@
 public record CreateBotRequest(
     string Name,
     string Context,
-    string Bio
+    string Bio,
+    Guid[]? PatientIds
 );

@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Autine.Domain\Autine.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Bots\Commands\Remove\" />
+  </ItemGroup>
+
 </Project>

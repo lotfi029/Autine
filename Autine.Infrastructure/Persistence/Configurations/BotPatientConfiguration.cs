@@ -10,8 +10,8 @@ public class BotPatientConfiguration : IEntityTypeConfiguration<BotPatient>
                .WithMany(b => b.BotPatients)
                .HasForeignKey(bp => bp.BotId);
 
-        builder.HasOne<ApplicationUser>()
-               .WithMany(p => p.BotPatients)
+        builder.HasOne(e => e.Patient)
+               .WithMany(p => p.Bots)
                .HasForeignKey(pb => pb.PatientId);
     }
 }

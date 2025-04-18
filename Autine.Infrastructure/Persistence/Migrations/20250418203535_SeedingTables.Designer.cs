@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Autine.Infrastructure.Persistence.Migrations
+namespace Autine.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250418175657_AddMessagingEntities")]
-    partial class AddMessagingEntities
+    [Migration("20250418203535_SeedingTables")]
+    partial class SeedingTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -219,14 +219,14 @@ namespace Autine.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("MessageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ThreadId")
+                    b.Property<Guid>("ThreadMemberId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MessageId");
 
-                    b.HasIndex("ThreadId");
+                    b.HasIndex("ThreadMemberId");
 
                     b.ToTable("ThreadMessages");
                 });
@@ -629,15 +629,15 @@ namespace Autine.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Autine.Domain.Entities.Patient", "Thread")
+                    b.HasOne("Autine.Domain.Entities.ThreadMember", "ThreadMember")
                         .WithMany("Messages")
-                        .HasForeignKey("ThreadId")
+                        .HasForeignKey("ThreadMemberId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Message");
 
-                    b.Navigation("Thread");
+                    b.Navigation("ThreadMember");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -711,7 +711,10 @@ namespace Autine.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("Members");
+                });
 
+            modelBuilder.Entity("Autine.Domain.Entities.ThreadMember", b =>
+                {
                     b.Navigation("Messages");
                 });
 

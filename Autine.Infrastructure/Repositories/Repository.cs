@@ -19,9 +19,10 @@ public class Repository<T> : IRepository<T> where T : class
 
         return Guid.Empty;
     }
-    public async Task AddRange(IEnumerable<T> entities, CancellationToken ct = default)
+    public async Task AddRangeAsync(IEnumerable<T> entities, CancellationToken ct = default)
     {
         await _dbSet.AddRangeAsync(entities, ct);
+        await _context.SaveChangesAsync(ct);
     }
 
     public void Update(T entity)
@@ -69,6 +70,7 @@ public class Repository<T> : IRepository<T> where T : class
 
         return await query.ToListAsync(ct) ?? null!;
     }
+    
 
     private IQueryable<T> getIQeryable(Expression<Func<T, bool>> predicate, string? includes, bool tracked = false)
     {

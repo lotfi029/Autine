@@ -1,6 +1,14 @@
 ﻿namespace Autine.Infrastructure.Repositories;
 public class PatientRepository(ApplicationDbContext context) : Repository<Patient>(context), IPatientRespository
 {
+    public async Task<IEnumerable<Patient>> ArePatientsAsync(Guid[] ids, CancellationToken ct = default)
+    {
+        var patients = await _context.Patients
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync(ct);
+
+        return ids.Length == patients.Count ? patients : Enumerable.Empty<Patient>();
+    }
     public async Task<IEnumerable<Patient>> GetAllThreads(string userId, CancellationToken ct = default)
         => await GetThreadsAsync(userId, Guid.Empty, ct);
     public async Task<Patient?> GetThreadByIdAsync(string userId, Guid id, CancellationToken ct = default)

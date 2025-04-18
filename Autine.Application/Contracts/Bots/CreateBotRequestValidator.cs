@@ -14,5 +14,19 @@ public class CreateBotRequestValidator : AbstractValidator<CreateBotRequest>
 
         RuleFor(x => x.Bio)
             .NotEmpty();
+
+        RuleFor(e => e.PatientIds)
+            .Must(e =>
+            {
+                if (e is null)
+                    return true;
+
+                foreach (var id in e)
+                {
+                    if (id == Guid.Empty)
+                        return false;
+                }
+                return true;
+            }).WithMessage("{PropertyName} cannot contain empty Ids.");
     }
 }

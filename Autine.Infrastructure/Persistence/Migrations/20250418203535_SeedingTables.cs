@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Autine.Infrastructure.Persistence.Migrations
+namespace Autine.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class SeedingTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -167,28 +167,177 @@ namespace Autine.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
+                name: "Bots",
                 columns: table => new
                 {
-                    PatientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SupervisorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IsSupervised = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Context = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: false),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Patients", x => new { x.SupervisorId, x.PatientId });
+                    table.PrimaryKey("PK_Bots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bots_AspNetUsers_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Message",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeliveredAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Message_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Patients",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PatientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsSupervised = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ThreadTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Patients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Patients_AspNetUsers_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Patients_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BotPatients",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BotId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PatientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BotPatients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Patients_AspNetUsers_SupervisorId",
-                        column: x => x.SupervisorId,
+                        name: "FK_BotPatients_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BotPatients_Bots_BotId",
+                        column: x => x.BotId,
+                        principalTable: "Bots",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ThreadMembers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ThreadMembers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ThreadMembers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ThreadMembers_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BotMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BotPatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BotMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BotMessages_BotPatients_BotPatientId",
+                        column: x => x.BotPatientId,
+                        principalTable: "BotPatients",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_BotMessages_Message_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Message",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ThreadMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ThreadMemberId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ThreadMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ThreadMessages_Message_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Message",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ThreadMessages_ThreadMembers_ThreadMemberId",
+                        column: x => x.ThreadMemberId,
+                        principalTable: "ThreadMembers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -253,9 +402,64 @@ namespace Autine.Infrastructure.Persistence.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BotMessages_BotPatientId",
+                table: "BotMessages",
+                column: "BotPatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BotMessages_MessageId",
+                table: "BotMessages",
+                column: "MessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BotPatients_BotId",
+                table: "BotPatients",
+                column: "BotId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BotPatients_PatientId",
+                table: "BotPatients",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bots_CreatedBy",
+                table: "Bots",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_SenderId",
+                table: "Message",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_CreatedBy",
+                table: "Patients",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Patients_PatientId",
                 table: "Patients",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ThreadMembers_PatientId",
+                table: "ThreadMembers",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ThreadMembers_UserId",
+                table: "ThreadMembers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ThreadMessages_MessageId",
+                table: "ThreadMessages",
+                column: "MessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ThreadMessages_ThreadMemberId",
+                table: "ThreadMessages",
+                column: "ThreadMemberId");
         }
 
         /// <inheritdoc />
@@ -277,10 +481,28 @@ namespace Autine.Infrastructure.Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Patients");
+                name: "BotMessages");
+
+            migrationBuilder.DropTable(
+                name: "ThreadMessages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "BotPatients");
+
+            migrationBuilder.DropTable(
+                name: "Message");
+
+            migrationBuilder.DropTable(
+                name: "ThreadMembers");
+
+            migrationBuilder.DropTable(
+                name: "Bots");
+
+            migrationBuilder.DropTable(
+                name: "Patients");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

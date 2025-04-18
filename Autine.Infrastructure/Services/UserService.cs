@@ -6,6 +6,7 @@ public class UserService(ApplicationDbContext context) : IUserService
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
 
+
     public async Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, bool isFollowing = false, CancellationToken ct = default)
     {
         

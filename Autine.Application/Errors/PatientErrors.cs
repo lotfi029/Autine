@@ -8,4 +8,6 @@ public class PatientErrors
         = Error.Conflict($"Patient.{nameof(DuplicatedPatient)}", "this patient is already supervised by you.");
     public static readonly Error MemberNotSupervisor
         = Error.BadRequest($"Patient.{nameof(MemberNotSupervisor)}", "Member is not a parent or doctor to add to thread.");
+    public static readonly Error InvalidPatients
+        = Error.BadRequest($"Patient.{nameof(InvalidPatients)}", "One or more patient not found try again.");
 }

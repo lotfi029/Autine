@@ -10,6 +10,12 @@ public class CreateBotCommandHanlder(
             return BotErrors.DuplicatedBot;
 
         var isAdmin = await roleService.UserIsAdminAsync(request.UserId);
+
+        if (isAdmin.IsSuccess)
+        {
+            if (request.Request.PatientIds is not null)
+                return AdminErrors.InvalidRole;
+        }
         
         var result = await aIModelService.AddModelAsync(
             request.UserId, new(
@@ -28,8 +34,42 @@ public class CreateBotCommandHanlder(
             Context = request.Request.Context,
             Bio = request.Request.Bio,
             IsPublic = isAdmin.IsSuccess,
-            CreatedBy = request.UserId,
+            CreatedBy = request.UserId
         }, cancellationToken);
+
+
+        // assign this bot to ids patients
+        var ids = request.Request.PatientIds;
+        if (ids is not null)
+        {
+            var patients = await unitOfWork.Patients.ArePatientsAsync(ids, ct: cancellationToken);
+
+            if (patients is null || !patients.Any())
+                return PatientErrors.InvalidPatients;
+
+            var botPatient = new List<BotPatient>();
+
+            foreach (var id in patients)
+            {
+                var aiResult = await aIModelService.AssignModelAsync(
+                    request.UserId,
+                    request.Request.Name,
+                    id.PatientId,
+                    cancellationToken);
+
+                if (aiResult.IsFailure)
+                    return aiResult.Error;
+
+                botPatient.Add(new()
+                {
+                    BotId = modelId,
+                    PatientId = id.Id
+                });
+            }
+
+            await unitOfWork.BotPatients.AddRangeAsync(botPatient, cancellationToken);
+        }
+
 
         return modelId;
     }

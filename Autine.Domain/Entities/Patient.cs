@@ -5,6 +5,6 @@ public class Patient : AuditableEntity
     public string PatientId { get; set; } = string.Empty;
     public bool IsSupervised { get; set; } = true;
     public string ThreadTitle { get; set; } = string.Empty;
-    public virtual ICollection<ThreadMember> Members { get; set; } = [];
-    public virtual ICollection<ThreadMessage>? Messages { get; set; }
+    public ICollection<ThreadMember> Members { get; set; } = [];
+    public ICollection<BotPatient> Bots { get; set; } = [];
 }
