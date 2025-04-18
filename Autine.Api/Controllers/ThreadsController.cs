@@ -1,9 +1,8 @@
-﻿using Autine.Application.Contracts.Thread;
-using Autine.Application.Features.Thread.Queries.Get;
-using Autine.Application.Features.Thread.Queries.GetAll;
+﻿using Autine.Application.Features.Threads.Queries.Get;
+using Autine.Application.Features.Threads.Queries.GetAll;
 using Autine.Application.Features.ThreadMember.Commands.Add;
 using Autine.Application.Features.ThreadMember.Commands.Remove;
-using Autine.Application.Features.ThreadMember.Queries.Get;
+using Autine.Application.Contracts.Threads;
 
 namespace Autine.Api.Controllers;
 [Route("api/{patientId:guid}/[controller]")]

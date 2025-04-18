@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Thread;
+﻿namespace Autine.Application.Contracts.Threads;
 
 public record ThreadMemberResponse(
     Guid Id,

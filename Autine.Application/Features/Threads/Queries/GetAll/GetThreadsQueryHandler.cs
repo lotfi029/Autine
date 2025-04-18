@@ -1,6 +1,6 @@
-﻿using Autine.Application.Contracts.Thread;
+﻿using Autine.Application.Contracts.Threads;
 
-namespace Autine.Application.Features.Thread.Queries.GetAll;
+namespace Autine.Application.Features.Threads.Queries.GetAll;
 public class GetThreadsQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetThreadsQuery, IEnumerable<ThreadResponse>>
 {
     public async Task<Result<IEnumerable<ThreadResponse>>> Handle(GetThreadsQuery request, CancellationToken cancellationToken)

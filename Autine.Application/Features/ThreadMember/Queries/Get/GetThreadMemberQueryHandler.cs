@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Thread;
+﻿using Autine.Application.Contracts.Threads;
 
 namespace Autine.Application.Features.ThreadMember.Queries.Get;
 public class GetThreadMemberQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetThreadMemberQuery, ThreadMemberResponse>
