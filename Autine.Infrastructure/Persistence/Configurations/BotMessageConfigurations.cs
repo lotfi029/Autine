@@ -1,28 +1,22 @@
-﻿//namespace Autine.Infrastructure.Persistence.Configurations;
+﻿namespace Autine.Infrastructure.Persistence.Configurations;
 
-//public class BotMessageConfigurations : IEntityTypeConfiguration<BotMessage>
-//{
-//    public void Configure(EntityTypeBuilder<BotMessage> builder)
-//    {
-//        builder.HasKey(c => c.Id);
+public class BotMessageConfigurations : IEntityTypeConfiguration<BotMessage>
+{
+    public void Configure(EntityTypeBuilder<BotMessage> builder)
+    {
+        builder.HasKey(c => c.Id);
 
+        builder.HasOne(m => m.BotPatient)
+          .WithMany(b => b.BotMessages)
+          .HasForeignKey(m => m.BotPatientId)
+          .OnDelete(DeleteBehavior.NoAction);
 
-//        builder.Property(b => b.Message)
-//           .IsRequired()
-//           .HasMaxLength(100);
-
-//        builder.Property(m => m.SentDate)
-//            .IsRequired();
-
-//        builder.Property(m => m.Direction)
-//            .HasMaxLength(50).IsRequired();
-
-//        builder.HasOne(m => m.BotPatient)
-//          .WithMany(b => b.BotMessages)
-//          .HasForeignKey(m => m.BotPatientId)
-//          .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(m => m.Message)
+            .WithMany(b => b.BotMessages)
+            .HasForeignKey(e => e.MessageId)
+            .OnDelete(DeleteBehavior.NoAction);
 
 
-//    }
+    }
 
-//}
+}

@@ -1,8 +1,10 @@
 ﻿namespace Autine.Domain.Entities;
 
-public class ThreadMessage : AuditableEntity
+public class ThreadMessage
 {
-    public string Message { get; set; } = string.Empty;
-    public int ThreadId { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
+    public Guid ThreadId { get; set; }
+    public Guid MessageId { get; set; }
+    public Message Message { get; set; } = default!;
     public virtual Patient Thread { get; set; } = default!;
 }

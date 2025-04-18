@@ -1,8 +1,7 @@
 ﻿namespace Autine.Domain.Entities;
 
-public enum MessageStatus
+public enum MessageDirection
 {
     Sent = 0,
-    Delivered,
-    Read
+    Received
 }

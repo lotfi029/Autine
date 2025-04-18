@@ -4,7 +4,7 @@ public class BotPatientConfiguration : IEntityTypeConfiguration<BotPatient>
 {
     public void Configure(EntityTypeBuilder<BotPatient> builder)
     {
-        builder.HasKey(k => new { k.BotId, k.PatientId });
+        builder.HasKey(b => b.Id);
 
         builder.HasOne(bp => bp.Bot)
                .WithMany(b => b.BotPatients)
