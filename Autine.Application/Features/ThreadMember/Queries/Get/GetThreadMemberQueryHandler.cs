@@ -10,7 +10,7 @@ public class GetThreadMemberQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler
 
         var response = new ThreadMemberResponse(
             thread.Id,
-            thread.UserId,
+            thread.MemberId,
             thread.CreatedAt
             );
 

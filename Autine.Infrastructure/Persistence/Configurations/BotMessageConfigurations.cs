@@ -17,6 +17,8 @@ public class BotMessageConfigurations : IEntityTypeConfiguration<BotMessage>
             .OnDelete(DeleteBehavior.NoAction);
 
 
+        builder.HasIndex(e => new { e.BotPatientId, e.MessageId })
+            .IsUnique();
     }
 
 }

@@ -21,7 +21,7 @@ public class GetThreadQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetTh
                 .Select(e => new ThreadMemberResponse
                 (
                     Id: e.Id,
-                    UserId: e.UserId,
+                    UserId: e.MemberId,
                     e.CreatedAt
                 ))]
         );

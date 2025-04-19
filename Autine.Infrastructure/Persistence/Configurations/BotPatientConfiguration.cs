@@ -13,5 +13,8 @@ public class BotPatientConfiguration : IEntityTypeConfiguration<BotPatient>
         builder.HasOne(e => e.Patient)
                .WithMany(p => p.Bots)
                .HasForeignKey(pb => pb.PatientId);
+
+        builder.HasIndex(b => new { b.BotId, b.PatientId })
+            .IsUnique();
     }
 }

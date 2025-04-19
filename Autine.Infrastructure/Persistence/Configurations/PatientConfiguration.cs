@@ -18,5 +18,9 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 
         builder.Property(e => e.IsSupervised)
             .HasDefaultValue(false);
+
+
+        builder.HasIndex(p => new { p.PatientId, p.CreatedBy })
+            .IsUnique();
     }
 }

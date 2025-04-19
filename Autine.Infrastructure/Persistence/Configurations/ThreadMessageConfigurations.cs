@@ -15,5 +15,8 @@ public class ThreadMessageConfigurations : IEntityTypeConfiguration<ThreadMessag
               .WithMany(u => u.Messages)
               .HasForeignKey(t => t.ThreadMemberId)
               .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasIndex(tm => new { tm.ThreadMemberId, tm.MessageId })
+            .IsUnique();
     }
 }

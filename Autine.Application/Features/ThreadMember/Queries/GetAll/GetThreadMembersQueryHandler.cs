@@ -12,7 +12,7 @@ public class GetThreadMembersQueryHandler(IUnitOfWork unitOfWork) : IQueryHandle
             .Select(e => new ThreadMemberResponse
             (
                 Id: e.Id,
-                UserId: e.UserId,
+                UserId: e.MemberId,
                 e.CreatedAt
             ));
 

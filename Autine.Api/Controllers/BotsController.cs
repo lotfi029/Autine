@@ -7,14 +7,13 @@ using Autine.Application.Features.Bots.Queries.GetById;
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(Roles = $"{DefaultRoles.Admin.Name}, {DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
 [Produces("application/json")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
 public class BotsController(ISender sender) : ControllerBase
 {
     [HttpPost]
-    [Authorize(Roles = $"{DefaultRoles.Admin.Name}, {DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddBot([FromBody] CreateBotRequest request, CancellationToken ct)
@@ -60,7 +59,7 @@ public class BotsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet]
+    [HttpGet("my-bots")]
     [ProducesResponseType(typeof(ICollection<BotResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetBots(CancellationToken ct)

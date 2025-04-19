@@ -19,9 +19,9 @@ public class UserService(ApplicationDbContext context) : IUserService
             join u in context.Users
             on t.PatientId equals u.Id
             where
-            (isFollowing && tm.UserId == userId && t.CreatedBy != userId)
+            (isFollowing && tm.MemberId == userId && t.CreatedBy != userId)
             ||
-            (!isFollowing && tm.UserId == userId && tm.CreatedBy == userId)
+            (!isFollowing && tm.MemberId == userId && tm.CreatedBy == userId)
             select new PatientResponse(
             t.Id,
             u.FirstName,
@@ -46,7 +46,7 @@ public class UserService(ApplicationDbContext context) : IUserService
             on tm.PatientId equals t.Id
             join u in context.Users
             on t.PatientId equals u.Id
-            where t.Id == id && (tm.UserId == userId)
+            where t.Id == id && (tm.MemberId == userId)
             select new PatientResponse(
                     t.Id,
                     u.FirstName,

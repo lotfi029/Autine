@@ -40,7 +40,7 @@ public class AddPatientCommandHandler(
             new()
             {
                 PatientId = patient.Id,
-                UserId = request.UserId
+                MemberId = request.UserId
             }, ct);
 
         return Result.Success(patient.Id);
