@@ -1,4 +1,6 @@
-﻿using Autine.Application.Contracts.Patients;
+﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.Contracts.Patients;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(ApplicationDbContext context) : IUserService
@@ -9,7 +11,7 @@ public class UserService(ApplicationDbContext context) : IUserService
 
     public async Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, bool isFollowing = false, CancellationToken ct = default)
     {
-        
+
         var query = await (
             from tm in context.ThreadMembers
             join t in context.Patients
@@ -20,8 +22,8 @@ public class UserService(ApplicationDbContext context) : IUserService
             (isFollowing && tm.UserId == userId && t.CreatedBy != userId)
             ||
             (!isFollowing && tm.UserId == userId && tm.CreatedBy == userId)
-            select new  PatientResponse(
-            u.Id,
+            select new PatientResponse(
+            t.Id,
             u.FirstName,
             u.LastName,
             u.Email!,
@@ -31,29 +33,6 @@ public class UserService(ApplicationDbContext context) : IUserService
             u.Country!,
             u.City!
             )).ToListAsync(cancellationToken: ct);
-
-        //var response = query.GroupBy(g => new
-        //{
-        //    g.Id,
-        //    g.FirstName,
-        //    g.LastName,
-        //    g.Email,
-        //    g.UserName,
-        //    g.DateOfBirth,
-        //    g.Gender,
-        //    g.Country,
-        //    g.City,
-        //}).Select(x => new PatientResponse(
-        //    x.Key.Id,
-        //    x.Key.FirstName,
-        //    x.Key.LastName,
-        //    x.Key.Email,
-        //    x.Key.UserName,
-        //    x.Key.DateOfBirth,
-        //    x.Key.Gender,
-        //    x.Key.Country,
-        //    x.Key.City
-        //    ));
 
         if (query is null)
             return [];
@@ -69,7 +48,7 @@ public class UserService(ApplicationDbContext context) : IUserService
             on t.PatientId equals u.Id
             where t.Id == id && (tm.UserId == userId)
             select new PatientResponse(
-                    u.Id,
+                    t.Id,
                     u.FirstName,
                     u.LastName,
                     u.Email!,
@@ -81,6 +60,19 @@ public class UserService(ApplicationDbContext context) : IUserService
             ))
             .SingleOrDefaultAsync(ct);
 
+    public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid[] ids, CancellationToken ct = default)
+        => await (
+            from p in context.Patients
+            join u in context.Users
+            on p.PatientId equals u.Id
+            where ids.Contains(p.Id)
+            select new BotPatientResponse(
+                p.Id,
+                $"{u.FirstName} {u.LastName}",
+                p.CreatedAt,
+                u.ProfilePicture
+                )
+            ).ToListAsync(ct);
 
 
 }

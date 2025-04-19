@@ -5,7 +5,7 @@ using Autine.Application.Features.ThreadMember.Commands.Remove;
 using Autine.Application.Contracts.Threads;
 
 namespace Autine.Api.Controllers;
-[Route("api/{patientId:guid}/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
 [Produces("application/json")]
@@ -13,7 +13,7 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
 public class ThreadsController(ISender sender) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("{patientId:guid}/add-member")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -38,11 +38,11 @@ public class ThreadsController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}/remove-member")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> RemoveMember([FromRoute] Guid patientId, [FromRoute] Guid id, CancellationToken ct)
+    public async Task<IActionResult> RemoveMember([FromRoute] Guid id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
@@ -55,10 +55,10 @@ public class ThreadsController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
 
-    [HttpGet]
+    [HttpGet("")]
     [ProducesResponseType(typeof(IEnumerable<ThreadMemberResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllThreads([FromRoute] Guid patientId, CancellationToken ct)
+    public async Task<IActionResult> GetAllThreads(CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var query = new GetThreadsQuery(userId);
@@ -67,13 +67,13 @@ public class ThreadsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{id:guid}")]
+    [HttpGet("{threadId:guid}")]
     [ProducesResponseType(typeof(ThreadMemberResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThread([FromRoute] Guid patientId, [FromRoute] Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetThread([FromRoute] Guid threadId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
-        var query = new GetThreadQuery(userId, id);
+        var query = new GetThreadQuery(userId, threadId);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

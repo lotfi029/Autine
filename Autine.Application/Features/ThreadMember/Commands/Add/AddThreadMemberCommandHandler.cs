@@ -11,7 +11,7 @@ public class AddThreadMemberCommandHandler(
         if (patient.CreatedBy != request.UserId)
             return PatientErrors.PatientsNotFound;
         
-        if (await unitOfWork.ThreadMembers.GetAsync(e => e.UserId == request.MemberId && e.PatientId == request.PatientId, ct:cancellationToken) is not null)
+        if (await unitOfWork.ThreadMembers.CheckExistAsync(e => e.UserId == request.MemberId && e.PatientId == request.PatientId, ct:cancellationToken) )
             return ThreadMemberErrors.ThreadMemberAlreadyExists;
 
         if (!await roleService.UserIsSupervisorAsync(request.MemberId))

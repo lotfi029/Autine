@@ -68,6 +68,7 @@ public class CreateBotCommandHanlder(
             }
 
             await unitOfWork.BotPatients.AddRangeAsync(botPatient, cancellationToken);
+            await unitOfWork.CommitChangesAsync(cancellationToken);
         }
 
 

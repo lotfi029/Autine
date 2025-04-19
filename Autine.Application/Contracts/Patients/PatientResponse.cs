@@ -1,6 +1,6 @@
 ﻿namespace Autine.Application.Contracts.Patients;
 public record PatientResponse (
-    string Id,
+    Guid Id,
     string FirstName,
     string LastName,
     string Email,

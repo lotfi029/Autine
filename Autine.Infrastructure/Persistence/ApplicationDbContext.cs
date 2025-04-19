@@ -15,6 +15,7 @@ public class ApplicationDbContext(
     public DbSet<ThreadMember> ThreadMembers { get; set; }
     public DbSet<BotMessage> BotMessages { get; set; }
     public DbSet<ThreadMessage> ThreadMessages { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     //public DbSet<ChatMessage> ChatMessage { get; set; }
     //public DbSet<Chat> Chat { get; set; }

@@ -1,4 +1,5 @@
-﻿using Autine.Application.Contracts.Patients;
+﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.Contracts.Patients;
 
 namespace Autine.Application.Interfaces;
 public interface IUserService
@@ -6,4 +7,5 @@ public interface IUserService
     Task<bool> CheckUserExist(string userId, CancellationToken ct = default);
     Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, bool isFollowing = false, CancellationToken ct = default);
     Task<PatientResponse?> GetPatientByIdAsync(string userId, Guid id, CancellationToken ct = default);
+    Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid[] ids, CancellationToken ct = default);
 }

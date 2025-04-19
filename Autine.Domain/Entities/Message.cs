@@ -8,7 +8,7 @@ public class Message
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public DateTime? DeliveredAt { get; set; }
     public DateTime? ReadAt { get; set; }
-    public string SenderId { get; set; } = string.Empty;
+    public string? SenderId { get; set; }
 
     public ICollection<ThreadMessage>? ThreadMessages { get; set; }
     public ICollection<BotMessage>? BotMessages { get; set; }

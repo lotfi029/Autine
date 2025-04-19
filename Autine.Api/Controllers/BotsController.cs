@@ -29,12 +29,12 @@ public class BotsController(ISender sender) : ControllerBase
             ? CreatedAtAction(nameof(GetBotById), new {id = result.Value }, null!)
             : result.ToProblem();
     }
-    [HttpPost("{id}/assign-bot")]
+    [HttpPost("{id:guid}/assign-bot")]
     [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> AssignBot([FromRoute] string id, [FromQuery] Guid botId,CancellationToken ct)
+    public async Task<IActionResult> AssignBot([FromRoute] Guid id, [FromQuery] Guid botId,CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 

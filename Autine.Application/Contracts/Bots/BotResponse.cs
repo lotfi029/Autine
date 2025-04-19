@@ -4,5 +4,13 @@ public record BotResponse(
     string Name,
     string Context,
     string Bio,
-    DateTime CreateAt
+    DateTime CreateAt,
+    List<BotPatientResponse> Patients
+);
+
+public record BotPatientResponse(
+    Guid Id,
+    string Name,
+    DateTime CreateAt,
+    string ProfilePic
 );
