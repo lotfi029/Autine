@@ -2,6 +2,7 @@
 using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
 using Autine.Application.Features.Patients.Commads.Add;
+using Autine.Application.Features.Patients.Commads.Remove;
 using Autine.Application.Features.Patients.Queries.Get;
 using Autine.Application.Features.Patients.Queries.GetAll;
 using Autine.Application.Features.Patients.Queries.GetBots;
@@ -79,6 +80,19 @@ public class PatientsController(ISender sender) : ControllerBase
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)
+            : result.ToProblem();
+    }
+
+    [HttpDelete("{patientId:guid}")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeletePatient([FromRoute] Guid patientId, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var command = new RemovePatientCommand(userId, patientId);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent()
             : result.ToProblem();
     }
 }

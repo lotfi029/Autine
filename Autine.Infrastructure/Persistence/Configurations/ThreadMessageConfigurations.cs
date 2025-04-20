@@ -9,12 +9,12 @@ public class ThreadMessageConfigurations : IEntityTypeConfiguration<ThreadMessag
         builder.HasOne(t => t.Message)
               .WithMany(u => u.ThreadMessages)
               .HasForeignKey(t => t.MessageId)
-              .OnDelete(DeleteBehavior.NoAction);
+              .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasOne(t => t.ThreadMember)
               .WithMany(u => u.Messages)
               .HasForeignKey(t => t.ThreadMemberId)
-              .OnDelete(DeleteBehavior.NoAction);
+              .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(tm => new { tm.ThreadMemberId, tm.MessageId })
             .IsUnique();

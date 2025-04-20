@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace Autine.Infrastructure.Repositories;
 
@@ -38,6 +39,8 @@ public class Repository<T> : IRepository<T> where T : class
         }
         _dbSet.Remove(entity);
     }
+    public async Task<int> ExcuteUpdateAsync(Expression<Func<T, bool>> predicate, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCall, CancellationToken ct = default)
+        => await _dbSet.Where(predicate).ExecuteUpdateAsync(setPropertyCall, ct);
 
     public async Task DeleteByIdAsync(CancellationToken ct = default, params object[] keyValues)
     {

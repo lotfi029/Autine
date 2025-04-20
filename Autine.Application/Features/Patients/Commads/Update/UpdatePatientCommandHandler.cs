@@ -15,7 +15,7 @@ public class UpdatePatientCommandHandler(
 
         if (userUpdateResult.IsFailure)
             return userUpdateResult;
-
+        // Update user info
         return Result.Success();
     }
 }

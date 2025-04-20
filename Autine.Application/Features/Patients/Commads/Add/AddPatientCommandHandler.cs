@@ -6,43 +6,67 @@ public class AddPatientCommandHandler(
 {
     public async Task<Result<Guid>> Handle(AddPatientCommand request, CancellationToken ct)
     {
-        var authResult = await authService.RegisterPatient(request.Request, ct);
 
-        if (authResult.IsFailure)
-            return authResult.Error;
-
-
-        var aIResult = await aIAuthService.AddPatientAsync(
-            request.UserId, new(
-                request.Request.Email,
-                authResult.Value,
-                request.Request.Password,
-                request.Request.FirstName,
-                request.Request.LastName,
-                request.Request.DateOfBirth,
-                request.Request.Gender
-                ), ct);
-
-        if (aIResult.IsFailure)
-            return aIResult.Error;
-
-        var patient = new Patient()
+        var transaction = await unitOfWork.BeginTransactionAsync(ct);
+        Guid patiendId = Guid.Empty;
+        bool aIPatientAdded = false;
+        string userPatientId = string.Empty;
+        try
         {
+            var authResult = await authService.RegisterPatient(request.Request, ct);
 
-            IsSupervised = true,
-            PatientId = authResult.Value,
-            ThreadTitle = $"{request.Request.FirstName} {request.Request.LastName}"
-        };
+            if (authResult.IsFailure)
+                return authResult.Error;
 
-        await unitOfWork.Patients.AddAsync(patient, ct);
+            userPatientId = authResult.Value;
 
-        await unitOfWork.ThreadMembers.AddAsync(
-            new()
+            var aIResult = await aIAuthService.AddPatientAsync(
+                request.UserId, new(
+                    request.Request.Email,
+                    userPatientId,
+                    request.Request.Password,
+                    request.Request.FirstName,
+                    request.Request.LastName,
+                    request.Request.DateOfBirth,
+                    request.Request.Gender
+                    ), ct);
+
+            if (aIResult.IsFailure)
             {
-                PatientId = patient.Id,
-                MemberId = request.UserId
-            }, ct);
+                await unitOfWork.RollbackTransactionAsync(transaction, ct);
+                return aIResult.Error;
+            }
+            aIPatientAdded = true;
 
-        return Result.Success(patient.Id);
+            var patient = new Patient()
+            {
+
+                IsSupervised = true,
+                PatientId = authResult.Value,
+                ThreadTitle = $"{request.Request.FirstName} {request.Request.LastName}"
+            };
+            await unitOfWork.Patients.AddAsync(patient, ct);
+
+            await unitOfWork.ThreadMembers.AddAsync(
+                new()
+                {
+                    PatientId = patient.Id,
+                    MemberId = request.UserId
+                }, ct);
+
+            patiendId = patient.Id;
+
+        }
+        catch
+        {
+            await unitOfWork.RollbackTransactionAsync(transaction, ct);
+            
+            if (aIPatientAdded)
+                await aIAuthService.RemovePatientAsync(request.UserId, userPatientId, ct);
+            // TODO: log error
+            return Error.BadRequest("Error", "Error while adding patient");
+        }
+
+        return Result.Success(patiendId);
     }
 }
