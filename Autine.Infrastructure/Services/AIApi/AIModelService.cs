@@ -1,7 +1,6 @@
 ﻿using Autine.Application.ExternalContracts.Bots;
 using Autine.Application.Interfaces.AIApi;
 using Autine.Infrastructure.Abstractions;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 
 namespace Autine.Infrastructure.Services.AIApi;
@@ -42,6 +41,22 @@ public class AIModelService(
 
         return response;
     }
+    public async Task<Result> RemoveModelAsync(string userId, string modelName, bool isAdmin = false, CancellationToken ct = default)
+    {
+        if (isAdmin)
+            return await baseService.SendAsync(new(
+                $"{_options.AIApi}/model/admin/delete?username={userId}&model_name={modelName}&session_id={1}"
+                ), ct);
+
+        return await baseService.SendAsync(new(
+            $"{_options.AIApi}/model/supervisor/delete?username={userId}&model_name={modelName}&session_id={1}"
+            ), ct);
+    }
+    public async Task<Result> UnAssignModelAsync(string username, string user_username, string model_name, CancellationToken ct = default)
+        => await baseService.SendAsync(new(
+            $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={username}&user_username={user_username}&model_name={model_name}&session_id={1}"
+            ), ct);
 
 
+   
 }

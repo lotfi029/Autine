@@ -1,9 +1,10 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Autine.Infrastructure.Services;
-public class UserService(ApplicationDbContext context) : IUserService
+public class UserService(
+    ApplicationDbContext context,
+    UserManager<ApplicationUser> userManager) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
@@ -60,19 +61,51 @@ public class UserService(ApplicationDbContext context) : IUserService
             ))
             .SingleOrDefaultAsync(ct);
 
-    public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid[] ids, CancellationToken ct = default)
+    public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default)
         => await (
             from p in context.Patients
             join u in context.Users
             on p.PatientId equals u.Id
-            where ids.Contains(p.Id)
+            join bp in context.BotPatients
+            on p.Id equals bp.PatientId
+            where bp.BotId == botId
             select new BotPatientResponse(
-                p.Id,
+                bp.Id,
                 $"{u.FirstName} {u.LastName}",
-                p.CreatedAt,
+                bp.CreatedAt,
                 u.ProfilePicture
                 )
             ).ToListAsync(ct);
 
+    public async Task<Result> UpdateUserRequest(string userId, UpdateUserRequest request, CancellationToken ct = default)
+    {
+        if (await context.Users.FindAsync([userId], ct) is not { } user)
+            return UserErrors.UserNotFound;
 
+        user = request.Adapt(user);
+
+        var result = await userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.FirstOrDefault()!;
+            return Error.BadRequest(error.Code, error.Description);
+        }
+        return Result.Success();
+    }
+
+    public async Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
+    {
+        if (await context.Users.FindAsync([userId], ct) is not { } user)
+            return UserErrors.UserNotFound;
+
+        var result = await userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.FirstOrDefault()!;
+
+            return Error.BadRequest(error.Code, error.Description);
+        }
+
+        return Result.Success();
+    }
 }

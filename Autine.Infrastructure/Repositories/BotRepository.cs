@@ -9,4 +9,6 @@ public class BotRepository(ApplicationDbContext context) : Repository<Bot>(conte
 
         return entity.Id;
     }
+
+    
 }

@@ -8,13 +8,13 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 
         builder.HasOne<ApplicationUser>()
             .WithMany(e => e.Patients)
-            .HasForeignKey(e => e.CreatedBy)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(e => e.PatientId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<ApplicationUser>()
             .WithMany(e => e.Supervisors)
-            .HasForeignKey(e => e.PatientId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(e => e.CreatedBy)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(e => e.IsSupervised)
             .HasDefaultValue(false);

@@ -3,6 +3,7 @@ using Autine.Application.Features.Bots.Commands.Assign;
 using Autine.Application.Features.Bots.Commands.Create;
 using Autine.Application.Features.Bots.Queries.GetAll;
 using Autine.Application.Features.Bots.Queries.GetById;
+using Autine.Application.Features.Bots.Queries.GetPatients;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -25,7 +26,7 @@ public class BotsController(ISender sender) : ControllerBase
         var result = await sender.Send(command, ct);
 
         return result.IsSuccess
-            ? CreatedAtAction(nameof(GetBotById), new {id = result.Value }, null!)
+            ? CreatedAtAction(nameof(GetBotById), new { id = result.Value }, null!)
             : result.ToProblem();
     }
     [HttpPost("{id:guid}/assign-bot")]
@@ -33,14 +34,14 @@ public class BotsController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> AssignBot([FromRoute] Guid id, [FromQuery] Guid botId,CancellationToken ct)
+    public async Task<IActionResult> AssignBot([FromRoute] Guid id, [FromQuery] Guid botId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
         var command = new AssignModelCommand(userId, id, botId);
 
         var result = await sender.Send(command, ct);
-        
+
         return result.IsSuccess
             ? NoContent()
             : result.ToProblem();
@@ -66,6 +67,17 @@ public class BotsController(ISender sender) : ControllerBase
     {
         var userId = User.GetUserId()!;
         var query = new GetBotsQuery(userId);
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpGet("{id:guid}/bot-patients")]
+    [ProducesResponseType(typeof(ICollection<BotPatientResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetBotPatients([FromRoute] Guid id, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var query = new GetBotPatientsQuery(userId, id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

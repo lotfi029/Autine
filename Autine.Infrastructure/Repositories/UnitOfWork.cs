@@ -10,12 +10,13 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 
     public IRepository<T> GetRepository<T>() where T : class
         => new Repository<T>(_context);
-    //public IUserRepository<T> GetUserRepository<T>() where T : class
-    //    => new resp;
+    
     public IPatientRespository Patients
         => new PatientRepository(_context);
+    
     public IThreadMemberRepository ThreadMembers 
         => new ThreadMemberRepository(_context);
+    
     public IBotRepository Bots
         => new BotRepository(_context);
 
@@ -35,9 +36,8 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
         => await _context.SaveChangesAsync(ct);
 
     public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Database.BeginTransactionAsync(cancellationToken);
-    }
+        => await _context.Database.BeginTransactionAsync(cancellationToken);
+    
 
     public async Task CommitTransactionAsync(IDbContextTransaction transaction, CancellationToken cancellationToken = default)
     {

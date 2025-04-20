@@ -14,7 +14,8 @@ public class MessageConfigurations : IEntityTypeConfiguration<Message>
 
         builder.HasOne<ApplicationUser>()
             .WithMany(e => e.Messages)
-            .HasForeignKey(e => e.SenderId);
+            .HasForeignKey(e => e.SenderId)
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
 

@@ -1,8 +1,10 @@
 ﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
 using Autine.Application.Features.Patients.Commads.Add;
 using Autine.Application.Features.Patients.Queries.Get;
 using Autine.Application.Features.Patients.Queries.GetAll;
+using Autine.Application.Features.Patients.Queries.GetBots;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -62,6 +64,18 @@ public class PatientsController(ISender sender) : ControllerBase
 
         var query = new GetPatientsQuery(userId, true);
 
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpGet("{patientId:guid}/patient-bot")]
+    [ProducesResponseType(typeof(IEnumerable<PatientBotResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPatientBots([FromRoute] Guid patientId, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var query = new GetPatientBotsQuery(userId, patientId);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

@@ -8,8 +8,7 @@ public class GetBotsQueryHandler(
     public async Task<Result<ICollection<BotResponse>>> Handle(GetBotsQuery request, CancellationToken cancellationToken)
     {
         var bots = await unitOfWork.Bots.GetAllAsync(
-            e => e.CreatedBy == request.UserId, 
-            includes: "BotPatients",
+            e => e.CreatedBy == request.UserId,
             ct: cancellationToken);
 
         var response = new List<BotResponse>();
@@ -17,7 +16,7 @@ public class GetBotsQueryHandler(
             IEnumerable<BotPatientResponse> botPatients;
             if (b.BotPatients is not null) 
             {
-                botPatients = await userService.GetBotPatientAsync([..b.BotPatients.Select(e => e.PatientId)], cancellationToken);
+                botPatients = await userService.GetBotPatientAsync(b.Id, cancellationToken);
             }
             else
             {

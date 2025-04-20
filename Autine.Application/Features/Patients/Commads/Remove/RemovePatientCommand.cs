@@ -1,2 +1,2 @@
 ﻿namespace Autine.Application.Features.Patients.Commads.Remove;
-public record RemovePatientCommand(string UserId, Guid ID) : ICommand;
+public record RemovePatientCommand(string UserId, Guid Id) : ICommand;

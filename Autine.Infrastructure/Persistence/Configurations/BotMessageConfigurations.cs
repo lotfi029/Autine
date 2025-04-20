@@ -9,12 +9,12 @@ public class BotMessageConfigurations : IEntityTypeConfiguration<BotMessage>
         builder.HasOne(m => m.BotPatient)
           .WithMany(b => b.BotMessages)
           .HasForeignKey(m => m.BotPatientId)
-          .OnDelete(DeleteBehavior.NoAction);
+          .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(m => m.Message)
             .WithMany(b => b.BotMessages)
             .HasForeignKey(e => e.MessageId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
 
         builder.HasIndex(e => new { e.BotPatientId, e.MessageId })

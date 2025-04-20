@@ -14,3 +14,9 @@ public record BotPatientResponse(
     DateTime CreateAt,
     string ProfilePic
 );
+
+public record PatientBotResponse(
+    Guid Id,
+    string Name,
+    DateTime CreateAt
+);
