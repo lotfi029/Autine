@@ -1,4 +1,6 @@
-﻿namespace Autine.Infrastructure.Repositories;
+﻿using Autine.Domain.Entities;
+
+namespace Autine.Infrastructure.Repositories;
 public class BotPatientRepository(ApplicationDbContext context) : Repository<BotPatient>(context), IBotPatientRepository
 {    
     public async Task<IEnumerable<BotMessage>> GetMessagesAsync(Guid botPatientId, CancellationToken ct = default)
@@ -7,4 +9,26 @@ public class BotPatientRepository(ApplicationDbContext context) : Repository<Bot
             .Include(e => e.Message)
             .Where(e => e.BotPatientId == botPatientId)
             .ToListAsync(ct);
+
+
+    public async Task<Result> DeleteBotPatientAsync(Bot bot, CancellationToken ct = default)
+    {
+        var botMessages = await _context.BotMessages
+            .Where(e => e.BotPatientId == bot.Id)
+            .Include(e => e.Message)
+            .ToListAsync(ct);
+        
+        var message = botMessages.Select(e => e.Message).ToList();
+
+        _context.RemoveRange(botMessages);
+        _context.RemoveRange(message);
+        _context.Remove(bot);
+
+        await _context.SaveChangesAsync(ct);
+
+        
+
+        
+        return Result.Success();
+    }
 }

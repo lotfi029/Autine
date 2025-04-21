@@ -10,7 +10,7 @@ public class GetBotPatientsQueryHandler(
         if (await unitOfWork.Bots.FindByIdAsync(cancellationToken, [request.BotId]) is not { } bot)
             return BotErrors.BotNotFound;
 
-        if (bot.CreatedBy!= request.UserId)
+        if (bot.CreatedBy!= request.UserId || bot.IsDisabled)
             return BotErrors.BotNotFound;
 
         var patients = await userService.GetBotPatientAsync(request.BotId, cancellationToken);

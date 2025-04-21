@@ -14,17 +14,31 @@ public class AssignModelCommandHandler(
         if(await unitOfWork.Patients.FindByIdAsync(cancellationToken, [request.PatientId]) is not { } patient)
             return PatientErrors.PatientsNotFound;
 
-        var result = await aIModelService.AssignModelAsync(request.UserId, bot.Name, patient.PatientId, cancellationToken);
-
-        if (result.IsFailure)
-            return result;
-
-        await unitOfWork.BotPatients.AddAsync(new()
+        using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
         {
-            BotId = request.BotId,
-            PatientId = request.PatientId
-        }, cancellationToken);
 
-        return Result.Success();
+            await unitOfWork.BotPatients.AddAsync(new()
+            {
+                BotId = request.BotId,
+                PatientId = request.PatientId
+            }, cancellationToken);
+
+            var result = await aIModelService.AssignModelAsync(request.UserId, bot.Name, patient.PatientId, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return result.Error;
+            }
+            await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
+            return Result.Success();
+        }
+        catch
+        {
+            // TODO: log error
+            await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+            return Error.BadRequest("Error", "An error occurred while assigning the model.");
+        }
     }
 }

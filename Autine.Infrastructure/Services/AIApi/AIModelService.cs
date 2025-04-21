@@ -1,4 +1,5 @@
-﻿using Autine.Application.ExternalContracts.Bots;
+﻿using Autine.Application.ExternalContracts;
+using Autine.Application.ExternalContracts.Bots;
 using Autine.Application.Interfaces.AIApi;
 using Autine.Infrastructure.Abstractions;
 using Microsoft.Extensions.Options;
@@ -45,18 +46,44 @@ public class AIModelService(
     {
         if (isAdmin)
             return await baseService.SendAsync(new(
-                $"{_options.AIApi}/model/admin/delete?username={userId}&model_name={modelName}&session_id={1}"
+                $"{_options.AIApi}/model/admin/delete?username={userId}&model_name={modelName}&session_id={1}",
+                ApiMethod: ApiMethod.Delete
                 ), ct);
 
         return await baseService.SendAsync(new(
-            $"{_options.AIApi}/model/supervisor/delete?username={userId}&model_name={modelName}&session_id={1}"
+            $"{_options.AIApi}/model/supervisor/delete?username={userId}&model_name={modelName}&session_id={1}",
+            ApiMethod: ApiMethod.Delete
             ), ct);
     }
+    
     public async Task<Result> UnAssignModelAsync(string username, string user_username, string model_name, CancellationToken ct = default)
         => await baseService.SendAsync(new(
-            $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={username}&user_username={user_username}&model_name={model_name}&session_id={1}"
+            $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={username}&user_username={user_username}&model_name={model_name}&session_id={1}",
+            ApiMethod: ApiMethod.Delete
             ), ct);
 
 
-   
+    public async Task<Result> UpdateModelAsync(string username, string model_name, ModelRequest request, bool isAdmin = false, CancellationToken ct = default)
+    {
+        if (isAdmin)
+            return await baseService.SendAsync(new(
+                $"{_options.AIApi}/model/admin/update?username={username}&model_name={model_name}&session_id={1}",
+                Data: request,
+                ApiMethod: ApiMethod.Put
+                ), ct);
+        return await baseService.SendAsync(new(
+            $"{_options.AIApi}/model/supervisor/update?username={username}&model_name={model_name}&session_id={1}",
+            Data: request,
+            ApiMethod: ApiMethod.Put
+            ), ct);
+    }
+    public async Task<Result> DeleteAssignAsync(string supervisor_username, string user_username, string model_name, CancellationToken ct = default)
+    {
+        var url = $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={supervisor_username}&user_username={user_username}&model_name={model_name}&session_id={1}";
+        var response = await baseService.SendAsync(new(
+            url,
+            ApiMethod: ApiMethod.Delete
+            ), ct);
+        return response;
+    }
 }

@@ -1,6 +1,8 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Features.Bots.Commands.Assign;
 using Autine.Application.Features.Bots.Commands.Create;
+using Autine.Application.Features.Bots.Commands.UnAssign;
+using Autine.Application.Features.Bots.Commands.Update;
 using Autine.Application.Features.Bots.Queries.GetAll;
 using Autine.Application.Features.Bots.Queries.GetById;
 using Autine.Application.Features.Bots.Queries.GetPatients;
@@ -29,6 +31,18 @@ public class BotsController(ISender sender) : ControllerBase
             ? CreatedAtAction(nameof(GetBotById), new { id = result.Value }, null!)
             : result.ToProblem();
     }
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateBot([FromRoute] Guid id, [FromBody] UpdateBotRequest request, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var command = new UpdateBotCommand(userId, id, request);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
+    }
     [HttpPost("{id:guid}/assign-bot")]
     [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -42,6 +56,20 @@ public class BotsController(ISender sender) : ControllerBase
 
         var result = await sender.Send(command, ct);
 
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
+    }
+    [HttpDelete("{botPatientId:guid}/remove-assign")]
+    [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> RemoveAssign([FromRoute] Guid botPatientId, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var command = new DeleteAssignCommand(userId, botPatientId);
+        var result = await sender.Send(command, ct);
         return result.IsSuccess
             ? NoContent()
             : result.ToProblem();

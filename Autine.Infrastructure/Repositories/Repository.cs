@@ -40,7 +40,11 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet.Remove(entity);
     }
     public async Task<int> ExcuteUpdateAsync(Expression<Func<T, bool>> predicate, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCall, CancellationToken ct = default)
-        => await _dbSet.Where(predicate).ExecuteUpdateAsync(setPropertyCall, ct);
+    {
+        var row = await _dbSet.Where(predicate).ExecuteUpdateAsync(setPropertyCall, ct);
+
+        return row;
+    }
 
     public async Task DeleteByIdAsync(CancellationToken ct = default, params object[] keyValues)
     {

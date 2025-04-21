@@ -8,7 +8,7 @@ public class GetBotsQueryHandler(
     public async Task<Result<ICollection<BotResponse>>> Handle(GetBotsQuery request, CancellationToken cancellationToken)
     {
         var bots = await unitOfWork.Bots.GetAllAsync(
-            e => e.CreatedBy == request.UserId,
+            e => e.CreatedBy == request.UserId && !e.IsDisabled,
             ct: cancellationToken);
 
         var response = new List<BotResponse>();

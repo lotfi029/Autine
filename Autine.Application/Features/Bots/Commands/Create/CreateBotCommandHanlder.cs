@@ -17,7 +17,20 @@ public class CreateBotCommandHanlder(
                 return AdminErrors.InvalidRole;
         }
         
-        var result = await aIModelService.AddModelAsync(
+        using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+
+            var modelId = await unitOfWork.Bots.AddAsync(new()
+            {
+                Name = request.Request.Name,
+                Context = request.Request.Context,
+                Bio = request.Request.Bio,
+                IsPublic = isAdmin.IsSuccess,
+                CreatedBy = request.UserId
+            }, cancellationToken);
+
+            var result = await aIModelService.AddModelAsync(
             request.UserId, new(
                 request.Request.Name,
                 request.Request.Context,
@@ -25,53 +38,71 @@ public class CreateBotCommandHanlder(
                 ), isAdmin.IsSuccess,
             cancellationToken);
 
-        if (result.IsFailure)
-            return result.Error;
-
-        var modelId = await unitOfWork.Bots.AddAsync(new()
-        {
-            Name = request.Request.Name,
-            Context = request.Request.Context,
-            Bio = request.Request.Bio,
-            IsPublic = isAdmin.IsSuccess,
-            CreatedBy = request.UserId
-        }, cancellationToken);
-
-
-        // assign this bot to ids patients
-        var ids = request.Request.PatientIds;
-        if (ids is not null)
-        {
-            var patients = await unitOfWork.Patients.ArePatientsAsync(ids, ct: cancellationToken);
-
-            if (patients is null || !patients.Any())
-                return PatientErrors.InvalidPatients;
-
-            var botPatient = new List<BotPatient>();
-
-            foreach (var id in patients)
+            if (result.IsFailure)
             {
-                var aiResult = await aIModelService.AssignModelAsync(
-                    request.UserId,
-                    request.Request.Name,
-                    id.PatientId,
-                    cancellationToken);
-
-                if (aiResult.IsFailure)
-                    return aiResult.Error;
-
-                botPatient.Add(new()
-                {
-                    BotId = modelId,
-                    PatientId = id.Id
-                });
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return result.Error;
             }
+            var ids = request.Request.PatientIds;
 
-            await unitOfWork.BotPatients.AddRangeAsync(botPatient, cancellationToken);
-            await unitOfWork.CommitChangesAsync(cancellationToken);
+
+            if (ids is not null)
+            {
+                var patients = await unitOfWork.Patients.ArePatientsAsync(ids, ct: cancellationToken);
+
+                if (patients is null || !patients.Any())
+                    return PatientErrors.InvalidPatients;
+                var p = patients.ToList();
+                var botPatient = new List<BotPatient>();
+                var count = p.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    var aiResult = await aIModelService.AssignModelAsync(
+                        request.UserId,
+                        request.Request.Name,
+                        p[i].PatientId,
+                        cancellationToken);
+
+                    if (aiResult.IsFailure)
+                    {
+                        for(var j = i-1; j >= 0; j--)
+                        {
+                            await aIModelService.DeleteAssignAsync(
+                                request.UserId,
+                                p[j].PatientId,
+                                request.Request.Name,
+                                cancellationToken);
+                        }
+
+                        await aIModelService.RemoveModelAsync(
+                            request.UserId, 
+                            request.Request.Name, 
+                            isAdmin.IsSuccess, 
+                            cancellationToken);
+
+                        await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+
+                        return aiResult.Error;
+                    }
+
+                    botPatient.Add(new()
+                    {
+                        BotId = modelId,
+                        PatientId = p[i].Id
+                    });
+                }
+
+                await unitOfWork.BotPatients.AddRangeAsync(botPatient, cancellationToken);
+                await unitOfWork.CommitChangesAsync(cancellationToken);
+            }
+            await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
+            return Result.Success(modelId);
         }
-
-
-        return modelId;
+        catch
+        {
+            // TODO: log error
+            await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+            return Error.BadRequest("Error", "an error occure");
+        }
     }
 }

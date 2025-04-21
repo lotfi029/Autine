@@ -63,10 +63,10 @@ public class UserService(
 
     public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default)
         => await (
-            from p in context.Patients
-            join u in context.Users
+            from p in context.Patients.Where(e => !e.IsDisabled)
+            join u in context.Users.Where(e => !e.IsDisabled)
             on p.PatientId equals u.Id
-            join bp in context.BotPatients
+            join bp in context.BotPatients.Where(e => !e.IsDisabled)
             on p.Id equals bp.PatientId
             where bp.BotId == botId
             select new BotPatientResponse(
@@ -95,16 +95,9 @@ public class UserService(
 
     public async Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
     {
-        if (await context.Users.FindAsync([userId], ct) is not { } user)
-            return UserErrors.UserNotFound;
-
-        var result = await userManager.DeleteAsync(user);
-        if (!result.Succeeded)
-        {
-            var error = result.Errors.FirstOrDefault()!;
-
-            return Error.BadRequest(error.Code, error.Description);
-        }
+        await context.Users
+            .Where(e => e.Id == userId)
+            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
 
         return Result.Success();
     }

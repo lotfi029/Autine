@@ -9,7 +9,7 @@ public class ApplicationUser : IdentityUser
     public string? Country { get; set; } = string.Empty;
     public string? City { get; set; } = string.Empty;
     public DateTime DateOfBirth { get; set; }
-
+    public bool IsDisabled { get; set; } = false;
     public ICollection<Patient> Patients { get; set; } = [];
     public ICollection<Patient> Supervisors { get; set; } = [];
     public ICollection<Bot> Bots { get; set; } = [];

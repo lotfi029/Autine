@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
 
 namespace Autine.Infrastructure.Repositories;
 
@@ -45,7 +44,7 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 
         try
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            await CommitChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
         catch

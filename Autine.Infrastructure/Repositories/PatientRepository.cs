@@ -19,6 +19,18 @@ public class PatientRepository(ApplicationDbContext context) : Repository<Patien
 
         return thread;
     }
+    public async Task<Result> DeletePatientAsync(Guid id, CancellationToken ct = default)
+    {
+        await _context.Patients
+            .Where(e => e.Id == id)
+            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
+
+        await _context.BotPatients
+            .Where(e => e.PatientId == id)
+            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
+
+        return Result.Success();
+    }
     private async Task<IEnumerable<Patient>> GetThreadsAsync(string userId, Guid id, CancellationToken ct = default)
     {
         var threads = await _context.ThreadMembers
@@ -36,7 +48,6 @@ public class PatientRepository(ApplicationDbContext context) : Repository<Patien
                     CreatedBy = p.CreatedBy
                 }
             ).ToListAsync(ct);
-
 
         return threads;
     }

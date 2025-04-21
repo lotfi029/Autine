@@ -9,8 +9,3 @@ public record UserProfileResponse(
     string? City,
     DateTime DateOfBirth
     );
-
-
-
-
-
