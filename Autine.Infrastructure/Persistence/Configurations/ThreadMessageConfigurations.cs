@@ -7,8 +7,8 @@ public class ThreadMessageConfigurations : IEntityTypeConfiguration<ThreadMessag
         builder.HasKey(m => m.Id);
 
         builder.HasOne(t => t.Message)
-              .WithMany(u => u.ThreadMessages)
-              .HasForeignKey(t => t.MessageId)
+              .WithOne()
+              .HasForeignKey<ThreadMessage>(t => t.MessageId)
               .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasOne(t => t.ThreadMember)

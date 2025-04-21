@@ -14,7 +14,7 @@ public class ThreadMemberConfigurations : IEntityTypeConfiguration<ThreadMember>
         builder.HasOne(e => e.Patient)
                .WithMany(t => t.Members)
                .HasForeignKey(m => m.PatientId)
-               .OnDelete(DeleteBehavior.NoAction);
+               .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(t => new { t.PatientId, t.MemberId })
             .IsUnique();

@@ -7,8 +7,7 @@ public class RemoveBotCommandHandler(
     public async Task<Result> Handle(RemoveBotCommand request, CancellationToken cancellationToken)
     {
         var bot = await unitOfWork.Bots
-            .GetAsync(
-            e => !e.IsDisabled &&
+            .GetAsync(e =>
             e.Id == request.BotId &&
             e.CreatedBy == request.UserId,
             ct: cancellationToken);
@@ -19,17 +18,7 @@ public class RemoveBotCommandHandler(
         using var beginTransaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await unitOfWork.Bots
-                .ExcuteUpdateAsync(
-                b => b.Id == request.BotId,
-                b => b.SetProperty(e => e.IsDisabled, true),
-                ct: cancellationToken);
-
-            await unitOfWork.BotPatients
-                .ExcuteUpdateAsync(
-                b => b.BotId == request.BotId,
-                b => b.SetProperty(e => e.IsDisabled, true),
-                ct: cancellationToken);
+            await unitOfWork.Bots.DeleteBotAsync(bot, cancellationToken);
 
             var isAdmin = await roleService.UserIsAdminAsync(request.UserId);
             

@@ -11,10 +11,6 @@ public class BotConfigurations : IEntityTypeConfiguration<Bot>
            .HasForeignKey(b => b.CreatedBy)
            .OnDelete(DeleteBehavior.Restrict);
 
-        //builder.HasOne(b => b.Patient)
-        //  .WithMany(p => p.PatientBots)
-        //  .HasForeignKey(b => b.PatientId)
-        //  .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(b => b.Name)
            .IsRequired()

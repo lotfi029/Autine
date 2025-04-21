@@ -10,6 +10,5 @@ public class Message
     public DateTime? ReadAt { get; set; }
     public string? SenderId { get; set; }
 
-    public ICollection<ThreadMessage>? ThreadMessages { get; set; }
-    public ICollection<BotMessage>? BotMessages { get; set; }
+    //public ICollection<ThreadMessage>? ThreadMessages { get; set; }
 }

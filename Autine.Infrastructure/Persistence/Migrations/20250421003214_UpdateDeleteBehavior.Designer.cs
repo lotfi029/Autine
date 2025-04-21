@@ -4,6 +4,7 @@ using Autine.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Autine.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250421003214_UpdateDeleteBehavior")]
+    partial class UpdateDeleteBehavior
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,8 +79,7 @@ namespace Autine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MessageId")
-                        .IsUnique();
+                    b.HasIndex("MessageId");
 
                     b.HasIndex("BotPatientId", "MessageId")
                         .IsUnique();
@@ -238,8 +240,7 @@ namespace Autine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MessageId")
-                        .IsUnique();
+                    b.HasIndex("MessageId");
 
                     b.HasIndex("ThreadMemberId", "MessageId")
                         .IsUnique();
@@ -573,8 +574,8 @@ namespace Autine.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Autine.Domain.Entities.Message", "Message")
-                        .WithOne()
-                        .HasForeignKey("Autine.Domain.Entities.BotMessage", "MessageId")
+                        .WithMany("BotMessages")
+                        .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -649,8 +650,8 @@ namespace Autine.Infrastructure.Migrations
             modelBuilder.Entity("Autine.Domain.Entities.ThreadMessage", b =>
                 {
                     b.HasOne("Autine.Domain.Entities.Message", "Message")
-                        .WithOne()
-                        .HasForeignKey("Autine.Domain.Entities.ThreadMessage", "MessageId")
+                        .WithMany("ThreadMessages")
+                        .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -724,6 +725,13 @@ namespace Autine.Infrastructure.Migrations
             modelBuilder.Entity("Autine.Domain.Entities.BotPatient", b =>
                 {
                     b.Navigation("BotMessages");
+                });
+
+            modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
+                {
+                    b.Navigation("BotMessages");
+
+                    b.Navigation("ThreadMessages");
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>

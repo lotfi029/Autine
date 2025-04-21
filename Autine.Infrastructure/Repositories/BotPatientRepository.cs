@@ -11,24 +11,24 @@ public class BotPatientRepository(ApplicationDbContext context) : Repository<Bot
             .ToListAsync(ct);
 
 
-    public async Task<Result> DeleteBotPatientAsync(Bot bot, CancellationToken ct = default)
+    public async Task<Result> DeleteBotPatientAsync(BotPatient bot, CancellationToken ct = default)
     {
         var botMessages = await _context.BotMessages
             .Where(e => e.BotPatientId == bot.Id)
             .Include(e => e.Message)
             .ToListAsync(ct);
         
-        var message = botMessages.Select(e => e.Message).ToList();
-
         _context.RemoveRange(botMessages);
-        _context.RemoveRange(message);
+        _context.RemoveRange(botMessages.Select(e => e.Message));
         _context.Remove(bot);
 
-        await _context.SaveChangesAsync(ct);
+        //await _context.SaveChangesAsync(ct);
 
-        
-
-        
         return Result.Success();
     }
+
+    //public async Task<Result> DeleteAllBotPatientAsync(Bot bot, CancellationToken ct = default)
+    //{
+
+    //}
 }

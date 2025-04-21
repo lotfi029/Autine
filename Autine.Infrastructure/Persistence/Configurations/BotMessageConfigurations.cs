@@ -12,8 +12,8 @@ public class BotMessageConfigurations : IEntityTypeConfiguration<BotMessage>
           .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(m => m.Message)
-            .WithMany(b => b.BotMessages)
-            .HasForeignKey(e => e.MessageId)
+            .WithOne()
+            .HasForeignKey<BotMessage>(e => e.MessageId)
             .OnDelete(DeleteBehavior.Cascade);
 
 

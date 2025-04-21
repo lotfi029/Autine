@@ -19,7 +19,7 @@ public class DeleteAssignCommandHandler(
         using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await unitOfWork.BotPatients.DeleteBotPatientAsync(bot, cancellationToken);
+            await unitOfWork.BotPatients.DeleteBotPatientAsync(botPatient, cancellationToken);
 
             var aiResult = await aIModelService.UnAssignModelAsync(
                 request.UserId,
