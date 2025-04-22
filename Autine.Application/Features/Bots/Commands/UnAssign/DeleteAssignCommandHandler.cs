@@ -35,7 +35,7 @@ public class DeleteAssignCommandHandler(
                 return aiResult;
             }
 
-            await unitOfWork.CommitTransactionAsync(transaction,cancellationToken);
+            await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
             return Result.Success();
         }
         catch
