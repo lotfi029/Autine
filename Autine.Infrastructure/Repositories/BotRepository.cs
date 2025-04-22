@@ -12,11 +12,30 @@ public class BotRepository(ApplicationDbContext context) : Repository<Bot>(conte
 
     public async Task DeleteBotAsync(Bot bot, CancellationToken ct = default)
     {
-        var botPatients = await _context.BotPatients
+        var botPatients = _context.BotPatients
             .Where(e => e.BotId == bot.Id)
-            .Include(e => e.BotMessages)
-            .ThenInclude(e => e.Message)
-            .ToListAsync(ct);
+            .Join(_context.BotMessages.Include(e => e.Message),
+            bp => bp.Id,
+            bm => bm.BotPatientId,
+            (bp, bm) => new BotPatient
+            {
+                Id = bp.Id,
+                BotId = bp.BotId,
+                PatientId = bp.PatientId,
+                BotMessages = new List<BotMessage> 
+                {
+                    bm
+                },
+                CreatedBy = bp.CreatedBy,
+                CreatedAt = bp.CreatedAt,
+                IsDisabled = bp.IsDisabled
+            });
+
+
+
+        var botMessage = _context.BotMessages
+            .Where(e => e.BotPatient.BotId == bot.Id)
+            .Include(e => e.Message);
 
         foreach (var botPatient in botPatients)
         {

@@ -1,6 +1,7 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Features.Bots.Commands.Assign;
 using Autine.Application.Features.Bots.Commands.Create;
+using Autine.Application.Features.Bots.Commands.Remove;
 using Autine.Application.Features.Bots.Commands.UnAssign;
 using Autine.Application.Features.Bots.Commands.Update;
 using Autine.Application.Features.Bots.Queries.GetAll;
@@ -69,6 +70,19 @@ public class BotsController(ISender sender) : ControllerBase
     {
         var userId = User.GetUserId()!;
         var command = new DeleteAssignCommand(userId, botPatientId);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
+    }
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteBot([FromRoute] Guid id, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var command = new RemoveBotCommand(userId, id);
         var result = await sender.Send(command, ct);
         return result.IsSuccess
             ? NoContent()

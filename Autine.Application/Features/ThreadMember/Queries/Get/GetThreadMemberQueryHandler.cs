@@ -13,7 +13,7 @@ public class GetThreadMemberQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler
             thread.MemberId,
             thread.CreatedAt
             );
-
+        // TODO: Add more properties to the response
         return Result.Success(response);
     }
 }

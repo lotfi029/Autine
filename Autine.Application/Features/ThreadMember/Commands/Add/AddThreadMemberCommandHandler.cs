@@ -17,6 +17,9 @@ public class AddThreadMemberCommandHandler(
         if (!await roleService.UserIsSupervisorAsync(request.MemberId))
             return PatientErrors.MemberNotSupervisor;
 
+        if (!await roleService.UserIsSupervisorAsync(request.MemberId))
+            return PatientErrors.MemberNotSupervisor;
+
         var threadMemberId = await unitOfWork.ThreadMembers.AddAsync(new()
         {
             PatientId = request.PatientId,

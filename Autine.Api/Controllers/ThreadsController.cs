@@ -3,6 +3,8 @@ using Autine.Application.Features.Threads.Queries.GetAll;
 using Autine.Application.Features.ThreadMember.Commands.Add;
 using Autine.Application.Features.ThreadMember.Commands.Remove;
 using Autine.Application.Contracts.Threads;
+using System.Threading;
+using Autine.Application.Features.ThreadMember.Queries.GetAll;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -31,8 +33,8 @@ public class ThreadsController(ISender sender) : ControllerBase
 
         return result.IsSuccess
             ? CreatedAtAction(
-                nameof(GetThread),
-                new { patientId, id = result.Value },
+        nameof(GetThread),
+                new { threadId = result.Value},
                 null
             )
             : result.ToProblem();
@@ -74,6 +76,18 @@ public class ThreadsController(ISender sender) : ControllerBase
     {
         var userId = User.GetUserId()!;
         var query = new GetThreadQuery(userId, threadId);
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpGet("{threadId:guid}/thread-member")]
+    [ProducesResponseType(typeof(IEnumerable<ThreadMemberResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetThreadMembers([FromRoute] Guid threadId, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+        var query = new GetThreadMembersQuery(userId, threadId);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

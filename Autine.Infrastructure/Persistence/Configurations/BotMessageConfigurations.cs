@@ -9,7 +9,7 @@ public class BotMessageConfigurations : IEntityTypeConfiguration<BotMessage>
         builder.HasOne(m => m.BotPatient)
           .WithMany(b => b.BotMessages)
           .HasForeignKey(m => m.BotPatientId)
-          .OnDelete(DeleteBehavior.Cascade);
+          .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.HasOne(m => m.Message)
             .WithOne()
