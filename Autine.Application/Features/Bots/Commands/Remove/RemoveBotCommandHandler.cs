@@ -18,7 +18,7 @@ public class RemoveBotCommandHandler(
         using var beginTransaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await unitOfWork.Bots.DeleteBotAsync(bot, cancellationToken);
+            await unitOfWork.Bots.DeleteBotAsync(bot.Id);
 
             var isAdmin = await roleService.UserIsAdminAsync(request.UserId);
             

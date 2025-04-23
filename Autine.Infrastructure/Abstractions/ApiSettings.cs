@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Autine.Infrastructure.Abstractions;
+namespace Autine.Infrastructure.Persistence;
 public class ApiSettings
 {
     public const string Section = "AIApiSettings";

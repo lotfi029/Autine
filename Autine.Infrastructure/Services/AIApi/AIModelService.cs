@@ -1,7 +1,7 @@
 ﻿using Autine.Application.ExternalContracts;
 using Autine.Application.ExternalContracts.Bots;
 using Autine.Application.Interfaces.AIApi;
-using Autine.Infrastructure.Abstractions;
+using Autine.Infrastructure.Persistence;
 using Microsoft.Extensions.Options;
 
 namespace Autine.Infrastructure.Services.AIApi;

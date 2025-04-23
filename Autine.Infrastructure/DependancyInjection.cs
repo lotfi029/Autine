@@ -1,5 +1,5 @@
 ﻿using Autine.Application.Interfaces.AIApi;
-using Autine.Infrastructure.Abstractions;
+using Autine.Infrastructure.Persistence;
 using Autine.Infrastructure.Identity.Authentication;
 using Autine.Infrastructure.Repositories;
 using Autine.Infrastructure.Services;

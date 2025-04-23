@@ -1,7 +1,7 @@
-﻿namespace Autine.Domain.Interfaces;
+﻿using Autine.Domain.Abstractions;
+
+namespace Autine.Domain.Interfaces;
 public interface IBotRepository : IRepository<Bot>
 {
-    Task DeleteBotAsync(Bot bot, CancellationToken ct = default);
-
-
+    Task<Result> DeleteBotAsync(Guid botId);
 }

@@ -65,15 +65,6 @@ public class CreateBotCommandHanlder(
 
                     if (aiResult.IsFailure)
                     {
-                        for(var j = i-1; j >= 0; j--)
-                        {
-                            await aIModelService.DeleteAssignAsync(
-                                request.UserId,
-                                p[j].PatientId,
-                                request.Request.Name,
-                                cancellationToken);
-                        }
-
                         await aIModelService.RemoveModelAsync(
                             request.UserId, 
                             request.Request.Name, 
