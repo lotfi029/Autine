@@ -1,6 +1,6 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
-using Autine.Application.Contracts.Users;
+using Autine.Application.Contracts.Profiles;
 
 namespace Autine.Application.Interfaces;
 public interface IUserService
@@ -13,4 +13,9 @@ public interface IUserService
 
     Task<Result> UpdateUserRequest(string userId, UpdateUserRequest request, CancellationToken ct = default);
     Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default);
+
+    // get
+    Task<Result<UserProfileResponse>> GetProfileAsync(string userId, CancellationToken ct = default);
+    // put
+    Task<Result> UpdateProfileAsync(string userId, UpdateProfileRequest request, CancellationToken ct = default);
 }

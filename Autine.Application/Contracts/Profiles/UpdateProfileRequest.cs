@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Users;
+﻿namespace Autine.Application.Contracts.Profiles;
 
 public record UpdateProfileRequest(
     string FirstName,

@@ -1,5 +1,6 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
+using Autine.Application.Contracts.Profiles;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
@@ -98,6 +99,38 @@ public class UserService(
         await context.Users
             .Where(e => e.Id == userId)
             .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
+
+        return Result.Success();
+    }
+    //get
+    public async Task<Result<UserProfileResponse>> GetProfileAsync(string userId, CancellationToken ct = default)
+    {
+        var userProfile = await context.Users
+            .Where(e => e.Id == userId)
+            .ProjectToType<UserProfileResponse>()
+            .SingleOrDefaultAsync(ct);
+
+        if (userProfile is null)
+            return UserErrors.UserNotFound;
+
+        return userProfile;
+    }
+    // put
+    public async Task<Result> UpdateProfileAsync(string userId, UpdateProfileRequest request, CancellationToken ct = default)
+    {
+        if (!await context.Users.AnyAsync(e => e.Id == userId, ct))
+            return UserErrors.UserNotFound;
+
+        await context.Users
+            .ExecuteUpdateAsync(setters =>
+                setters
+                .SetProperty(e => e.FirstName, request.FirstName)
+                .SetProperty(e => e.LastName, request.LastName)
+                .SetProperty(e => e.Bio, request.Bio)
+                .SetProperty(e => e.City, request.City)
+                .SetProperty(e => e.Country, request.Country),
+                ct
+            );
 
         return Result.Success();
     }
