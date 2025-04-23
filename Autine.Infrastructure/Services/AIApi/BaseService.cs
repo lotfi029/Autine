@@ -92,7 +92,7 @@ public class BaseService(IHttpClientFactory _httpClientFactory) : IBaseService
         }
         catch
         {
-            return Error.BadRequest("Error", "an error eccure");
+            return Error.BadRequest("Ai.Error", "an error eccure");
         }
     }
 

@@ -1,82 +1,16 @@
-﻿using Autine.Application.Contracts.Bots;
-using Autine.Application.Contracts.Patients;
+﻿using Autine.Application.Contracts.Auths;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
-    ApplicationDbContext context) : IUserService
+    ApplicationDbContext context,
+    UserManager<ApplicationUser> userManager) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
 
-
-    public async Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, bool isFollowing = false, CancellationToken ct = default)
-    {
-
-        var query = await (
-            from tm in context.ThreadMembers
-            join t in context.Patients
-            on tm.PatientId equals t.Id
-            join u in context.Users
-            on t.PatientId equals u.Id
-            where
-            (isFollowing && tm.MemberId == userId && t.CreatedBy != userId)
-            ||
-            (!isFollowing && tm.MemberId == userId && tm.CreatedBy == userId)
-            select new PatientResponse(
-            t.Id,
-            u.FirstName,
-            u.LastName,
-            u.Email!,
-            u.UserName!,
-            u.DateOfBirth,
-            u.Gender,
-            u.Country!,
-            u.City!
-            )).ToListAsync(cancellationToken: ct);
-
-        if (query is null)
-            return [];
-
-        return query;
-    }
-    public async Task<PatientResponse?> GetPatientByIdAsync(string userId, Guid id, CancellationToken ct = default)
-        => await (
-            from tm in context.ThreadMembers
-            join t in context.Patients
-            on tm.PatientId equals t.Id
-            join u in context.Users
-            on t.PatientId equals u.Id
-            where t.Id == id && (tm.MemberId == userId)
-            select new PatientResponse(
-                    t.Id,
-                    u.FirstName,
-                    u.LastName,
-                    u.Email!,
-                    u.UserName!,
-                    u.DateOfBirth,
-                    u.Gender,
-                    u.Country!,
-                    u.City!
-            ))
-            .SingleOrDefaultAsync(ct);
-
-    public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default)
-        => await (
-            from p in context.Patients.Where(e => !e.IsDisabled)
-            join u in context.Users.Where(e => !e.IsDisabled)
-            on p.PatientId equals u.Id
-            join bp in context.BotPatients.Where(e => !e.IsDisabled)
-            on p.Id equals bp.PatientId
-            where bp.BotId == botId
-            select new BotPatientResponse(
-                bp.Id,
-                $"{u.FirstName} {u.LastName}",
-                bp.CreatedAt,
-                u.ProfilePicture
-                )
-            ).ToListAsync(ct);
 
     public async Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
     {
@@ -102,7 +36,19 @@ public class UserService(
     // put
     public async Task<Result<AIRegisterRequest>> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default)
     {
-        if (await context.Users.FindAsync([userId], ct) is not { } user)
+        var user = await context.Users
+            .Where(e => e.Id == userId)
+            .Select(x => new AIRegisterRequest(
+                x.Email!,
+                x.Id,
+                x.PasswordHash!,
+                request.FirstName,
+                request.LastName,
+                x.DateOfBirth,
+                x.Gender
+                )).SingleOrDefaultAsync(ct);
+
+        if (user is null)
             return UserErrors.UserNotFound;
 
         await context.Users
@@ -116,15 +62,22 @@ public class UserService(
                 ct
             );
 
-        var response = new AIRegisterRequest(
-            user.Email!,
-            user.Id,
-            user.PasswordHash!,
-            request.FirstName,
-            request.LastName,
-            user.DateOfBirth,
-            user.Gender);
+        return Result.Success(user);
+    }
 
-        return Result.Success(response);
+    public async Task<Result> ChangePasswordAsync(string userId, ChangePasswordRequest request, CancellationToken ct = default)
+    {
+        if (await context.Users.FindAsync([userId], ct) is not { } user)
+            return UserErrors.UserNotFound;
+
+        var changeResult = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+
+        if (!changeResult.Succeeded)
+        {
+            var errors = changeResult.Errors.FirstOrDefault()!;
+            return Error.BadRequest(errors.Code, errors.Description);
+        }
+
+        return Result.Success();
     }
 }

@@ -3,7 +3,7 @@
 namespace Autine.Application.Features.Bots.Queries.GetPatients;
 public class GetBotPatientsQueryHandler(
     IUnitOfWork unitOfWork,
-    IUserService userService) : IQueryHandler<GetBotPatientsQuery, IEnumerable<BotPatientResponse>>
+    IPatientService patientService) : IQueryHandler<GetBotPatientsQuery, IEnumerable<BotPatientResponse>>
 {
     public async Task<Result<IEnumerable<BotPatientResponse>>> Handle(GetBotPatientsQuery request, CancellationToken cancellationToken)
     {
@@ -13,7 +13,7 @@ public class GetBotPatientsQueryHandler(
         if (bot.CreatedBy!= request.UserId || bot.IsDisabled)
             return BotErrors.BotNotFound;
 
-        var patients = await userService.GetBotPatientAsync(request.BotId, cancellationToken);
+        var patients = await patientService.GetBotPatientAsync(request.BotId, cancellationToken);
 
         return Result.Success(patients);
     }

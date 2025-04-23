@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Features.Profiles.Commands;
+﻿namespace Autine.Application.Features.Profiles.Commands.Update;
 public class UpdateProfileCommandHandler(
     IUserService userService, 
     IUnitOfWork unitOfWork,
@@ -18,21 +18,22 @@ public class UpdateProfileCommandHandler(
                 await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
                 return serverResult;
             }
-            var role = await roleService.GetUserRoleAsync(request.UserId);
+
+            //var role = await roleService.GetUserRoleAsync(request.UserId);
 
 
-            var aiResult = await aIAuthService.UpdateUserAsync(
-                request.UserId, 
-                role.Value,
-                new(serverResult.Value.email, serverResult.Value.username, serverResult.Value.password, serverResult.Value.fname, serverResult.Value.lname, serverResult.Value.dateofbirth, serverResult.Value.gender), 
-                "String!23",
-                cancellationToken);
+            //var aiResult = await aIAuthService.UpdateUserAsync(
+            //    request.UserId, 
+            //    role.Value,
+            //    serverResult.Value, 
+            //    "String!23",
+            //    cancellationToken);
 
-            if (aiResult.IsFailure)
-            {
-                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-                return aiResult.Error;
-            }
+            //if (aiResult.IsFailure)
+            //{
+            //    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+            //    return aiResult.Error;
+            //}
 
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
             return Result.Success();

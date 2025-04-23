@@ -23,7 +23,12 @@ public class FileService(
 
         return Result.Success(response);
     }
-    public Task<(FileStream? stream, string contentType, string fileName)> StreamAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<(FileStream? stream, string? contentType, string? fileName)> StreamAsync(string image, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result> DeleteImageAsync(string image, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

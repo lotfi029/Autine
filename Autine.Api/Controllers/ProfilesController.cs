@@ -1,6 +1,8 @@
-﻿using Autine.Application.Contracts.Files;
+﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.Contracts.Files;
 using Autine.Application.Contracts.Profiles;
-using Autine.Application.Features.Profiles.Commands;
+using Autine.Application.Features.Profiles.Commands.ChangePassword;
+using Autine.Application.Features.Profiles.Commands.Update;
 using Autine.Application.Features.Profiles.Queries;
 
 namespace Autine.Api.Controllers;
@@ -40,9 +42,15 @@ public class ProfilesController(ISender sender) : ControllerBase
 
     [HttpPut("change-password")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> ChangePassword(CancellationToken ct = default)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request,CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var userId = User.GetUserId()!;
+
+        var command = new ChangePasswordCommand(userId, request);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
     }
 
     [HttpPut("change-profile-picture")]
