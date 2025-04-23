@@ -4,8 +4,7 @@ using Autine.Application.Contracts.Profiles;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
-    ApplicationDbContext context,
-    UserManager<ApplicationUser> userManager) : IUserService
+    ApplicationDbContext context) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
@@ -78,22 +77,6 @@ public class UserService(
                 )
             ).ToListAsync(ct);
 
-    public async Task<Result> UpdateUserRequest(string userId, UpdateUserRequest request, CancellationToken ct = default)
-    {
-        if (await context.Users.FindAsync([userId], ct) is not { } user)
-            return UserErrors.UserNotFound;
-
-        user = request.Adapt(user);
-
-        var result = await userManager.UpdateAsync(user);
-        if (!result.Succeeded)
-        {
-            var error = result.Errors.FirstOrDefault()!;
-            return Error.BadRequest(error.Code, error.Description);
-        }
-        return Result.Success();
-    }
-
     public async Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
     {
         await context.Users
@@ -116,7 +99,7 @@ public class UserService(
         return userProfile;
     }
     // put
-    public async Task<Result> UpdateProfileAsync(string userId, UpdateProfileRequest request, CancellationToken ct = default)
+    public async Task<Result> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default)
     {
         if (!await context.Users.AnyAsync(e => e.Id == userId, ct))
             return UserErrors.UserNotFound;

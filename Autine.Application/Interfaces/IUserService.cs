@@ -11,11 +11,10 @@ public interface IUserService
     Task<PatientResponse?> GetPatientByIdAsync(string userId, Guid id, CancellationToken ct = default);
     Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default);
 
-    Task<Result> UpdateUserRequest(string userId, UpdateUserRequest request, CancellationToken ct = default);
     Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default);
 
     // get
     Task<Result<UserProfileResponse>> GetProfileAsync(string userId, CancellationToken ct = default);
     // put
-    Task<Result> UpdateProfileAsync(string userId, UpdateProfileRequest request, CancellationToken ct = default);
+    Task<Result> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default);
 }

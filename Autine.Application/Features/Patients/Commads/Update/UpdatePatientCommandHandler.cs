@@ -11,7 +11,7 @@ public class UpdatePatientCommandHandler(
         if (patient.CreatedBy != request.UserId)
             return PatientErrors.PatientsNotFound;
 
-        var userUpdateResult = await userService.UpdateUserRequest(patient.PatientId, request.UpdateRequest, cancellationToken);
+        var userUpdateResult = await userService.UpdateProfileAsync(patient.PatientId, request.UpdateRequest, cancellationToken);
 
         if (userUpdateResult.IsFailure)
             return userUpdateResult;

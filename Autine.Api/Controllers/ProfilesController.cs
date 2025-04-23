@@ -1,5 +1,6 @@
 ﻿using Autine.Application.Contracts.Files;
 using Autine.Application.Contracts.Profiles;
+using Autine.Application.Features.Profiles.Queries;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -12,9 +13,15 @@ public class ProfilesController(ISender sender) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
-    public Task<IActionResult> GetProfile(CancellationToken ct = default)
+    public async Task<IActionResult> GetProfile(CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var userId = User.GetUserId()!;
+
+        var query = new GetProfileQuery(userId);
+        var response = await sender.Send(query, ct);
+        return response.IsSuccess
+            ? Ok(response.Value)
+            : response.ToProblem();
     }
 
     [HttpPut]

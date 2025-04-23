@@ -1,6 +1,6 @@
 ﻿namespace Autine.Application.Contracts.Profiles;
 
-public class UpdateProfileRequestValidator : AbstractValidator<UpdateProfileRequest>
+public class UpdateProfileRequestValidator : AbstractValidator<UpdateUserProfileRequest>
 {
     public UpdateProfileRequestValidator()
     {

@@ -1,6 +1,6 @@
 ﻿namespace Autine.Application.Contracts.Profiles;
 
-public record UpdateProfileRequest(
+public record UpdateUserProfileRequest(
     string FirstName,
     string LastName,
     string Bio,

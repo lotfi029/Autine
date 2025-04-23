@@ -1,7 +1,5 @@
-﻿using Autine.Application.Interfaces.AIApi;
-
-namespace Autine.Application.Features.Auth.RegisterSupervisor;
-public record RegisterSupervisorCommandHandler(
+﻿namespace Autine.Application.Features.Auth.RegisterSupervisor;
+public class RegisterSupervisorCommandHandler(
     IAuthService authService, 
     IAIAuthService aIAuthService) : ICommandHandler<RegisterSupervisorCommand, RegisterResponse>
 {

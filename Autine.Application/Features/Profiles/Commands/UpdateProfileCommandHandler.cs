@@ -3,8 +3,27 @@ public class UpdateProfileCommandHandler(
     IUserService userService, 
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateProfileCommand>
 {
-    public Task<Result> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+
+        var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var serverResult = await userService.UpdateProfileAsync(request.UserId, request.UpdateRequest, cancellationToken);
+
+            if (!serverResult.IsSuccess)
+            {
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return serverResult;
+            }
+
+            await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
+            return Result.Success();
+        }
+        catch
+        {
+            await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+            return Error.InternalServerError("Error", "An error occure while update info");
+        }
     }
 }
