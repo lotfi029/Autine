@@ -1,5 +1,6 @@
 ﻿using Autine.Application.Contracts.Files;
 using Autine.Application.Contracts.Profiles;
+using Autine.Application.Features.Profiles.Commands;
 using Autine.Application.Features.Profiles.Queries;
 
 namespace Autine.Api.Controllers;
@@ -11,7 +12,7 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status400BadRequest)]
 public class ProfilesController(ISender sender) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("")]
     [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProfile(CancellationToken ct = default)
     {
@@ -24,11 +25,17 @@ public class ProfilesController(ISender sender) : ControllerBase
             : response.ToProblem();
     }
 
-    [HttpPut]
+    [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> UpdateProfile(CancellationToken ct = default)
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileRequest request,CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var userId = User.GetUserId()!;
+
+        var command = new UpdateProfileCommand(userId, request);
+        var result = await sender.Send(command,ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
     }
 
     [HttpPut("change-password")]

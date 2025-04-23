@@ -1,32 +1,46 @@
 ﻿namespace Autine.Application.Features.Auth.RegisterSupervisor;
 public class RegisterSupervisorCommandHandler(
+    IUnitOfWork unitOfWork,
     IAuthService authService, 
     IAIAuthService aIAuthService) : ICommandHandler<RegisterSupervisorCommand, RegisterResponse>
 {
     public async Task<Result<RegisterResponse>> Handle(RegisterSupervisorCommand request, CancellationToken cancellationToken)
     {
-        // TODO:
+        var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var authResult = await authService.RegisterSupervisorAsync(request.Request, cancellationToken);
 
+            if (authResult.IsFailure)
+            {
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return authResult.Error;
+            }
 
+            var aiResult = await aIAuthService.SupervisorAsync(new(
+                request.Request.Email,
+                authResult.Value.UserId,
+                authResult.Value.HashPassword,
+                request.Request.FirstName,
+                request.Request.LastName,
+                request.Request.DateOfBirth,
+                request.Request.Gender
+                ), cancellationToken);
 
-        var authResult = await authService.RegisterSupervisorAsync(request.Request, cancellationToken);
+            if (aiResult.IsFailure)
+            {
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return aiResult.Error;
+            }
 
-        if (authResult.IsFailure)
-            return authResult.Error;
-
-        var aiResult = await aIAuthService.SupervisorAsync(new(
-            request.Request.Email,
-            authResult.Value.UserId,
-            request.Request.Password,
-            request.Request.FirstName,
-            request.Request.LastName,
-            request.Request.DateOfBirth,
-            request.Request.Gender
-            ), cancellationToken);
-
-        if (aiResult.IsFailure)
-            return aiResult.Error;
-
-        return authResult.Value;
+            var response = new RegisterResponse(authResult.Value.Code, authResult.Value.UserId);
+            await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
+            return response;
+        }
+        catch
+        {
+            await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+            return Error.InternalServerError("Error", "An error occure while register user.");
+        }
     }
 }

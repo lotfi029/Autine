@@ -48,7 +48,7 @@ public class AuthService(
         return Result.Success(response);
     }
     
-    public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
+    public async Task<Result<InternalRegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
         var user = await RegisterValidationAsync(request, ct: cancellationToken);
 
@@ -56,12 +56,11 @@ public class AuthService(
             return user.Error;
 
         var code = await GenerateEmailConfirmationCodeAync(user.Value);
-
-        var response = new RegisterResponse(code, user.Value.Id);
+        var response = new InternalRegisterResponse(code, user.Value.Id, user.Value.Email!, user.Value.PasswordHash!);
 
         return Result.Success(response);
     }
-    public async Task<Result<RegisterResponse>> RegisterSupervisorAsync(CreateSupervisorRequest request, CancellationToken cancellationToken = default)
+    public async Task<Result<InternalRegisterResponse>> RegisterSupervisorAsync(CreateSupervisorRequest request, CancellationToken cancellationToken = default)
     {
 
         var registerRequest = request.Adapt<RegisterRequest>();
@@ -72,16 +71,16 @@ public class AuthService(
             return user.Error;
 
         var addToRoleResult = await _userManager.AddToRoleAsync(user.Value!, request.SuperviorRole);
-
+        
         if (!addToRoleResult.Succeeded)
         {
             var error = addToRoleResult.Errors.First();
-            return Result.Failure<RegisterResponse>(Error.BadRequest(error.Code, error.Description));
+            return Error.BadRequest(error.Code, error.Description);
         }
 
         var code = await GenerateEmailConfirmationCodeAync(user.Value);
 
-        var response = new RegisterResponse(code, user.Value.Id);
+        var response = new InternalRegisterResponse(code, user.Value.Id, user.Value.Email!, user.Value.PasswordHash!);
 
         return Result.Success(response);
     }

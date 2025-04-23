@@ -1,6 +1,7 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
 using Autine.Application.Contracts.Profiles;
+using Autine.Application.ExternalContracts.Auth;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
@@ -99,9 +100,9 @@ public class UserService(
         return userProfile;
     }
     // put
-    public async Task<Result> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default)
+    public async Task<Result<AIRegisterRequest>> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default)
     {
-        if (!await context.Users.AnyAsync(e => e.Id == userId, ct))
+        if (await context.Users.FindAsync([userId], ct) is not { } user)
             return UserErrors.UserNotFound;
 
         await context.Users
@@ -115,6 +116,15 @@ public class UserService(
                 ct
             );
 
-        return Result.Success();
+        var response = new AIRegisterRequest(
+            user.Email!,
+            user.Id,
+            user.PasswordHash!,
+            request.FirstName,
+            request.LastName,
+            user.DateOfBirth,
+            user.Gender);
+
+        return Result.Success(response);
     }
 }

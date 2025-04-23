@@ -1,7 +1,9 @@
 ﻿namespace Autine.Application.Features.Profiles.Commands;
 public class UpdateProfileCommandHandler(
     IUserService userService, 
-    IUnitOfWork unitOfWork) : ICommandHandler<UpdateProfileCommand>
+    IUnitOfWork unitOfWork,
+    IRoleService roleService,
+    IAIAuthService aIAuthService) : ICommandHandler<UpdateProfileCommand>
 {
     public async Task<Result> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
@@ -15,6 +17,21 @@ public class UpdateProfileCommandHandler(
             {
                 await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
                 return serverResult;
+            }
+            var role = await roleService.GetUserRoleAsync(request.UserId);
+
+
+            var aiResult = await aIAuthService.UpdateUserAsync(
+                request.UserId, 
+                role.Value,
+                new(serverResult.Value.email, serverResult.Value.username, serverResult.Value.password, serverResult.Value.fname, serverResult.Value.lname, serverResult.Value.dateofbirth, serverResult.Value.gender), 
+                "String!23",
+                cancellationToken);
+
+            if (aiResult.IsFailure)
+            {
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return aiResult.Error;
             }
 
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);

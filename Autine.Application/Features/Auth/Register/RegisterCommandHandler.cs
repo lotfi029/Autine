@@ -16,10 +16,9 @@ public class RegisterCommandHandler(
                 return result.Error;
 
             var externalRegisterResult = await _aIAuthService.RegisterAsync(new(
-        
                 request.Request.Email,
                 result.Value.UserId,
-                request.Request.Password,
+                result.Value.HashPassword,
                 request.Request.FirstName,
                 request.Request.LastName,
                 request.Request.DateOfBirth,
@@ -32,8 +31,9 @@ public class RegisterCommandHandler(
                 return externalRegisterResult.Error; 
             }
 
+            var response = new RegisterResponse(result.Value.Code, result.Value.UserId);
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
-            return Result.Success(result.Value);
+            return Result.Success(response);
         }
         catch
         {
