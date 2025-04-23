@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Autine.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250423112504_AddBotPatientDeletionObject")]
+    [Migration("20250423113852_AddBotPatientDeletionObject")]
     partial class AddBotPatientDeletionObject
     {
         /// <inheritdoc />

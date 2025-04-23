@@ -4,7 +4,10 @@ public class StoredProcedures
     public static class BotSPs
     {
         public const string DeleteBotWithRelations = $"dbo.{nameof(DeleteBotWithRelations)}";
-        public const string RemovePatientBotData = $"dbo.{nameof(RemovePatientBotData)}";
-            
+    }
+    public static class BotPatientSPs
+    {
+        public const string DeleteBotPatientWithRelations = $"dbo.{nameof(DeleteBotPatientWithRelations)} @BotPatientId";
+
     }
 }

@@ -19,8 +19,9 @@ public class DeleteAssignCommandHandler(
         using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await unitOfWork.BotPatients.DeleteBotPatientAsync(botPatient, cancellationToken);
-            await unitOfWork.CommitChangesAsync(cancellationToken);
+            var result = await unitOfWork.BotPatients.DeleteBotPatientAsync(botPatient.Id, cancellationToken);
+            if (result.IsFailure)
+                return result;
 
             var aiResult = await aIModelService.UnAssignModelAsync(
                 request.UserId,

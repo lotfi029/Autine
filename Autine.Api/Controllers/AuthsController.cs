@@ -1,5 +1,4 @@
-﻿using Autine.Api.Abstractions;
-using Autine.Application.Contracts.Auths;
+﻿using Autine.Application.Contracts.Auths;
 using Autine.Application.Features.Auth.ConfirmEmail;
 using Autine.Application.Features.Auth.ForgotPassword;
 using Autine.Application.Features.Auth.Login;
@@ -7,7 +6,6 @@ using Autine.Application.Features.Auth.ReConfirmEmail;
 using Autine.Application.Features.Auth.Register;
 using Autine.Application.Features.Auth.RegisterSupervisor;
 using Autine.Application.Features.Auth.ResetPassword;
-
 
 namespace Autine.Api.Controllers;
 

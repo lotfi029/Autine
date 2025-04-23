@@ -11,7 +11,7 @@ namespace Autine.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-                CREATE OR ALTER PROCEDURE dbo.RemovePatientBotData
+                CREATE OR ALTER PROCEDURE dbo.DeleteBotPatientWithRelations
                     @BotPatientId UNIQUEIDENTIFIER
                 AS
                 BEGIN
