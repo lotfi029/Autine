@@ -5,16 +5,14 @@ public class DeleteAssignCommandHandler(
 {
     public async Task<Result> Handle(DeleteAssignCommand request, CancellationToken cancellationToken)
     {
-        if (await unitOfWork.BotPatients.GetAsync(e => e.Id == request.BotPatientId, ct: cancellationToken) is not { } botPatient)
+        if (await unitOfWork.BotPatients.GetAsync(e => !e.IsUser && e.Id == request.BotPatientId, ct: cancellationToken) is not { } botPatient)
             return BotErrors.BotNotFound;
 
-        if (await unitOfWork.Bots.GetAsync(e => !e.IsDisabled && e.Id == botPatient.BotId && e.CreatedBy == request.UserId, ct: cancellationToken) is not { } bot)
+        if (await unitOfWork.Bots.GetAsync(e => e.Id == botPatient.BotId && e.CreatedBy == request.UserId, ct: cancellationToken) is not { } bot)
             return BotErrors.BotNotFound;
 
-        if (await unitOfWork.Patients.GetAsync(e => !e.IsDisabled && e.Id == botPatient.PatientId && e.CreatedBy == request.UserId, ct: cancellationToken) is not { } patient)
+        if (await unitOfWork.Patients.GetAsync(e => e.PatientId == botPatient.UserId && e.CreatedBy == request.UserId, ct: cancellationToken) is not { } patient)
             return PatientErrors.PatientsNotFound;
-
-
 
         using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try

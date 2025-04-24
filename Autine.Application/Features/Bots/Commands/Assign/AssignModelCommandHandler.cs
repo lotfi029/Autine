@@ -11,7 +11,7 @@ public class AssignModelCommandHandler(
         if (bot.CreatedBy != request.UserId)
             return BotErrors.BotNotFound;
 
-        if(await unitOfWork.Patients.FindByIdAsync(cancellationToken, [request.PatientId]) is not { } patient)
+        if(await unitOfWork.Patients.GetAsync(e => e.PatientId == request.PatientId, ct: cancellationToken) is not { } patient)
             return PatientErrors.PatientsNotFound;
 
         using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -21,7 +21,7 @@ public class AssignModelCommandHandler(
             await unitOfWork.BotPatients.AddAsync(new()
             {
                 BotId = request.BotId,
-                PatientId = request.PatientId
+                UserId = request.PatientId
             }, cancellationToken);
 
             var result = await aIModelService.AssignModelAsync(request.UserId, bot.Name, patient.PatientId, cancellationToken);

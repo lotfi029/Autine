@@ -23,7 +23,7 @@ public class CreateBotRequestValidator : AbstractValidator<CreateBotRequest>
 
                 foreach (var id in e)
                 {
-                    if (id == Guid.Empty)
+                    if (string.IsNullOrEmpty(id))
                         return false;
                 }
                 return true;

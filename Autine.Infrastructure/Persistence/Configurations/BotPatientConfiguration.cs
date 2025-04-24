@@ -11,11 +11,6 @@ public class BotPatientConfiguration : IEntityTypeConfiguration<BotPatient>
                .HasForeignKey(bp => bp.BotId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        //builder.HasOne(e => e.Patient)
-        //       .WithMany(p => p.Bots)
-        //       .HasForeignKey(pb => pb.PatientId)
-        //       .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne<ApplicationUser>()
                .WithMany(e => e.BotUsers)
                .HasForeignKey(pb => pb.UserId)

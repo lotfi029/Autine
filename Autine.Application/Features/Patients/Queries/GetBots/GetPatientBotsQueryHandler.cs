@@ -12,7 +12,7 @@ public class GetPatientBotsQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<
             return PatientErrors.PatientsNotFound;
 
         var bots = await unitOfWork.BotPatients.GetAllAsync(
-            e => e.PatientId == request.PatientId, 
+            e => e.UserId == request.PatientId, 
             includes: nameof(Bot), 
             ct: cancellationToken);
 

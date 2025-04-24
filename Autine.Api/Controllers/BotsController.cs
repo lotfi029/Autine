@@ -44,19 +44,17 @@ public class BotsController(ISender sender) : ControllerBase
             ? NoContent()
             : result.ToProblem();
     }
-    [HttpPost("{id:guid}/assign-bot")]
+    [HttpPost("{botId:guid}/assign-bot")]
     [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> AssignBot([FromRoute] Guid id, [FromQuery] Guid botId, CancellationToken ct)
+    public async Task<IActionResult> AssignBot([FromRoute] Guid botId, [FromQuery] string patientId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
-        var command = new AssignModelCommand(userId, id, botId);
-
+        var command = new AssignModelCommand(userId, patientId, botId);
         var result = await sender.Send(command, ct);
-
         return result.IsSuccess
             ? NoContent()
             : result.ToProblem();

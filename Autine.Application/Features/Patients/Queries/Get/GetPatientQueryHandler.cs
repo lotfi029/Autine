@@ -1,7 +1,7 @@
 ﻿using Autine.Application.Contracts.Patients;
 
 namespace Autine.Application.Features.Patients.Queries.Get;
-public record GetPatientQueryHandler(IPatientService patientService) : IQueryHandler<GetPatientQuery, PatientResponse>
+public class GetPatientQueryHandler(IPatientService patientService) : IQueryHandler<GetPatientQuery, PatientResponse>
 {
     public async Task<Result<PatientResponse>> Handle(GetPatientQuery request, CancellationToken cancellationToken)
     {

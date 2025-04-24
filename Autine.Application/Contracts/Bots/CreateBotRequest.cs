@@ -4,5 +4,5 @@ public record CreateBotRequest(
     string Name,
     string Context,
     string Bio,
-    Guid[]? PatientIds
+    IList<string>? PatientIds
 );

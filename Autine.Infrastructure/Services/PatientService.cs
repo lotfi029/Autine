@@ -20,7 +20,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             ||
             (!isFollowing && tm.MemberId == userId && tm.CreatedBy == userId)
             select new PatientResponse(
-            t.Id,
+            u.Id,
             u.FirstName,
             u.LastName,
             u.Email!,
@@ -36,16 +36,16 @@ public class PatientService(ApplicationDbContext context) : IPatientService
 
         return query;
     }
-    public async Task<PatientResponse?> GetPatientByIdAsync(string userId, Guid id, CancellationToken ct = default)
+    public async Task<PatientResponse?> GetPatientByIdAsync(string userId, string id, CancellationToken ct = default)
         => await (
-            from tm in context.ThreadMembers
-            join t in context.Patients
-            on tm.PatientId equals t.Id
+            from t in context.Patients
             join u in context.Users
             on t.PatientId equals u.Id
-            where t.Id == id && (tm.MemberId == userId)
+            join tm in context.ThreadMembers
+            on t.Id equals tm.PatientId
+            where t.PatientId == id && (tm.MemberId == userId)
             select new PatientResponse(
-                    t.Id,
+                    u.Id,
                     u.FirstName,
                     u.LastName,
                     u.Email!,
@@ -59,11 +59,11 @@ public class PatientService(ApplicationDbContext context) : IPatientService
 
     public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default)
         => await (
-            from p in context.Patients.Where(e => !e.IsDisabled)
-            join u in context.Users.Where(e => !e.IsDisabled)
+            from p in context.Patients
+            join u in context.Users
             on p.PatientId equals u.Id
-            join bp in context.BotPatients.Where(e => !e.IsUser)
-            on p.Id equals bp.PatientId
+            join bp in context.BotPatients
+            on p.PatientId equals bp.UserId
             where bp.BotId == botId
             select new BotPatientResponse(
                 bp.Id,

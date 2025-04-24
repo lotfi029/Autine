@@ -30,10 +30,10 @@ public class PatientsController(ISender sender) : ControllerBase
                 )
             : result.ToProblem();
     }
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(PatientResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPatientById([FromRoute] Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetPatientById([FromRoute] string id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var query = new GetPatientQuery(userId, id);
@@ -70,10 +70,10 @@ public class PatientsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{patientId:guid}/patient-bot")]
+    [HttpGet("{patientId}/patient-bot")]
     [ProducesResponseType(typeof(IEnumerable<PatientBotResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPatientBots([FromRoute] Guid patientId, CancellationToken ct)
+    public async Task<IActionResult> GetPatientBots([FromRoute] string patientId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var query = new GetPatientBotsQuery(userId, patientId);

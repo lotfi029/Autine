@@ -1,13 +1,13 @@
 ﻿namespace Autine.Infrastructure.Repositories;
 public class PatientRepository(ApplicationDbContext context) : Repository<Patient>(context), IPatientRespository
 {
-    public async Task<IEnumerable<Patient>> ArePatientsAsync(Guid[] ids, CancellationToken ct = default)
+    public async Task<IEnumerable<Patient>> ArePatientsAsync(IList<string> ids, CancellationToken ct = default)
     {
         var patients = await _context.Patients
-            .Where(e => ids.Contains(e.Id))
+            .Where(e => ids.Contains(e.PatientId))
             .ToListAsync(ct);
 
-        return ids.Length == patients.Count ? patients : Enumerable.Empty<Patient>();
+        return ids.Count == patients.Count ? patients : Enumerable.Empty<Patient>();
     }
     public async Task<IEnumerable<Patient>> GetAllThreads(string userId, CancellationToken ct = default)
         => await GetThreadsAsync(userId, Guid.Empty, ct);
@@ -19,17 +19,10 @@ public class PatientRepository(ApplicationDbContext context) : Repository<Patien
 
         return thread;
     }
-    public async Task<Result> DeletePatientAsync(Guid id, CancellationToken ct = default)
+    public Task<Result> DeletePatientAsync(Guid id, CancellationToken ct = default)
     {
-        await _context.Patients
-            .Where(e => e.Id == id)
-            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
 
-        await _context.BotPatients
-            .Where(e => e.PatientId == id)
-            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsUser, true), ct);
-
-        return Result.Success();
+        throw new NotImplementedException();
     }
     private async Task<IEnumerable<Patient>> GetThreadsAsync(string userId, Guid id, CancellationToken ct = default)
     {

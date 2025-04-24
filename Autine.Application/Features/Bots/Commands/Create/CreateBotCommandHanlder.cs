@@ -9,7 +9,7 @@ public class CreateBotCommandHanlder(
         if (await unitOfWork.Bots.CheckExistAsync(e => e.Name == request.Request.Name, cancellationToken))
             return BotErrors.DuplicatedBot;
 
-        var isAdmin = await roleService.UserIsAdminAsync(request.UserId);
+        var isAdmin = await roleService.CheckUserInRoleAsync(request.UserId, "admin");
 
         if (isAdmin.IsSuccess)
         {
@@ -20,7 +20,6 @@ public class CreateBotCommandHanlder(
         using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-
             var modelId = await unitOfWork.Bots.AddAsync(new()
             {
                 Name = request.Request.Name,
@@ -52,15 +51,15 @@ public class CreateBotCommandHanlder(
 
                 if (patients is null || !patients.Any())
                     return PatientErrors.InvalidPatients;
-                var p = patients.ToList();
+                
                 var botPatient = new List<BotPatient>();
-                var count = p.Count;
-                for (int i = 0; i < count; i++)
+
+                foreach(var p in patients)
                 {
                     var aiResult = await aIModelService.AssignModelAsync(
                         request.UserId,
                         request.Request.Name,
-                        p[i].PatientId,
+                        p.PatientId,
                         cancellationToken);
 
                     if (aiResult.IsFailure)
@@ -79,7 +78,7 @@ public class CreateBotCommandHanlder(
                     botPatient.Add(new()
                     {
                         BotId = modelId,
-                        PatientId = p[i].Id
+                        UserId = p.PatientId
                     });
                 }
 
@@ -93,7 +92,7 @@ public class CreateBotCommandHanlder(
         {
             // TODO: log error
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-            return Error.BadRequest("Error", "an error occure");
+            return Error.BadRequest("CreateBot.Error", "an error occure while create bot");
         }
     }
 }
