@@ -12,8 +12,8 @@ public class ApplicationUser : IdentityUser
     public bool IsDisabled { get; set; } = false;
     public ICollection<Patient> Patients { get; set; } = [];
     public ICollection<Patient> Supervisors { get; set; } = [];
+    public ICollection<BotPatient>? BotUsers { get; set; } = [];
     public ICollection<Bot> Bots { get; set; } = [];
-    public virtual ICollection<BotPatient> BotPatients { get; set; } = [];
     public virtual ICollection<ThreadMember>? ThreadMember { get; set; }
     public ICollection<Message>? Messages { get; set; }
 }

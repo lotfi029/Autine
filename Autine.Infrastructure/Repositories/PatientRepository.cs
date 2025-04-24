@@ -27,7 +27,7 @@ public class PatientRepository(ApplicationDbContext context) : Repository<Patien
 
         await _context.BotPatients
             .Where(e => e.PatientId == id)
-            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
+            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsUser, true), ct);
 
         return Result.Success();
     }

@@ -62,7 +62,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             from p in context.Patients.Where(e => !e.IsDisabled)
             join u in context.Users.Where(e => !e.IsDisabled)
             on p.PatientId equals u.Id
-            join bp in context.BotPatients.Where(e => !e.IsDisabled)
+            join bp in context.BotPatients.Where(e => !e.IsUser)
             on p.Id equals bp.PatientId
             where bp.BotId == botId
             select new BotPatientResponse(

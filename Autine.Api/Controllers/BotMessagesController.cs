@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Bots;
+﻿using Autine.Application.Contracts.UserBots;
 using Autine.Application.Features.BotMessages.Commands.Send;
 using Autine.Application.Features.BotMessages.Queries.GetAll;
 

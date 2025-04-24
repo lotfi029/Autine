@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Bots;
+﻿using Autine.Application.Contracts.UserBots;
 
 namespace Autine.Application.Features.BotMessages.Queries.GetAll;
 public record GetBotMessagesQuery(string UserId, Guid BotPatientId) : IQuery<List<MessageResponse>>;

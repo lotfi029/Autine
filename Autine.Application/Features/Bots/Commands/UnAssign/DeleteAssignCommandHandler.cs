@@ -5,7 +5,7 @@ public class DeleteAssignCommandHandler(
 {
     public async Task<Result> Handle(DeleteAssignCommand request, CancellationToken cancellationToken)
     {
-        if (await unitOfWork.BotPatients.GetAsync(e => !e.IsDisabled && e.Id == request.BotPatientId, ct: cancellationToken) is not { } botPatient)
+        if (await unitOfWork.BotPatients.GetAsync(e => !e.IsUser && e.Id == request.BotPatientId, ct: cancellationToken) is not { } botPatient)
             return BotErrors.BotNotFound;
 
         if (await unitOfWork.Bots.GetAsync(e => !e.IsDisabled && e.Id == botPatient.BotId && e.CreatedBy == request.UserId, ct: cancellationToken) is not { } bot)

@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Bots;
+﻿namespace Autine.Application.Contracts.UserBots;
 public record MessageResponse(
     Guid Id,
     string Content,
