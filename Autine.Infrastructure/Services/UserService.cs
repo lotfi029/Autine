@@ -1,7 +1,6 @@
 ﻿using Autine.Application.Contracts.Auths;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
@@ -52,6 +51,7 @@ public class UserService(
             return UserErrors.UserNotFound;
 
         await context.Users
+            .Where(e => e.Id == userId)
             .ExecuteUpdateAsync(setters =>
                 setters
                 .SetProperty(e => e.FirstName, request.FirstName)
@@ -70,14 +70,29 @@ public class UserService(
         if (await context.Users.FindAsync([userId], ct) is not { } user)
             return UserErrors.UserNotFound;
 
-        var changeResult = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+        var oldPasswordHash = user.PasswordHash!;
 
-        if (!changeResult.Succeeded)
-        {
-            var errors = changeResult.Errors.FirstOrDefault()!;
-            return Error.BadRequest(errors.Code, errors.Description);
-        }
+        if (userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash!, request.CurrentPassword) is not PasswordVerificationResult.Success)
+            return Error.BadRequest("InvalidPassword", "Current password is incorrect");
+
+        var newPasswordHash = userManager.PasswordHasher.HashPassword(user, request.NewPassword);
+
+        user.PasswordHash = newPasswordHash;
+        // to invalidate tokens/cookies
+        await userManager.UpdateSecurityStampAsync(user);
+        await context.SaveChangesAsync(ct);
 
         return Result.Success();
     }
 }
+
+// 52833048-1ffa-4b18-9bd9-d9e9d5bd54e5
+
+
+
+// old "AQAAAAIAAYagAAAAEKiyuXy+BNFz5GLgifhp6uWrV7y2+AnbvwBxLmMEKRvbRk4WgNKjPhc3fsYETrILbA=="
+// new "AQAAAAIAAYagAAAAEJSEjbJ6wPXMBVsJCAVNYbUVabldEoNNfjjssAjn0FnRDub8S6P4qj5WW2Vclj8cGA=="
+// ai  AQAAAAIAAYagAAAAEKiyuXy+BNFz5GLgifhp6uWrV7y2+AnbvwBxLmMEKRvbRk4WgNKjPhc3fsYETrILbA==
+// "AQAAAAIAAYagAAAAEFTWYPpWUDa4xpdjKCFUSHHlwHIyxR5NnY1RqvT9lKeQeyMAIEvIVXQnUPmIzYJBhg=="
+// "AQAAAAIAAYagAAAAEJ/6ECcIPWoAkj4/wVWQufu1VAzpvH/SdI5B5MsnEnWl+zA6Q4f29NRzvUgzIu4PJA=="
+// "AQAAAAIAAYagAAAAEJ/6ECcIPWoAkj4/wVWQufu1VAzpvH/SdI5B5MsnEnWl+zA6Q4f29NRzvUgzIu4PJA=="

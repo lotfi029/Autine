@@ -2,6 +2,7 @@
 using Autine.Application.Contracts.Files;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.Features.Profiles.Commands.ChangePassword;
+using Autine.Application.Features.Profiles.Commands.Delete;
 using Autine.Application.Features.Profiles.Commands.Update;
 using Autine.Application.Features.Profiles.Queries;
 
@@ -61,9 +62,15 @@ public class ProfilesController(ISender sender) : ControllerBase
     }
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> DeleteProfile(CancellationToken ct = default)
+    public async Task<IActionResult> DeleteProfile(CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        string userId = User.GetUserId()!;
+
+        var command = new DeleteProfileCommand(userId);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
     }
 
 }

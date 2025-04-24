@@ -19,21 +19,22 @@ public class UpdateProfileCommandHandler(
                 return serverResult;
             }
 
-            //var role = await roleService.GetUserRoleAsync(request.UserId);
+            var role = await roleService.IsUserAsync(request.UserId);
 
+            if (role.IsSuccess) 
+            {
+                var aiResult = await aIAuthService.UpdateUserAsync(
+                    request.UserId,
+                    new(fname: request.UpdateRequest.FirstName, lname: request.UpdateRequest.LastName),
+                    Consts.FixedPassword,
+                    cancellationToken);
 
-            //var aiResult = await aIAuthService.UpdateUserAsync(
-            //    request.UserId, 
-            //    role.Value,
-            //    serverResult.Value, 
-            //    "String!23",
-            //    cancellationToken);
-
-            //if (aiResult.IsFailure)
-            //{
-            //    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-            //    return aiResult.Error;
-            //}
+                if (aiResult.IsFailure)
+                {
+                    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                    return aiResult.Error;
+                }
+            }
 
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
             return Result.Success();

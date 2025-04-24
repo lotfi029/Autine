@@ -36,10 +36,10 @@ public class AIAuthService(
                 ApiMethod.Delete
         ), ct);
 
-    public async Task<Result> UpdateUserAsync(string username, string role,AIRegisterRequest request, string password, CancellationToken ct = default)
+    public async Task<Result> UpdateUserAsync(string username, AIUpdateRequest request, string password, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request(
-                $"{_apiSetting.AIApi}/auth/{role}/update?username={username}&password={password}&session_id=1",
+                $"{_apiSetting.AIApi}/auth/user/update?username={username}&password={password}&session_id=1",
                 ApiMethod.Put,
                 Data: request
         ), ct);

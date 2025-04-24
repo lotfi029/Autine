@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.ObjectPool;
-
-namespace Autine.Infrastructure.Services;
+﻿namespace Autine.Infrastructure.Services;
 public class RoleService(
     UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager) : IRoleService
@@ -50,11 +48,23 @@ public class RoleService(
 
         if (result.Contains(DefaultRoles.Parent.Name, StringComparer.OrdinalIgnoreCase))
             return "supervisor";
-        
+
         if (result.Contains(DefaultRoles.Doctor.Name, StringComparer.OrdinalIgnoreCase))
             return "supervisor";
 
-        
+
         return DefaultRoles.User.Name.ToLower();
+    }
+
+    public async Task<Result> IsUserAsync(string userId)
+    {
+        if (await userManager.FindByIdAsync(userId) is not { } user)
+            return UserErrors.UserNotFound;
+
+        var result = await userManager.GetRolesAsync(user);
+        
+        var isUser = result.Where(e => !string.Equals(DefaultRoles.User.Name, e, StringComparison.OrdinalIgnoreCase));
+        
+        return isUser.Any() ? Result.Success() : RoleErrors.UserNotFound;
     }
 }

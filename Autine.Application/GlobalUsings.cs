@@ -6,6 +6,7 @@ global using Microsoft.AspNetCore.Http;
 
 global using Autine.Application.Errors;
 global using Autine.Application.Interfaces;
+global using Autine.Application.Abstractions;
 global using Autine.Application.Contracts.Auths;
 global using Autine.Application.Interfaces.AIApi;
 global using Autine.Application.Contracts.Validation;

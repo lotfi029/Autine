@@ -5,4 +5,5 @@ public interface IRoleService
     Task<Result> UserIsAdminAsync(string userId);
     Task<bool> UserIsSupervisorAsync(string userId);
     Task<Result<string>> GetUserRoleAsync(string userId);
+    Task<Result> IsUserAsync(string userId);
 }

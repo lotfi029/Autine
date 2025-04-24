@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Auth.RegisterSupervisor;
+﻿
+
+namespace Autine.Application.Features.Auth.RegisterSupervisor;
 public class RegisterSupervisorCommandHandler(
     IUnitOfWork unitOfWork,
     IAuthService authService, 
@@ -20,7 +22,7 @@ public class RegisterSupervisorCommandHandler(
             var aiResult = await aIAuthService.SupervisorAsync(new(
                 request.Request.Email,
                 authResult.Value.UserId,
-                authResult.Value.HashPassword,
+                Consts.FixedPassword,
                 request.Request.FirstName,
                 request.Request.LastName,
                 request.Request.DateOfBirth,

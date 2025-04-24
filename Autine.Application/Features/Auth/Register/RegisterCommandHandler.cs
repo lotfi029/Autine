@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Auth.Register;
+﻿using Autine.Application.Abstractions;
+
+namespace Autine.Application.Features.Auth.Register;
 public class RegisterCommandHandler(
     IAuthService _authService,
     IAIAuthService _aIAuthService,
@@ -18,7 +20,7 @@ public class RegisterCommandHandler(
             var externalRegisterResult = await _aIAuthService.RegisterAsync(new(
                 request.Request.Email,
                 result.Value.UserId,
-                result.Value.HashPassword,
+                Consts.FixedPassword,
                 request.Request.FirstName,
                 request.Request.LastName,
                 request.Request.DateOfBirth,
