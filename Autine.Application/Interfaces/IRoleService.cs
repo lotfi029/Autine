@@ -1,6 +1,7 @@
 ﻿namespace Autine.Application.Interfaces;
 public interface IRoleService
 {
+    Task<Result> IsInRoleAsync(string userId, string role, CancellationToken ct = default);
     Task<Result> CheckUserInRoleAsync(string userId, string roleName);
     Task<Result> UserIsAdminAsync(string userId);
     Task<bool> UserIsSupervisorAsync(string userId);

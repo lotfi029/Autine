@@ -1,5 +1,4 @@
 ﻿using Autine.Application.Contracts.UserBots;
-using Autine.Application.Features.BotMessages.Commands.Send;
 using Autine.Application.Features.BotMessages.Queries.GetAll;
 
 namespace Autine.Api.Controllers;
@@ -21,10 +20,10 @@ public class BotMessagesController(ISender sender) : ControllerBase
     {
         string userId = User.GetUserId()!;
 
-        var response = await sender
-            .Send(new SendMessageToBotCommand(userId, botPatientId, request.Content), cancellationToken);
+        //var response = await sender
+        //    .Send(new SendMessageToBotCommand(userId, botPatientId, request.Content), cancellationToken);
         
-        return Ok(response);
+        return Ok();
     }
     [HttpGet("history")]
     [ProducesResponseType(typeof(IEnumerable<MessageResponse>), StatusCodes.Status200OK)]

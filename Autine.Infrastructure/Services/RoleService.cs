@@ -55,7 +55,24 @@ public class RoleService(
 
         return DefaultRoles.User.Name.ToLower();
     }
+    public async Task<Result> IsInRoleAsync(string userId, string role, CancellationToken ct = default)
+    {
+        if (await userManager.FindByIdAsync(userId) is not { } user)
+            return UserErrors.UserNotFound;
 
+        var result = await userManager.GetRolesAsync(user);
+
+        if (string.Equals(role, DefaultRoles.User.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            var isUser = result.Where(e => !string.Equals(DefaultRoles.User.Name, e, StringComparison.OrdinalIgnoreCase));
+
+            return isUser.Any() ? Result.Success() : RoleErrors.UserNotFound;
+        }
+
+        return result.Any(r => string.Equals(r, role, StringComparison.OrdinalIgnoreCase))
+            ? Result.Success()
+            : RoleErrors.RoleNotFound;
+    }
     public async Task<Result> IsUserAsync(string userId)
     {
         if (await userManager.FindByIdAsync(userId) is not { } user)

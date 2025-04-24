@@ -59,7 +59,7 @@ namespace Autine.Infrastructure.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.ToTable("Bots");
+                    b.ToTable("Bots", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.BotMessage", b =>
@@ -82,7 +82,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("BotPatientId", "MessageId")
                         .IsUnique();
 
-                    b.ToTable("BotMessages");
+                    b.ToTable("BotMessages", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.BotPatient", b =>
@@ -91,32 +91,35 @@ namespace Autine.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<Guid>("BotId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsUser")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDisabled")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("PatientId")
+                    b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId");
+
                     b.HasIndex("PatientId");
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("BotId", "PatientId")
-                        .IsUnique()
-                        .HasFilter("[PatientId] IS NOT NULL");
+                        .IsUnique();
 
-                    b.ToTable("BotPatients");
+                    b.ToTable("BotPatients", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
@@ -149,7 +152,7 @@ namespace Autine.Infrastructure.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
@@ -188,7 +191,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("PatientId", "CreatedBy")
                         .IsUnique();
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.ThreadMember", b =>
@@ -218,7 +221,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("PatientId", "MemberId")
                         .IsUnique();
 
-                    b.ToTable("ThreadMembers");
+                    b.ToTable("ThreadMembers", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.ThreadMessage", b =>
@@ -241,7 +244,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("ThreadMemberId", "MessageId")
                         .IsUnique();
 
-                    b.ToTable("ThreadMessages");
+                    b.ToTable("ThreadMessages", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>
@@ -582,6 +585,10 @@ namespace Autine.Infrastructure.Migrations
 
             modelBuilder.Entity("Autine.Domain.Entities.BotPatient", b =>
                 {
+                    b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
+                        .WithMany("BotPatients")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Autine.Domain.Entities.Bot", "Bot")
                         .WithMany("BotPatients")
                         .HasForeignKey("BotId")
@@ -591,12 +598,8 @@ namespace Autine.Infrastructure.Migrations
                     b.HasOne("Autine.Domain.Entities.Patient", "Patient")
                         .WithMany("Bots")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
-                        .WithMany("BotUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Bot");
 
@@ -737,7 +740,7 @@ namespace Autine.Infrastructure.Migrations
 
             modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("BotUsers");
+                    b.Navigation("BotPatients");
 
                     b.Navigation("Bots");
 
