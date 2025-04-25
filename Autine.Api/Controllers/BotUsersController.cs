@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.UserBots;
+using Autine.Application.Features.UserBots.Commands.Remove;
 using Autine.Application.Features.UserBots.Commands.Send;
 using Autine.Application.Features.UserBots.Queries.GetAll;
 using Autine.Application.Features.UserBots.Queries.GetMyBots;
@@ -11,34 +12,34 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class BotUsersController(ISender sender) : ControllerBase
 {
-    [HttpPost("{botPatientId:guid}/send")]
+    [HttpPost("{botId:guid}/send")]
     [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SendMessage(
-        [FromRoute] Guid botPatientId,
+        [FromRoute] Guid botId,
         [FromBody] MessageRequest request,
         CancellationToken cancellationToken)
     {
         string userId = User.GetUserId()!;
 
-        var command = new SendMessageToBotCommand(userId, botPatientId, request.Content);
+        var command = new SendMessageToBotCommand(userId, botId, request.Content);
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{botPatientId}/history")]
+    [HttpGet("{botId}/history")]
     [ProducesResponseType(typeof(IEnumerable<MessageResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessageHistory(
-        [FromRoute] Guid botPatientId,
+        [FromRoute] Guid botId,
         CancellationToken cancellationToken)
     {
         string userId = User.GetUserId()!;
         var response = await sender
-            .Send(new GetBotMessagesQuery(userId, botPatientId), cancellationToken);
+            .Send(new GetBotMessagesQuery(userId, botId), cancellationToken);
 
         return response.IsSuccess
             ? Ok(response.Value)
@@ -55,12 +56,18 @@ public class BotUsersController(ISender sender) : ControllerBase
             ? Ok(response.Value)
             : response.ToProblem();
     }
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{botId:guid}/delete-chat")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> DeleteById([FromRoute] Guid id, CancellationToken ct = default)
+    public async Task<IActionResult> DeleteById([FromRoute] Guid botId, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var userId = User.GetUserId()!;
+
+        var query = new DeleteChatCommand(userId, botId);
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
     }
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

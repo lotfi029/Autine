@@ -7,4 +7,7 @@ public class BotErrors
 
     public static readonly Error DuplicatedBot
         = Error.Conflict($"Bot.{nameof(DuplicatedBot)}", "Bot name is exit select another name");
+
+    public static readonly Error InvalidBot
+        = Error.BadRequest($"Bot.{nameof(InvalidBot)}", "Bot is not valid right now.");
 }

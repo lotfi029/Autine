@@ -21,7 +21,7 @@ public class DeleteAssignCommandHandler(
             if (result.IsFailure)
                 return result;
 
-            var aiResult = await aIModelService.UnAssignModelAsync(
+            var aiResult = await aIModelService.DeleteAssignAsync(
                 request.UserId,
                 patient.PatientId,
                 bot.Name,

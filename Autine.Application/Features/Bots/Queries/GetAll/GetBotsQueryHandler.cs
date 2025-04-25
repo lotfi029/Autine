@@ -14,6 +14,7 @@ public class GetBotsQueryHandler(
         var response = new List<BotResponse>();
         foreach (var b in bots) {
             IEnumerable<BotPatientsResponse> botPatients;
+
             if (b.BotPatients is not null) 
             {
                 botPatients = await patientService.GetBotPatientAsync(b.Id, cancellationToken);
@@ -26,7 +27,6 @@ public class GetBotsQueryHandler(
                 Id: b.Id,
                 Name: b.Name,
                 Bio: b.Bio,
-                CreateAt: b.CreatedAt,
                 Patients: botPatients?.ToList() ?? []
                 );
 

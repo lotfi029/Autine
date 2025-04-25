@@ -8,21 +8,38 @@ public class SendMessageToBotCommandHandler(
 {
     public async Task<Result<MessageResponse>> Handle(SendMessageToBotCommand request, CancellationToken cancellationToken)
     {
-
-        var bot = await unitOfWork.BotPatients
+        var botPatient = await unitOfWork.BotPatients
             .GetAsync(e => 
-            e.Id == request.BotPatientId,
+            e.BotId == request.BotId && 
+            e.UserId == request.UserId,
             includes: "Bot",
             ct: cancellationToken);
-
-        if (bot == null)
-            return BotPatientError.PatientNotFound;
-
 
 
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
+            string botName = string.Empty;
+
+            if (botPatient == null)
+            {
+                var bot = await unitOfWork.Bots
+                    .GetAsync(e => e.Id == request.BotId, ct: cancellationToken);
+
+                if (!bot.IsPublic)
+                    return BotErrors.InvalidBot;
+
+                await unitOfWork.BotPatients.AddAsync(new()
+                {
+                    BotId = bot.Id,
+                    UserId = request.UserId
+                }, ct: cancellationToken);
+
+                botName = bot.Name;
+            }
+            else
+                botName = botPatient.Bot.Name;
+
             var userMessage = new Message()
             {
                 SenderId = request.UserId,
@@ -36,12 +53,12 @@ public class SendMessageToBotCommandHandler(
             var userBotMessage = new BotMessage()
             {
                 MessageId = userMessage.Id,
-                BotPatientId = request.BotPatientId
+                BotPatientId = request.BotId
             };
 
             var botResponse = await aIModelService.SendMessageToModelAsync(
                 userId: request.UserId,
-                modelName: bot.Bot.Name,
+                modelName: botName,
                 message: request.Content,
                 ct: cancellationToken
                 );
@@ -64,7 +81,7 @@ public class SendMessageToBotCommandHandler(
             var botBotMessage = new BotMessage()
             {
                 MessageId = botMessage.Id,
-                BotPatientId = request.BotPatientId
+                BotPatientId = request.BotId
             };
 
 
@@ -88,7 +105,5 @@ public class SendMessageToBotCommandHandler(
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.BadRequest("SendMessage.Error", "Error occure while sendimg message");
         }
-
-
     }
 }

@@ -8,5 +8,6 @@ public record PatientResponse (
     DateTime BirthOfDate,
     string Gender,
     string Country,
-    string City
+    string City,
+    DateTime CreatedAt
     );

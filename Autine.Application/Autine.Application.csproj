@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Autine.Domain\Autine.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Auth\Logout\" />
+  </ItemGroup>
+
 </Project>

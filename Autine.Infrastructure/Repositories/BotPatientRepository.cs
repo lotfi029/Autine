@@ -28,6 +28,5 @@ public class BotPatientRepository(ApplicationDbContext context) : Repository<Bot
             return Error.BadRequest("Exception", "error occure while delete bot");
         }
 
-
     }
 }

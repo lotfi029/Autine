@@ -56,11 +56,6 @@ public class AIModelService(
             ), ct);
     }
     
-    public async Task<Result> UnAssignModelAsync(string username, string user_username, string model_name, CancellationToken ct = default)
-        => await baseService.SendAsync(new(
-            $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={username}&user_username={user_username}&model_name={model_name}&session_id={1}",
-            ApiMethod: ApiMethod.Delete
-            ), ct);
 
 
     public async Task<Result> UpdateModelAsync(string username, string model_name, ModelRequest request, bool isAdmin = false, CancellationToken ct = default)
@@ -77,13 +72,14 @@ public class AIModelService(
             ApiMethod: ApiMethod.Put
             ), ct);
     }
-    public async Task<Result> DeleteAssignAsync(string supervisor_username, string user_username, string model_name, CancellationToken ct = default)
-    {
-        var url = $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={supervisor_username}&user_username={user_username}&model_name={model_name}&session_id={1}";
-        var response = await baseService.SendAsync(new(
-            url,
+    public async Task<Result> DeleteAssignAsync(string username, string user_username, string model_name, CancellationToken ct = default)
+        => await baseService.SendAsync(new(
+            $"{_options.AIApi}/assign/supervisor/delete?supervisor_username={username}&user_username={user_username}&model_name={model_name}&session_id={1}",
             ApiMethod: ApiMethod.Delete
             ), ct);
-        return response;
-    }
+    public async Task<Result> DeleteChatAsync(string username, string model_name, CancellationToken ct = default)
+        => await baseService.SendAsync(new(
+            $"{_options.AIApi}model/chat/user/delete?username={username}&model_name={model_name}&session_id={1}",
+            ApiMethod.Delete
+            ), ct);
 }

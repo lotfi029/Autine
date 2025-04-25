@@ -28,7 +28,8 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             u.DateOfBirth,
             u.Gender,
             u.Country!,
-            u.City!
+            u.City!,
+            t.CreatedAt
             )).ToListAsync(cancellationToken: ct);
 
         if (query is null)
@@ -53,7 +54,8 @@ public class PatientService(ApplicationDbContext context) : IPatientService
                     u.DateOfBirth,
                     u.Gender,
                     u.Country!,
-                    u.City!
+                    u.City!,
+                    t.CreatedAt
             ))
             .SingleOrDefaultAsync(ct);
 
@@ -66,7 +68,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             on p.PatientId equals bp.UserId
             where bp.BotId == botId
             select new BotPatientsResponse(
-                bp.Id,
+                u.Id,
                 $"{u.FirstName} {u.LastName}",
                 bp.CreatedAt,
                 u.ProfilePicture
