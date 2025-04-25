@@ -50,7 +50,17 @@ public class CreateBotCommandHanlder(
                 var patients = await unitOfWork.Patients.ArePatientsAsync(ids, ct: cancellationToken);
 
                 if (patients is null || !patients.Any())
+                {
+                    await aIModelService.RemoveModelAsync(
+                        request.UserId,
+                        request.Request.Name,
+                        isAdmin.IsSuccess,
+                        cancellationToken);
+
+                    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+
                     return PatientErrors.InvalidPatients;
+                }
                 
                 var botPatient = new List<BotPatient>();
 

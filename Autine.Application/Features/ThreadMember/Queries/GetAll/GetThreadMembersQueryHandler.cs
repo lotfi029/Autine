@@ -6,7 +6,7 @@ public class GetThreadMembersQueryHandler(IUnitOfWork unitOfWork) : IQueryHandle
     public async Task<Result<IEnumerable<ThreadMemberResponse>>> Handle(GetThreadMembersQuery request, CancellationToken cancellationToken)
     {
         var threadMember = await unitOfWork.ThreadMembers
-            .GetAllAsync(e => e.PatientId == request.PatientId, ct: cancellationToken);
+            .GetAllAsync(e => e.ThreadId == request.PatientId, ct: cancellationToken);
 
         var response = threadMember
             .Select(e => new ThreadMemberResponse

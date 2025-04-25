@@ -5,7 +5,7 @@ public class GetPatientBotsQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<
 {
     public async Task<Result<IEnumerable<PatientBotResponse>>> Handle(GetPatientBotsQuery request, CancellationToken cancellationToken)
     {
-        if (await unitOfWork.Patients.FindByIdAsync(cancellationToken, request.PatientId) is not { } patient)
+        if (await unitOfWork.Patients.GetAsync(e => e.PatientId == request.PatientId, ct: cancellationToken) is not { } patient)
             return PatientErrors.PatientsNotFound;
 
         if (patient.CreatedBy != request.UserId)

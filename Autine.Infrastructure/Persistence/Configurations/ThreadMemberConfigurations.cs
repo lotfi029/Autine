@@ -11,12 +11,12 @@ public class ThreadMemberConfigurations : IEntityTypeConfiguration<ThreadMember>
                .HasForeignKey(m => m.MemberId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(e => e.Patient)
+        builder.HasOne(e => e.Thread)
                .WithMany(t => t.Members)
-               .HasForeignKey(m => m.PatientId)
+               .HasForeignKey(m => m.ThreadId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(t => new { t.PatientId, t.MemberId })
+        builder.HasIndex(t => new { t.ThreadId, t.MemberId })
             .IsUnique();
     }
 }

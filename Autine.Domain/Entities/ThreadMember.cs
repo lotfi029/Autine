@@ -3,7 +3,7 @@
 public class ThreadMember : AuditableEntity
 {
     public string MemberId { get; set; } = string.Empty;
-    public Guid PatientId { get; set; }
-    public virtual Patient Patient { get; set; } = default!;
+    public Guid ThreadId { get; set; }
+    public virtual Patient Thread { get; set; } = default!;
     public virtual ICollection<ThreadMessage>? Messages { get; set; }
 }

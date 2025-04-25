@@ -12,7 +12,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
         var query = await (
             from tm in context.ThreadMembers
             join t in context.Patients
-            on tm.PatientId equals t.Id
+            on tm.ThreadId equals t.Id
             join u in context.Users
             on t.PatientId equals u.Id
             where
@@ -42,7 +42,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             join u in context.Users
             on t.PatientId equals u.Id
             join tm in context.ThreadMembers
-            on t.Id equals tm.PatientId
+            on t.Id equals tm.ThreadId
             where t.PatientId == id && (tm.MemberId == userId)
             select new PatientResponse(
                     u.Id,

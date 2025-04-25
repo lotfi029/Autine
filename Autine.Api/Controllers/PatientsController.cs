@@ -70,13 +70,13 @@ public class PatientsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{patientId}/patient-bot")]
+    [HttpGet("{id:guid}/patient-bot")]
     [ProducesResponseType(typeof(IEnumerable<PatientBotResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPatientBots([FromRoute] string patientId, CancellationToken ct)
+    public async Task<IActionResult> GetPatientBots([FromRoute] string id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
-        var query = new GetPatientBotsQuery(userId, patientId);
+        var query = new GetPatientBotsQuery(userId, id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

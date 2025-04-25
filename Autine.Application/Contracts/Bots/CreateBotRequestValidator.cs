@@ -27,6 +27,6 @@ public class CreateBotRequestValidator : AbstractValidator<CreateBotRequest>
                         return false;
                 }
                 return true;
-            }).WithMessage("{PropertyName} cannot contain empty Ids.");
+            }).WithMessage("{PropertyName} cannot contain empty Ids or duplicated patient.");
     }
 }

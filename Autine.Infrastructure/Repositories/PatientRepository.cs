@@ -29,7 +29,7 @@ public class PatientRepository(ApplicationDbContext context) : Repository<Patien
         var threads = await _context.ThreadMembers
             .Where(e => e.MemberId == userId)
             .Join(_context.Patients.Where(e => id == Guid.Empty || e.Id == id),
-                tm => tm.PatientId,
+                tm => tm.ThreadId,
                 p => p.Id,
                 (tm, p) => new Patient()
                 {

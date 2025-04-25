@@ -18,6 +18,22 @@ public class AddPatientCommandHandler(
             }
             string userPatientId = authResult.Value;
 
+
+            var patient = new Patient()
+            {
+                IsSupervised = true,
+                PatientId = authResult.Value,
+                ThreadTitle = $"{request.Request.FirstName} {request.Request.LastName}"
+            };
+            await unitOfWork.Patients.AddAsync(patient, ct);
+
+            await unitOfWork.ThreadMembers.AddAsync(
+                new()
+                {
+                    ThreadId = patient.Id,
+                    MemberId = request.UserId
+                }, ct);
+
             var aIResult = await aIAuthService.AddPatientAsync(
                 request.UserId, new(
                     request.Request.Email,
@@ -35,22 +51,6 @@ public class AddPatientCommandHandler(
                 return aIResult.Error;
             }
 
-            var patient = new Patient()
-            {
-                IsSupervised = true,
-                PatientId = authResult.Value,
-                ThreadTitle = $"{request.Request.FirstName} {request.Request.LastName}"
-            };
-            await unitOfWork.Patients.AddAsync(patient, ct);
-
-            await unitOfWork.ThreadMembers.AddAsync(
-                new()
-                {
-                    PatientId = patient.Id,
-                    MemberId = request.UserId
-                }, ct);
-
-
             await unitOfWork.CommitTransactionAsync(transaction, ct);
             return Result.Success(authResult.Value);
         }
@@ -62,3 +62,6 @@ public class AddPatientCommandHandler(
         }
     }
 }
+// d90f0c57-4f7f-460b-9ff7-d2d866f7d028
+// 2bd69410-3540-4512-a9d1-e3d675675096
+// 724993ca-b9ad-4582-be2e-0bfe4aea5b7a
