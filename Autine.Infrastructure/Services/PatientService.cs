@@ -57,7 +57,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             ))
             .SingleOrDefaultAsync(ct);
 
-    public async Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default)
+    public async Task<IEnumerable<BotPatientsResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default)
         => await (
             from p in context.Patients
             join u in context.Users
@@ -65,7 +65,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             join bp in context.BotPatients
             on p.PatientId equals bp.UserId
             where bp.BotId == botId
-            select new BotPatientResponse(
+            select new BotPatientsResponse(
                 bp.Id,
                 $"{u.FirstName} {u.LastName}",
                 bp.CreatedAt,

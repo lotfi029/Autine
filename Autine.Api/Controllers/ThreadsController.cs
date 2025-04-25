@@ -69,25 +69,25 @@ public class ThreadsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{threadId:guid}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ThreadMemberResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThread([FromRoute] Guid threadId, CancellationToken ct)
+    public async Task<IActionResult> GetThread([FromRoute] Guid id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
-        var query = new GetThreadQuery(userId, threadId);
+        var query = new GetThreadQuery(userId, id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{threadId:guid}/thread-member")]
+    [HttpGet("{id:guid}/thread-member")]
     [ProducesResponseType(typeof(IEnumerable<ThreadMemberResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThreadMembers([FromRoute] Guid threadId, CancellationToken ct)
+    public async Task<IActionResult> GetThreadMembers([FromRoute] Guid id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
-        var query = new GetThreadMembersQuery(userId, threadId);
+        var query = new GetThreadMembersQuery(userId, id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)

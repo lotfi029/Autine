@@ -7,5 +7,5 @@ public interface IPatientService
 {
     Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, bool isFollowing = false, CancellationToken ct = default);
     Task<PatientResponse?> GetPatientByIdAsync(string userId, string id, CancellationToken ct = default);
-    Task<IEnumerable<BotPatientResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default);
+    Task<IEnumerable<BotPatientsResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default);
 }

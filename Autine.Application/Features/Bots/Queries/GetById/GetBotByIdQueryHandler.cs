@@ -8,7 +8,7 @@ public class GetBotByIdQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetB
         if (await unitOfWork.Bots.FindByIdAsync(cancellationToken, [request.BotId]) is not { } bot)
             return BotErrors.BotNotFound;
 
-        if (bot.CreatedBy != request.UserId || bot.IsDisabled)
+        if (bot.CreatedBy != request.UserId)
             return BotErrors.BotNotFound;
 
         var response = bot.Adapt<BotResponse>();

@@ -2,21 +2,21 @@
 public record BotResponse(
     Guid Id,
     string Name,
-    string Context,
     string Bio,
     DateTime CreateAt,
-    List<BotPatientResponse> Patients
+    IList<BotPatientsResponse> Patients
 );
 
-public record BotPatientResponse(
+public record BotPatientsResponse(
     Guid Id,
     string Name,
     DateTime CreateAt,
     string ProfilePic
 );
 
-public record PatientBotResponse(
+public record PatientBotsResponse(
     Guid Id,
     string Name,
+    string ProfilePic,
     DateTime CreateAt
 );

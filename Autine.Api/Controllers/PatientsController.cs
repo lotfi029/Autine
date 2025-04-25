@@ -71,7 +71,7 @@ public class PatientsController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
     [HttpGet("{id:guid}/patient-bot")]
-    [ProducesResponseType(typeof(IEnumerable<PatientBotResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<PatientBotsResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPatientBots([FromRoute] string id, CancellationToken ct)
     {

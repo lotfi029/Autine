@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Server.HttpSys;
-
-namespace Autine.Application.Features.Bots.Commands.Update;
+﻿namespace Autine.Application.Features.Bots.Commands.Update;
 public class UpdateBotCommandHandler(
     IRoleService roleService,
     IAIModelService aIModelService,
@@ -10,8 +8,7 @@ public class UpdateBotCommandHandler(
     {
         var bot = await unitOfWork.Bots
             .GetAsync(
-            e => !e.IsDisabled &&
-            e.Id == request.BotId &&
+            e => e.Id == request.BotId &&
             e.CreatedBy == request.UserId,
             ct: cancellationToken);
 

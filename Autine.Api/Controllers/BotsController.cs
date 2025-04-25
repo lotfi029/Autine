@@ -113,7 +113,7 @@ public class BotsController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
     [HttpGet("{id:guid}/bot-patients")]
-    [ProducesResponseType(typeof(ICollection<BotPatientResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<BotPatientsResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBotPatients([FromRoute] Guid id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;

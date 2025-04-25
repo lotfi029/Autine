@@ -6,6 +6,6 @@ public class Bot : AuditableEntity
     public string Context { get; set; } = string.Empty;
     public string Bio { get; set; } = string.Empty;
     public bool IsPublic { get; set; } = false;
-    public bool IsDisabled { get; set; } = false;
+    public string? BotImage {  get; set; }
     public virtual ICollection<BotPatient>? BotPatients { get; set; } = [];
 }
