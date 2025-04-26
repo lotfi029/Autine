@@ -1,7 +1,6 @@
 ﻿using Autine.Application.ExternalContracts;
 using Autine.Application.ExternalContracts.Bots;
 using Autine.Application.Interfaces.AIApi;
-using Autine.Infrastructure.Persistence;
 using Microsoft.Extensions.Options;
 
 namespace Autine.Infrastructure.Services.AIApi;
@@ -79,7 +78,7 @@ public class AIModelService(
             ), ct);
     public async Task<Result> DeleteChatAsync(string username, string model_name, CancellationToken ct = default)
         => await baseService.SendAsync(new(
-            $"{_options.AIApi}model/chat/user/delete?username={username}&model_name={model_name}&session_id={1}",
+            $"{_options.AIApi}/model/chat/user/delete?username={username}&model_name={model_name}&session_id={1}",
             ApiMethod.Delete
             ), ct);
 }

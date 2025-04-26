@@ -79,7 +79,8 @@ namespace Autine.Infrastructure.Migrations
         {
             migrationBuilder.Sql("DROP TRIGGER IF EXISTS TR_BotPatient_Delete;");
 
-            migrationBuilder.Sql("DROP PROCEDURE IF EXISTS dbo.RemovePatientBotData;");
+            migrationBuilder.Sql("DROP PROCEDURE IF EXISTS dbo.DeleteBotPatientWithRelations;");
         }
     }
 }
+ 

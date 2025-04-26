@@ -21,7 +21,8 @@ public class AssignModelCommandHandler(
             await unitOfWork.BotPatients.AddAsync(new()
             {
                 BotId = request.BotId,
-                UserId = request.PatientId
+                UserId = request.PatientId,
+                IsUser = false
             }, cancellationToken);
 
             var result = await aIModelService.AssignModelAsync(request.UserId, bot.Name, patient.PatientId, cancellationToken);

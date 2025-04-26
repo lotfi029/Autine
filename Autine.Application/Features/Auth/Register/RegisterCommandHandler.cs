@@ -1,6 +1,4 @@
-﻿using Autine.Application.Abstractions;
-
-namespace Autine.Application.Features.Auth.Register;
+﻿namespace Autine.Application.Features.Auth.Register;
 public class RegisterCommandHandler(
     IAuthService _authService,
     IAIAuthService _aIAuthService,

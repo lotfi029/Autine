@@ -20,7 +20,7 @@ public class SendMessageToBotCommandHandler(
         try
         {
             string botName = string.Empty;
-
+            Guid botPatientId = Guid.Empty;
             if (botPatient == null)
             {
                 var bot = await unitOfWork.Bots
@@ -29,16 +29,23 @@ public class SendMessageToBotCommandHandler(
                 if (!bot.IsPublic)
                     return BotErrors.InvalidBot;
 
-                await unitOfWork.BotPatients.AddAsync(new()
+                var newBotPatient = new BotPatient
                 {
                     BotId = bot.Id,
-                    UserId = request.UserId
-                }, ct: cancellationToken);
+                    UserId = request.UserId,
+                    IsUser = true
+                };
+
+                await unitOfWork.BotPatients.AddAsync(newBotPatient, ct: cancellationToken);
 
                 botName = bot.Name;
+                botPatientId = newBotPatient.Id;
             }
             else
+            {
                 botName = botPatient.Bot.Name;
+                botPatientId = botPatient.Id;
+            }
 
             var userMessage = new Message()
             {
@@ -53,7 +60,7 @@ public class SendMessageToBotCommandHandler(
             var userBotMessage = new BotMessage()
             {
                 MessageId = userMessage.Id,
-                BotPatientId = request.BotId
+                BotPatientId = botPatientId
             };
 
             var botResponse = await aIModelService.SendMessageToModelAsync(
@@ -81,7 +88,7 @@ public class SendMessageToBotCommandHandler(
             var botBotMessage = new BotMessage()
             {
                 MessageId = botMessage.Id,
-                BotPatientId = request.BotId
+                BotPatientId = botPatientId
             };
 
 

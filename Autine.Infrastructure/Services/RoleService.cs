@@ -8,7 +8,7 @@ public class RoleService(
         if (await userManager.FindByIdAsync(userId) is not { } user)
             return UserErrors.UserNotFound;
 
-        if (await roleManager.RoleExistsAsync(roleName))
+        if (!await roleManager.RoleExistsAsync(roleName))
             return RoleErrors.RoleNotFound;
 
         if (await userManager.IsInRoleAsync(user, roleName))

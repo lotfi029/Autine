@@ -17,15 +17,28 @@ public class DeleteChatCommandHandler(
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var serverResult = await unitOfWork.BotPatients.DeleteBotPatientAsync(botPatient.Id, cancellationToken);
-
-            if (serverResult.IsFailure)
+            if (botPatient.IsUser)
             {
-                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-                return serverResult.Error;
+                var serverResult = await unitOfWork.BotPatients.DeleteBotPatientAsync(botPatient.Id, cancellationToken);
+
+                if (serverResult.IsFailure)
+                {
+                    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                    return serverResult.Error;
+                }
+            }
+            else
+            {
+                var serverResult = await unitOfWork.BotMessages.DeleteBotMessageWithRelationAsync(botPatient.Id, cancellationToken);
+                if (serverResult.IsFailure)
+                {
+                    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                    return serverResult.Error;
+                }
             }
 
             var result = await aIModelService.DeleteChatAsync(request.UserId, botPatient.Bot.Name, cancellationToken);
+
             if (result.IsFailure)
             {
                 await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
@@ -41,6 +54,5 @@ public class DeleteChatCommandHandler(
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.BadRequest("Error.DeleteChat", "error occure while delete chat bot.");
         }
-
     }
 }

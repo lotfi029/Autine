@@ -1,7 +1,9 @@
 ﻿using Autine.Application.Contracts.UserBots;
+using Autine.Application.Features.Bots.Queries.GetAll;
 using Autine.Application.Features.UserBots.Commands.Remove;
 using Autine.Application.Features.UserBots.Commands.Send;
-using Autine.Application.Features.UserBots.Queries.GetAll;
+using Autine.Application.Features.UserBots.Queries.GetBots;
+using Autine.Application.Features.UserBots.Queries.GetMessages;
 using Autine.Application.Features.UserBots.Queries.GetMyBots;
 
 namespace Autine.Api.Controllers;
@@ -12,7 +14,7 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class BotUsersController(ISender sender) : ControllerBase
 {
-    [HttpPost("{botId:guid}/send")]
+    [HttpPost("{botId:guid}/send-to-bot")]
     [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -30,7 +32,7 @@ public class BotUsersController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{botId}/bot")]
+    [HttpGet("{botId}/chat-bot")]
     [ProducesResponseType(typeof(IEnumerable<MessageResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessageHistory(
@@ -38,23 +40,23 @@ public class BotUsersController(ISender sender) : ControllerBase
         CancellationToken cancellationToken)
     {
         string userId = User.GetUserId()!;
-        var response = await sender
-            .Send(new GetBotMessagesQuery(userId, botId), cancellationToken);
 
-        return response.IsSuccess
-            ? Ok(response.Value)
-            : response.ToProblem();
+        var query = new GetChatBotsQuery(userId, botId);
+        var result = await sender.Send(query, cancellationToken);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
     }
     [HttpGet("my-bots")]
     public async Task<IActionResult> GetMyBots(CancellationToken ct = default)
     {
         var userId = User.GetUserId()!;
-        var query = new GetMyBotsQuery(userId);
-        var response = await sender.Send(query, ct);
 
-        return response.IsSuccess
-            ? Ok(response.Value)
-            : response.ToProblem();
+        var query = new GetMyBotsQuery(userId);
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
     }
     [HttpDelete("{botId:guid}/delete-chat")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -76,8 +78,11 @@ public class BotUsersController(ISender sender) : ControllerBase
         throw new NotImplementedException();
     }
     [HttpGet("")]
-    public Task<IActionResult> GetBots(CancellationToken ct = default)
+    public async Task<IActionResult> GetBots(CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var query = new GetAllBotsQuery();
+        var result = await sender.Send(query, ct);
+
+        return Ok(result.Value);
     }
 }

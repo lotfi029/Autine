@@ -26,7 +26,8 @@ public class CreateBotCommandHanlder(
                 Context = request.Request.Context,
                 Bio = request.Request.Bio,
                 IsPublic = isAdmin.IsSuccess,
-                CreatedBy = request.UserId
+                CreatedBy = request.UserId,
+                BotImage = "not implemented"
             }, cancellationToken);
 
             var result = await aIModelService.AddModelAsync(

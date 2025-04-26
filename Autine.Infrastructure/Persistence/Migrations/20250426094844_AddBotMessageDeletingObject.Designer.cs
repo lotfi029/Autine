@@ -4,6 +4,7 @@ using Autine.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Autine.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426094844_AddBotMessageDeletingObject")]
+    partial class AddBotMessageDeletingObject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -354,19 +357,19 @@ namespace Autine.Infrastructure.Migrations
                         {
                             Id = "019409bf-3ae7-7cdf-995b-db4620f2ff5f",
                             AccessFailedCount = 0,
-                            Bio = "Admin",
+                            Bio = "grad",
                             City = "Kafr elsheikh",
                             ConcurrencyStamp = "019409C1-DB8B-7B6F-A8A1-8E35FB4D0748",
                             Country = "Egypt",
                             DateOfBirth = new DateTime(2025, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@autine.com",
+                            Email = "admin@graduation.edu",
                             EmailConfirmed = true,
-                            FirstName = "Autine",
+                            FirstName = "Admin",
                             Gender = "male",
                             IsDisabled = false,
-                            LastName = "Admin",
+                            LastName = "grad",
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@AUTINE.COM",
+                            NormalizedEmail = "ADMIN@GRADUATION.EDU",
                             NormalizedUserName = "ADMIN",
                             PasswordHash = "AQAAAAIAAYagAAAAEBbWjL8coqX4W28rbExSdO9oxmhKHv6wM4FPUC7EA+NPus+zl7GH7agHyr/+5JzfJQ==",
                             PhoneNumberConfirmed = false,

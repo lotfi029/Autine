@@ -50,9 +50,10 @@ public class BaseService(IHttpClientFactory _httpClientFactory) : IBaseService
                 _ => Result.Failure(ParseError(responseContent))
             };
         }
-        catch (Exception ex)
+        catch
         {
-            return Result.Failure(Error.BadRequest("ex", ex.ToString()));
+            // TODO: log error
+            return Error.BadRequest("AI.Error", "An error occure while caling ai service.");
         }
     }
 
