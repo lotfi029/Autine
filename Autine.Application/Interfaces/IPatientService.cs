@@ -1,5 +1,6 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
+using Microsoft.EntityFrameworkCore;
 
 namespace Autine.Application.Interfaces;
 
@@ -9,3 +10,4 @@ public interface IPatientService
     Task<PatientResponse?> GetPatientByIdAsync(string userId, string id, CancellationToken ct = default);
     Task<IEnumerable<BotPatientsResponse>> GetBotPatientAsync(Guid botId, CancellationToken ct = default);
 }
+

@@ -1,4 +1,5 @@
-﻿using Autine.Infrastructure.Persistence.DBCommands;
+﻿using Autine.Application.Contracts.Bots;
+using Autine.Infrastructure.Persistence.DBCommands;
 using Microsoft.Data.SqlClient;
 
 namespace Autine.Infrastructure.Repositories;
@@ -27,6 +28,5 @@ public class BotPatientRepository(ApplicationDbContext context) : Repository<Bot
             // TODO:log error
             return Error.BadRequest("Exception", "error occure while delete bot");
         }
-
     }
 }

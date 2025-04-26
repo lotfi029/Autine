@@ -27,6 +27,7 @@ public static class DependancyInjection
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPatientService, PatientService>();
+        services.AddScoped<IBotService, BotService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         

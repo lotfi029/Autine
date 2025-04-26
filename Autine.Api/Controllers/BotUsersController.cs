@@ -30,7 +30,7 @@ public class BotUsersController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{botId}/history")]
+    [HttpGet("{botId}/bot")]
     [ProducesResponseType(typeof(IEnumerable<MessageResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessageHistory(
@@ -49,7 +49,7 @@ public class BotUsersController(ISender sender) : ControllerBase
     public async Task<IActionResult> GetMyBots(CancellationToken ct = default)
     {
         var userId = User.GetUserId()!;
-        var query = new BotPatientQuery(userId);
+        var query = new GetMyBotsQuery(userId);
         var response = await sender.Send(query, ct);
 
         return response.IsSuccess
