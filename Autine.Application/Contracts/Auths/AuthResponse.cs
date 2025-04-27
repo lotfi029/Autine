@@ -2,5 +2,7 @@
 public record AuthResponse(
     string AccessToken,
     int ExpiresIn,
+    string RefreshToken,
+    DateTime RefreshTokenExpiration,
     string TokenType = "Berear"
 );

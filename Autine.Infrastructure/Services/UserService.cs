@@ -9,13 +9,9 @@ public class UserService(
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
 
 
-    public async Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
+    public Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
     {
-        await context.Users
-            .Where(e => e.Id == userId)
-            .ExecuteUpdateAsync(x => x.SetProperty(e => e.IsDisabled, true), ct);
-
-        return Result.Success();
+        throw new NotImplementedException();
     }
     
 

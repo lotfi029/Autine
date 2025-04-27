@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Auths;
+﻿namespace Autine.Application.Contracts.Auth;
 
 public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervisorRequest>
 {

@@ -36,4 +36,29 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 
         return (token: new JwtSecurityTokenHandler().WriteToken(token), _jwtOptions.ExpireMinutes);
     }
+    public string? ValidateToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+
+        try
+        {
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                IssuerSigningKey = symmetricSecurityKey,
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validateToken);
+
+            var jwtToken = (JwtSecurityToken)validateToken;
+
+            return jwtToken.Claims.First(e => e.Type == JwtRegisteredClaimNames.Sub).Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

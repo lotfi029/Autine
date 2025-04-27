@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Contracts.Auths;
+﻿using Autine.Application.Contracts.Auths;
+
+namespace Autine.Application.Contracts.Auth;
 
 public class LoginRequestValidator : AbstractValidator<TokenRequest>
 {

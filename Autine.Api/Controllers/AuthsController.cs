@@ -3,21 +3,22 @@ using Autine.Application.Features.Auth.Commands.ConfirmEmail;
 using Autine.Application.Features.Auth.Commands.ForgotPassword;
 using Autine.Application.Features.Auth.Commands.Login;
 using Autine.Application.Features.Auth.Commands.ReConfirmEmail;
+using Autine.Application.Features.Auth.Commands.RefreshTokens;
 using Autine.Application.Features.Auth.Commands.Register;
 using Autine.Application.Features.Auth.Commands.RegisterSupervisor;
 using Autine.Application.Features.Auth.Commands.ResetPassword;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Autine.Api.Controllers;
 
 [Route("auths")]
 [ApiController]
-[Produces("application/json")]
 public class AuthsController(ISender _sender) : ControllerBase
 {
-    [HttpPost("register")]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromForm] RegisterRequest request, CancellationToken cancellationToken)
     {
         var command = new RegisterCommand(request);
@@ -94,14 +95,21 @@ public class AuthsController(ISender _sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
     {
-
         var command = new ResetPasswordCommand(request);
-
         var result = await _sender.Send(command);
-
         return result.IsSuccess
             ? Ok()
             : result.ToProblem();
+    }
 
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenRequest request, CancellationToken ct = default)
+    {
+        var command = new RefreshTokenCommand(request);
+        var result = await _sender.Send(command, ct);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
     }
 }

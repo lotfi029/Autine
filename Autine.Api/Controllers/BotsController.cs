@@ -17,10 +17,10 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
 public class BotsController(ISender sender) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> AddBot([FromBody] CreateBotRequest request, CancellationToken ct)
+    public async Task<IActionResult> AddBot([FromForm] CreateBotRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 

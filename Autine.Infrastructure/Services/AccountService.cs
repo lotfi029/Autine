@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Auths;
+﻿using Autine.Application.Contracts.Auth;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
 using Microsoft.AspNetCore.Http;

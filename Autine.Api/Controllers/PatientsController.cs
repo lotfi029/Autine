@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Auths;
+﻿using Autine.Application.Contracts.Auth;
 using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
 using Autine.Application.Features.Patients.Commads.Add;

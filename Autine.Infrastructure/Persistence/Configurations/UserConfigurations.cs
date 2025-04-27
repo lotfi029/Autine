@@ -24,6 +24,10 @@ public class UserConfigurations : IEntityTypeConfiguration<ApplicationUser>
         builder.Property(e => e.City)
             .HasMaxLength(100);
 
+        builder.OwnsMany(e => e.RefreshTokens)
+            .ToTable("RefreshTokens")
+            .WithOwner()
+            .HasForeignKey("UserId");
 
         var adminUser = new ApplicationUser
         {

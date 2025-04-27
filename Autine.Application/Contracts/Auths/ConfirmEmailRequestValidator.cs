@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Auths;
+﻿using Autine.Application.Contracts.Auth;
 
 namespace Autine.Application.Contracts.Auth;
 
