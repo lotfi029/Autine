@@ -3,7 +3,8 @@
 namespace Autine.Application.Features.Bots.Queries.GetAll;
 public class GetBotsQueryHandler(
     IUnitOfWork unitOfWork,
-    IPatientService patientService) : IQueryHandler<GetBotsQuery, ICollection<BotResponse>>
+    IPatientService patientService,
+    IUrlGenratorService urlGenratorService) : IQueryHandler<GetBotsQuery, ICollection<BotResponse>>
 {
     public async Task<Result<ICollection<BotResponse>>> Handle(GetBotsQuery request, CancellationToken cancellationToken)
     {
@@ -27,6 +28,7 @@ public class GetBotsQueryHandler(
                 Id: b.Id,
                 Name: b.Name,
                 Bio: b.Bio,
+                Image: urlGenratorService.GetImageUrl(b.BotImage!)!,
                 Patients: botPatients?.ToList() ?? []
                 );
 

@@ -63,23 +63,24 @@ public class FileService(
     public Task<Result> DeleteImageAsync(string image, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(image))
-            return Task.FromResult(Result.Failure(Error.BadRequest("", "")));
-
-        
-        image = Path.GetFileName(image);
-        var imagePath = Path.Combine(_path, image);
-
-        if (!File.Exists(imagePath))
-            return Task.FromResult(Result.Failure(Error.BadRequest("", "")));
+            return Task.FromResult(Result.Failure(Error.BadRequest("EmptyFileName", "File name cannot be empty")));
 
         try
         {
+            var fileName = Path.GetFileName(image);
+            var imagePath = Path.Combine(_path, fileName);
+
+            if (!File.Exists(imagePath))
+                return Task.FromResult(Result.Failure(Error.BadRequest("FileNotFound", "Image file does not exist")));
+
+
             File.Delete(imagePath);
             return Task.FromResult(Result.Success());
         }
-        catch
+        catch (Exception ex)
         {
-            return Task.FromResult(Result.Failure(Error.BadRequest("", "")));
+
+            return Task.FromResult(Result.Failure(Error.BadRequest("DeleteFailed", $"Failed to delete image: {ex.Message}")));
         }
     }
 }

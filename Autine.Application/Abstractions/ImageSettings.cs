@@ -2,8 +2,8 @@
 
 public class ImageSettings
 {
-    public const string ImagePath = "uploads/profilePicture";
-    public const string BotImagePath = "uploads/botImages";
+    public const string ImagePath = @"uploads\profilePicture";
+    public const string BotImagePath = @"uploads\botImages";
     public static readonly string[] AllowedExtension = [".jpg", ".jpeg", ".png"];
     public static readonly Dictionary<string, List<byte[]>> AllowedFileSignatures = new()
     {

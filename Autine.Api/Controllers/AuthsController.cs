@@ -9,7 +9,6 @@ using Autine.Application.Features.Auth.Commands.ResetPassword;
 
 namespace Autine.Api.Controllers;
 
-
 [Route("auths")]
 [ApiController]
 [Produces("application/json")]

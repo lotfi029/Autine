@@ -4,6 +4,7 @@ using Autine.Application.Interfaces;
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class FilesController(ISender sender) : ControllerBase
 {
 

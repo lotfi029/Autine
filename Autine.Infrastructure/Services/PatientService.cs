@@ -3,7 +3,9 @@ using Autine.Application.Contracts.Patients;
 
 namespace Autine.Infrastructure.Services;
 
-public class PatientService(ApplicationDbContext context) : IPatientService
+public class PatientService(
+    ApplicationDbContext context,
+    IUrlGenratorService urlGenratorService) : IPatientService
 {
 
     public async Task<IEnumerable<PatientResponse>> GetPatientsAsync(string userId, bool isFollowing = false, CancellationToken ct = default)
@@ -23,13 +25,13 @@ public class PatientService(ApplicationDbContext context) : IPatientService
             u.Id,
             u.FirstName,
             u.LastName,
-            u.Email!,
             u.UserName!,
             u.DateOfBirth,
             u.Gender,
             u.Country!,
             u.City!,
-            t.CreatedAt
+            t.CreatedAt,
+            urlGenratorService.GetImageUrl(u.ProfilePicture)!
             )).ToListAsync(cancellationToken: ct);
 
         if (query is null)
@@ -49,13 +51,13 @@ public class PatientService(ApplicationDbContext context) : IPatientService
                     u.Id,
                     u.FirstName,
                     u.LastName,
-                    u.Email!,
                     u.UserName!,
                     u.DateOfBirth,
                     u.Gender,
                     u.Country!,
                     u.City!,
-                    t.CreatedAt
+                    t.CreatedAt,
+                    urlGenratorService.GetImageUrl(u.ProfilePicture)!
             ))
             .SingleOrDefaultAsync(ct);
 
@@ -71,7 +73,7 @@ public class PatientService(ApplicationDbContext context) : IPatientService
                 u.Id,
                 $"{u.FirstName} {u.LastName}",
                 bp.CreatedAt,
-                u.ProfilePicture
+                urlGenratorService.GetImageUrl(u.ProfilePicture)!
                 )
             ).ToListAsync(ct);
 

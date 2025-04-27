@@ -1,6 +1,6 @@
 ﻿namespace Autine.Application.Features.Patients.Commads.Update;
 public class UpdatePatientCommandHandler(
-    IUserService userService,
+    IAccountService accountService,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdatePatientCommand>
 {
     public async Task<Result> Handle(UpdatePatientCommand request, CancellationToken cancellationToken)
@@ -11,7 +11,7 @@ public class UpdatePatientCommandHandler(
         if (patient.CreatedBy != request.UserId)
             return PatientErrors.PatientsNotFound;
 
-        var userUpdateResult = await userService.UpdateProfileAsync(patient.PatientId, request.UpdateRequest, cancellationToken);
+        var userUpdateResult = await accountService.UpdateProfileAsync(patient.PatientId, request.UpdateRequest, cancellationToken);
 
         if (userUpdateResult.IsFailure)
             return userUpdateResult;

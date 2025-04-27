@@ -3,5 +3,6 @@ public record BotResponse(
     Guid Id,
     string Name,
     string Bio,
+    string Image,
     IList<BotPatientsResponse> Patients
 );

@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Autine.Infrastructure\Autine.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
 </Project>

@@ -2,6 +2,7 @@
 using Autine.Application.Contracts.Files;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.Features.Profiles.Commands.ChangePassword;
+using Autine.Application.Features.Profiles.Commands.ChangeProfilePicture;
 using Autine.Application.Features.Profiles.Commands.Delete;
 using Autine.Application.Features.Profiles.Commands.Update;
 using Autine.Application.Features.Profiles.Queries;
@@ -50,9 +51,15 @@ public class ProfilesController(ISender sender) : ControllerBase
 
     [HttpPut("change-profile-picture")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> ChangeProfilePicture(ImageRequest file, CancellationToken ct = default)
+    public async Task<IActionResult> ChangeProfilePicture([FromForm]ImageRequest file, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var userId = User.GetUserId()!;
+
+        var command = new ChagneProfilePictureCommand(userId, file);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
     }
     
     [HttpGet("")]

@@ -25,6 +25,7 @@ public static class DependancyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IPatientService, PatientService>();
         services.AddScoped<IUrlGenratorService, UrlGenratorService>();
         services.AddScoped<IBotService, BotService>();
@@ -70,7 +71,7 @@ public static class DependancyInjection
         services.Configure<IdentityOptions>(options =>
         {
             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._!@#$";
-            options.User.RequireUniqueEmail = false;
+            options.User.RequireUniqueEmail = true;
             options.Password.RequiredLength = 8;
             options.SignIn.RequireConfirmedEmail = true;
         });

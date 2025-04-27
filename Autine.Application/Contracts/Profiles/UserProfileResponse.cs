@@ -8,5 +8,6 @@ public record UserProfileResponse(
     string Gender,
     string? Country,
     string? City,
+    string? ImageUrl,
     DateTime DateOfBirth
     );

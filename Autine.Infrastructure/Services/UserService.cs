@@ -1,11 +1,9 @@
-﻿using Autine.Application.Contracts.Auths;
-using Autine.Application.Contracts.Profiles;
-using Autine.Application.ExternalContracts.Auth;
+﻿using Autine.Application.Contracts.Users;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,
-    UserManager<ApplicationUser> userManager) : IUserService
+    IUrlGenratorService urlGenratorService) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
@@ -19,80 +17,74 @@ public class UserService(
 
         return Result.Success();
     }
-    //get
-    public async Task<Result<UserProfileResponse>> GetProfileAsync(string userId, CancellationToken ct = default)
+    
+
+    public async Task<Result<DetailedUserResponse>> GetAsync(string id, CancellationToken ct = default)
     {
-        var userProfile = await context.Users
-            .Where(e => e.Id == userId)
-            .ProjectToType<UserProfileResponse>()
+        var response = await (
+            from u in context.Users
+            join ur in context.UserRoles
+            on u.Id equals ur.UserId
+            join r in context.Roles
+            on ur.RoleId equals r.Id into rls
+            where u.Id == id
+            select new
+            {
+                u.Id,
+                u.FirstName,
+                u.LastName,
+                u.UserName,
+                u.Bio,
+                u.Gender,
+                u.ProfilePicture,
+                roles = rls.Select(e => e.Name)
+            })
+            .GroupBy(u => new { u.Id, u.FirstName, u.LastName, u.UserName, u.Bio, u.Gender, u.ProfilePicture })
+            .Select(x => new DetailedUserResponse
+            (
+                x.Key.Id,
+                x.Key.FirstName,
+                x.Key.LastName,
+                x.Key.UserName,
+                x.Key.Bio,
+                x.Key.Gender,
+                urlGenratorService.GetImageUrl(x.Key.ProfilePicture)!,
+                x.SelectMany(e => e.roles).ToList()
+            ))
             .SingleOrDefaultAsync(ct);
 
-        if (userProfile is null)
+
+        if (response == null)
             return UserErrors.UserNotFound;
 
-        return userProfile;
+        return Result.Success(response);
     }
-    // put
-    public async Task<Result<AIRegisterRequest>> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default)
+    public async Task<IEnumerable<UserResponse>> GetAllAsync(string roleId, CancellationToken cancellationToken = default)
     {
-        var user = await context.Users
-            .Where(e => e.Id == userId)
-            .Select(x => new AIRegisterRequest(
-                x.Email!,
-                x.Id,
-                x.PasswordHash!,
-                request.FirstName,
-                request.LastName,
-                x.DateOfBirth,
-                x.Gender
-                )).SingleOrDefaultAsync(ct);
+        var response = await (
+        from u in context.Users
+        join ur in context.UserRoles
+        on u.Id equals ur.UserId
+        where ur.RoleId == roleId
+        select new
+        {
+            u.Id,
+            u.FirstName,
+            u.LastName,
+            u.ProfilePicture
+        })
+        .GroupBy(u => new { u.Id, u.FirstName, u.LastName, u.ProfilePicture })
+        .Select(x => new UserResponse
+        (
+            x.Key.Id,
+            x.Key.FirstName,
+            x.Key.LastName,
+            x.Key.ProfilePicture
+        ))
+        .ToListAsync(cancellationToken);
 
-        if (user is null)
-            return UserErrors.UserNotFound;
 
-        await context.Users
-            .Where(e => e.Id == userId)
-            .ExecuteUpdateAsync(setters =>
-                setters
-                .SetProperty(e => e.FirstName, request.FirstName)
-                .SetProperty(e => e.LastName, request.LastName)
-                .SetProperty(e => e.Bio, request.Bio)
-                .SetProperty(e => e.City, request.City)
-                .SetProperty(e => e.Country, request.Country),
-                ct
-            );
-
-        return Result.Success(user);
-    }
-
-    public async Task<Result> ChangePasswordAsync(string userId, ChangePasswordRequest request, CancellationToken ct = default)
-    {
-        if (await context.Users.FindAsync([userId], ct) is not { } user)
-            return UserErrors.UserNotFound;
-
-        var oldPasswordHash = user.PasswordHash!;
-
-        if (userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash!, request.CurrentPassword) is not PasswordVerificationResult.Success)
-            return Error.BadRequest("InvalidPassword", "Current password is incorrect");
-
-        var newPasswordHash = userManager.PasswordHasher.HashPassword(user, request.NewPassword);
-
-        user.PasswordHash = newPasswordHash;
-        // to invalidate tokens/cookies
-        await userManager.UpdateSecurityStampAsync(user);
-        await context.SaveChangesAsync(ct);
-
-        return Result.Success();
+        return response;
     }
 }
 
-// 52833048-1ffa-4b18-9bd9-d9e9d5bd54e5
-
-
-
-// old "AQAAAAIAAYagAAAAEKiyuXy+BNFz5GLgifhp6uWrV7y2+AnbvwBxLmMEKRvbRk4WgNKjPhc3fsYETrILbA=="
-// new "AQAAAAIAAYagAAAAEJSEjbJ6wPXMBVsJCAVNYbUVabldEoNNfjjssAjn0FnRDub8S6P4qj5WW2Vclj8cGA=="
-// ai  AQAAAAIAAYagAAAAEKiyuXy+BNFz5GLgifhp6uWrV7y2+AnbvwBxLmMEKRvbRk4WgNKjPhc3fsYETrILbA==
-// "AQAAAAIAAYagAAAAEFTWYPpWUDa4xpdjKCFUSHHlwHIyxR5NnY1RqvT9lKeQeyMAIEvIVXQnUPmIzYJBhg=="
-// "AQAAAAIAAYagAAAAEJ/6ECcIPWoAkj4/wVWQufu1VAzpvH/SdI5B5MsnEnWl+zA6Q4f29NRzvUgzIu4PJA=="
-// "AQAAAAIAAYagAAAAEJ/6ECcIPWoAkj4/wVWQufu1VAzpvH/SdI5B5MsnEnWl+zA6Q4f29NRzvUgzIu4PJA=="

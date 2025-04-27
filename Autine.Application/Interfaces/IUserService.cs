@@ -1,17 +1,10 @@
-﻿using Autine.Application.Contracts.Profiles;
-using Autine.Application.ExternalContracts.Auth;
+﻿using Autine.Application.Contracts.Users;
 
 namespace Autine.Application.Interfaces;
 public interface IUserService
 {
     Task<bool> CheckUserExist(string userId, CancellationToken ct = default);
-    
-
+    Task<Result<DetailedUserResponse>> GetAsync(string id, CancellationToken ct = default);
+    Task<IEnumerable<UserResponse>> GetAllAsync(string roleId, CancellationToken cancellationToken = default);
     Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default);
-
-    // get
-    Task<Result<UserProfileResponse>> GetProfileAsync(string userId, CancellationToken ct = default);
-    // put
-    Task<Result<AIRegisterRequest>> UpdateProfileAsync(string userId, UpdateUserProfileRequest request, CancellationToken ct = default);
-    Task<Result> ChangePasswordAsync(string userId, ChangePasswordRequest request, CancellationToken ct = default);
 }

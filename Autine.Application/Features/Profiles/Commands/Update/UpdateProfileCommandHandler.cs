@@ -1,6 +1,6 @@
 ﻿namespace Autine.Application.Features.Profiles.Commands.Update;
 public class UpdateProfileCommandHandler(
-    IUserService userService, 
+    IAccountService accountService, 
     IUnitOfWork unitOfWork,
     IRoleService roleService,
     IAIAuthService aIAuthService) : ICommandHandler<UpdateProfileCommand>
@@ -11,7 +11,7 @@ public class UpdateProfileCommandHandler(
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var serverResult = await userService.UpdateProfileAsync(request.UserId, request.UpdateRequest, cancellationToken);
+            var serverResult = await accountService.UpdateProfileAsync(request.UserId, request.UpdateRequest, cancellationToken);
 
             if (!serverResult.IsSuccess)
             {

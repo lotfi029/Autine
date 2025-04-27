@@ -14,11 +14,12 @@ public static class DependancyInjection
         services.AddAuthentication();
         services.AddAuthorization();
 
-        services.AddOpenApi("v1", optinos =>
-        {
-            optinos.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-        });
+        //services.AddOpenApi("v1", optinos =>
+        //{
+        //    optinos.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+        //});
 
+        services.AddOpenApi();
         return services;
     }
 
