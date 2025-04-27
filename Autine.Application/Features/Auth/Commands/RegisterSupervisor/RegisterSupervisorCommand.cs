@@ -1,2 +1,2 @@
-﻿namespace Autine.Application.Features.Auth.RegisterSupervisor;
+﻿namespace Autine.Application.Features.Auth.Commands.RegisterSupervisor;
 public record RegisterSupervisorCommand(CreateSupervisorRequest Request) : ICommand<RegisterResponse>;

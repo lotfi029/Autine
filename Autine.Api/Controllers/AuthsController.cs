@@ -1,11 +1,11 @@
 ﻿using Autine.Application.Contracts.Auths;
-using Autine.Application.Features.Auth.ConfirmEmail;
-using Autine.Application.Features.Auth.ForgotPassword;
-using Autine.Application.Features.Auth.Login;
-using Autine.Application.Features.Auth.ReConfirmEmail;
-using Autine.Application.Features.Auth.Register;
-using Autine.Application.Features.Auth.RegisterSupervisor;
-using Autine.Application.Features.Auth.ResetPassword;
+using Autine.Application.Features.Auth.Commands.ConfirmEmail;
+using Autine.Application.Features.Auth.Commands.ForgotPassword;
+using Autine.Application.Features.Auth.Commands.Login;
+using Autine.Application.Features.Auth.Commands.ReConfirmEmail;
+using Autine.Application.Features.Auth.Commands.Register;
+using Autine.Application.Features.Auth.Commands.RegisterSupervisor;
+using Autine.Application.Features.Auth.Commands.ResetPassword;
 
 namespace Autine.Api.Controllers;
 
@@ -17,8 +17,8 @@ public class AuthsController(ISender _sender) : ControllerBase
 {
     [HttpPost("register")]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromForm] RegisterRequest request, CancellationToken cancellationToken)
     {
         var command = new RegisterCommand(request);
@@ -31,8 +31,8 @@ public class AuthsController(ISender _sender) : ControllerBase
     }
     [HttpPost("supervisor-register")]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> SupervisorRegister([FromForm] CreateSupervisorRequest request, CancellationToken cancellationToken)
     {
         var command = new RegisterSupervisorCommand(request);
@@ -43,10 +43,10 @@ public class AuthsController(ISender _sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpPost("login")]
+    [HttpPost("get-token")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login(TokenRequest request, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetToken(TokenRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateTokenCommand(request);
 
@@ -55,7 +55,7 @@ public class AuthsController(ISender _sender) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
     [HttpPost("confirm-email")]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
     {
         var command = new ConfirmEmailCommand(request);
@@ -66,7 +66,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     }
     [HttpPost("reconfirm-email")]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> ReConfirmEmail([FromBody] ResendConfirmEmailRequest request)
     {
         var command = new ReConfirmEmailCommand(request);
@@ -77,7 +77,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     }
 
     [HttpPost("forgot-password")]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
     {
@@ -91,8 +91,8 @@ public class AuthsController(ISender _sender) : ControllerBase
     }
 
     [HttpPost("reset-password")]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
     {
 

@@ -15,19 +15,13 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status400BadRequest)]
 public class ProfilesController(ISender sender) : ControllerBase
 {
-    [HttpGet("")]
-    [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetProfile(CancellationToken ct = default)
-    {
-        var userId = User.GetUserId()!;
 
-        var query = new GetProfileQuery(userId);
-        var response = await sender.Send(query, ct);
-        return response.IsSuccess
-            ? Ok(response.Value)
-            : response.ToProblem();
-    }
-
+    //[HttpPost("logout")]
+    //public Task<IActionResult> Logout(CancellationToken cancellationToken)
+    //{
+    //    var userId = User.GetUserId()!;
+    //    throw new NotImplementedException();
+    //}
     [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileRequest request,CancellationToken ct = default)
@@ -56,9 +50,22 @@ public class ProfilesController(ISender sender) : ControllerBase
 
     [HttpPut("change-profile-picture")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> ChangeProfilePicture(ProfilePictureRequest file, CancellationToken ct = default)
+    public Task<IActionResult> ChangeProfilePicture(ImageRequest file, CancellationToken ct = default)
     {
         throw new NotImplementedException();
+    }
+    
+    [HttpGet("")]
+    [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetProfile(CancellationToken ct = default)
+    {
+        var userId = User.GetUserId()!;
+
+        var query = new GetProfileQuery(userId);
+        var response = await sender.Send(query, ct);
+        return response.IsSuccess
+            ? Ok(response.Value)
+            : response.ToProblem();
     }
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -72,5 +79,6 @@ public class ProfilesController(ISender sender) : ControllerBase
             ? NoContent()
             : result.ToProblem();
     }
+
 
 }

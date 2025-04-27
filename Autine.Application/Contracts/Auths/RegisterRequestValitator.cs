@@ -1,6 +1,4 @@
-﻿using Autine.Application.Contracts.Auths;
-
-namespace Autine.Application.Contracts.Auth;
+﻿namespace Autine.Application.Contracts.Auths;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
@@ -60,8 +58,8 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .WithMessage(ValidationConstants.LengthErrorMesssage);
 
         RuleFor(x => x.ProfilePic)
-            .Must(BeValidImage)
-            .WithMessage("pal");
+            .Must(ValidImage)
+            .WithMessage("{PropertyName} allowed image .jpg, .jpeg, .png, .gif");
 
 
         RuleFor(e => e.Password)
@@ -72,30 +70,26 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
             .Matches(@"[\W_]").WithMessage("Password must contain at least one special character.");
     }
-    private bool BeValidImage(IFormFile? file)
+    private bool ValidImage(IFormFile? image)
     {
-        // No validation needed if file is null (handled by When clause)
-        if (file == null)
+        if (image == null)
             return true;
 
-        // Check file size (5MB limit)
-        const long maxSize = 5 * 1024 * 1024; // 5MB in bytes
-        if (file.Length > maxSize)
+        const long maxSize = 5 * 1024 * 1024;
+        if (image.Length > maxSize)
             return false;
 
-        // Check file type
         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
         if (!allowedExtensions.Contains(extension))
             return false;
 
-        // Check content type
         var allowedContentTypes = new[]
         {
             "image/jpeg",
             "image/png",
             "image/gif"
         };
-        return allowedContentTypes.Contains(file.ContentType.ToLowerInvariant());
+        return allowedContentTypes.Contains(image.ContentType.ToLowerInvariant());
     }
 }

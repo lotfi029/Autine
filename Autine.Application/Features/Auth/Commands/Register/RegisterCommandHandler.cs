@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Features.Auth.Register;
+﻿namespace Autine.Application.Features.Auth.Commands.Register;
 public class RegisterCommandHandler(
     IAuthService _authService,
     IAIAuthService _aIAuthService,

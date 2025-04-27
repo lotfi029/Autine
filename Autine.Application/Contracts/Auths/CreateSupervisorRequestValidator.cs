@@ -83,22 +83,19 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
     }
     private static bool BeValidImage(IFormFile? file)
     {
-        // No validation needed if file is null (handled by When clause)
         if (file == null)
             return true;
 
-        // Check file size (5MB limit)
-        const long maxSize = 5 * 1024 * 1024; // 5MB in bytes
+     
+        const long maxSize = 5 * 1024 * 1024;
         if (file.Length > maxSize)
             return false;
 
-        // Check file type
         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
         if (!allowedExtensions.Contains(extension))
             return false;
 
-        // Check content type
         var allowedContentTypes = new[]
         {
             "image/jpeg",

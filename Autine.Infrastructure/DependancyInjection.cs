@@ -1,5 +1,4 @@
 ﻿using Autine.Application.Interfaces.AIApi;
-using Autine.Infrastructure.Persistence;
 using Autine.Infrastructure.Identity.Authentication;
 using Autine.Infrastructure.Repositories;
 using Autine.Infrastructure.Services;
@@ -27,6 +26,7 @@ public static class DependancyInjection
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPatientService, PatientService>();
+        services.AddScoped<IUrlGenratorService, UrlGenratorService>();
         services.AddScoped<IBotService, BotService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

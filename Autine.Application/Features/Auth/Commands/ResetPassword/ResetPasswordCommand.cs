@@ -1,2 +1,2 @@
-﻿namespace Autine.Application.Features.Auth.ResetPassword;
+﻿namespace Autine.Application.Features.Auth.Commands.ResetPassword;
 public record ResetPasswordCommand(ResetPasswordRequest Request) : ICommand;

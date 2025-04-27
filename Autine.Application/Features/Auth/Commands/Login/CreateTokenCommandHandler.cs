@@ -2,7 +2,7 @@
 using Autine.Application.Contracts.Auths;
 using Autine.Application.Interfaces;
 
-namespace Autine.Application.Features.Auth.Login;
+namespace Autine.Application.Features.Auth.Commands.Login;
 
 public class CreateTokenCommandHandler(IAuthService _authService) : ICommandHandler<CreateTokenCommand, AuthResponse>
 {
