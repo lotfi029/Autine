@@ -20,10 +20,10 @@ namespace Autine.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql($"DROP TRIGGER IF EXISTS {AdminSPs.DeleteAdminWithRelation}");
-            migrationBuilder.Sql($"DROP TRIGGER IF EXISTS {SupervisorSPs.DeleteSupervisorRelations}");
-            migrationBuilder.Sql($"DROP TRIGGER IF EXISTS {PatientSPs.DeletePatientWithRelation}");
-            migrationBuilder.Sql($"DROP TRIGGER IF EXISTS {UserSPs.DeleteUserWithRelation}");
+            migrationBuilder.Sql($"DROP PROCEDURE IF EXISTS {AdminSPs.DeleteAdminWithRelation}");
+            migrationBuilder.Sql($"DROP PROCEDURE IF EXISTS {SupervisorSPs.DeleteSupervisorRelations}");
+            migrationBuilder.Sql($"DROP PROCEDURE IF EXISTS {PatientSPs.DeletePatientWithRelation}");
+            migrationBuilder.Sql($"DROP PROCEDURE IF EXISTS {UserSPs.DeleteUserWithRelation}");
 
         }
     }

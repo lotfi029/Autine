@@ -2,7 +2,7 @@
 namespace Autine.Application.Features.Profiles.Commands.Delete;
 public class DeleteProfileCommandHandler(
     IAIAuthService aIAuthService,
-    IAccountService accountService,
+    IUserService userService,
     IUnitOfWork unitOfWork) : ICommandHandler<DeleteProfileCommand>
 {
     public async Task<Result> Handle(DeleteProfileCommand request, CancellationToken cancellationToken)
@@ -10,7 +10,7 @@ public class DeleteProfileCommandHandler(
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var serverResult = await accountService.DeleteAccountAsync(request.UserId, cancellationToken);
+            var serverResult = await userService.DeleteUserAsync(request.UserId, cancellationToken);
 
             if (serverResult.IsFailure)
             {
@@ -18,7 +18,12 @@ public class DeleteProfileCommandHandler(
                 return serverResult.Error;
             }
 
-            var aiResult = await aIAuthService.DeleteUserAsync(request.UserId, Consts.FixedPassword, cancellationToken);
+            var aiResult = await aIAuthService.DeleteUserAsync(
+                serverResult.Value,
+                request.UserId, 
+                Consts.FixedPassword,
+                cancellationToken
+                );
 
             if (aiResult.IsFailure)
             {

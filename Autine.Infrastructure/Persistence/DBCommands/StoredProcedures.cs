@@ -74,6 +74,7 @@ public class StoredProcedures
     public static class SupervisorSPs
     {
         public const string DeleteSupervisorRelations = $"dbo.{nameof(DeleteSupervisorRelations)}";
+        public const string DeleteSupervisorRelationsCall = $"EXEC dbo.{nameof(DeleteSupervisorRelations)} @SupervisorId";
         public static SqlParameter DeleteSupervisorRelationsParamter(string supervisorId)
             => new("@SupervisorId", supervisorId);
 
@@ -143,6 +144,13 @@ public class StoredProcedures
                     FROM dbo.Bots AS b
                     WHERE b.CreatedBy = @SupervisorId;
 
+                    DELETE ur
+		            FROM dbo.AspNetUserRoles    AS ur
+		            INNER JOIN dbo.AspNetRoles   AS r  ON ur.RoleId = r.Id
+		            INNER JOIN dbo.Patients      AS p  ON ur.UserId = p.PatientId
+		            WHERE r.Name     = 'patient'
+		              AND p.CreatedBy = @SupervisorId;
+                    
                     DELETE pat
                     FROM dbo.Patients AS pat
                     WHERE pat.CreatedBy = @SupervisorId;
@@ -162,6 +170,7 @@ public class StoredProcedures
     public static class UserSPs
     {
         public const string DeleteUserWithRelation = $"dbo.{nameof(DeleteUserWithRelation)}";
+        public const string DeleteUserWithRelationCall = $"EXEC dbo.{nameof(DeleteUserWithRelation)} @UserId";
         public static SqlParameter DeleteUserWithRelationParamter(string userId)
             => new("@UserId", userId);
         public static string DeleteUserWithRelationProdcedure => @"
@@ -175,6 +184,12 @@ public class StoredProcedures
                 SET NOCOUNT, XACT_ABORT ON;
                 BEGIN TRANSACTION;
                 BEGIN TRY
+		            
+                    DELETE bm
+		            from dbo.BotMessages as bm
+		            inner join dbo.BotPatients as bp
+			            on bp.Id = bm.BotPatientId
+		            where bp.UserId = @UserId
 		
 		            DELETE msg
 		            from dbo.Messages as msg
@@ -184,11 +199,6 @@ public class StoredProcedures
 			            on bp.Id = bm.BotPatientId
 		            where bp.UserId = @UserId
 
-		            DELETE bm
-		            from dbo.BotMessages as bm
-		            inner join dbo.BotPatients as bp
-			            on bp.Id = bm.BotPatientId
-		            where bp.UserId = @UserId
 
 		            DELETE bp
 		            from dbo.BotPatients as bp
@@ -222,6 +232,7 @@ public class StoredProcedures
     public static class PatientSPs
     {
         public const string DeletePatientWithRelation = $"dbo.{nameof(DeletePatientWithRelation)}";
+        public const string DeletePatientWithRelationCall = $"EXEC dbo.{nameof(DeletePatientWithRelation)} @PatientId";
         public static SqlParameter DeletePatientWithRelationParamter(string patientId)
             => new("@PatientId", patientId);
         public static string DeletePatientWithRelationProdcedure => @"
@@ -235,17 +246,17 @@ public class StoredProcedures
                 SET NOCOUNT, XACT_ABORT ON;
                 BEGIN TRANSACTION;
                 BEGIN TRY
+
+		            DELETE bm
+		            from dbo.BotMessages as bm
+		            inner join dbo.BotPatients as bp
+			            on bp.Id = bm.BotPatientId
+		            where bp.UserId = @PatientId;
 	
 		            DELETE msg
 		            from dbo.Messages as msg
 		            inner join BotMessages as bm
 			            on msg.Id = bm.MessageId
-		            inner join dbo.BotPatients as bp
-			            on bp.Id = bm.BotPatientId
-		            where bp.UserId = @PatientId;
-
-		            DELETE bm
-		            from dbo.BotMessages as bm
 		            inner join dbo.BotPatients as bp
 			            on bp.Id = bm.BotPatientId
 		            where bp.UserId = @PatientId;
@@ -285,6 +296,7 @@ public class StoredProcedures
     public static class AdminSPs
     {
         public const string DeleteAdminWithRelation = $"dbo.{nameof(DeleteAdminWithRelation)}";
+        public const string DeleteAdminWithRelationCall = $"EXEC dbo.{nameof(DeleteAdminWithRelation)} @AdminId";
         public static SqlParameter DeleteAdminWithRelationParamter(string adminId)
             => new("@AdminId", adminId);
         public static string DeleteAdminWithRelationProdcedure => @"
@@ -299,6 +311,12 @@ public class StoredProcedures
                 BEGIN TRANSACTION;
                 BEGIN TRY
 		
+		            DELETE bm
+		            from dbo.BotMessages as bm
+		            inner join dbo.BotPatients as bp on bm.BotPatientId = bp.Id
+		            inner join dbo.Bots as b on b.Id = bp.BotId
+		            where b.CreatedBy = @AdminId
+
 		            ;WITH MsgsToDelete AS (
                         SELECT bm.MessageId
                         FROM dbo.BotMessages bm
@@ -309,12 +327,6 @@ public class StoredProcedures
                     DELETE msg
                     FROM dbo.Messages AS msg
                     JOIN MsgsToDelete d ON msg.Id = d.MessageId;
-
-		            DELETE bm
-		            from dbo.BotMessages as bm
-		            inner join dbo.BotPatients as bp on bm.BotPatientId = bp.Id
-		            inner join dbo.Bots as b on b.Id = bp.BotId
-		            where b.CreatedBy = @AdminId
 
 		            DELETE b
 		            from dbo.Bots as b

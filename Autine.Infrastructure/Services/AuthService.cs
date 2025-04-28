@@ -1,10 +1,7 @@
 ﻿using Autine.Application.Contracts.Auth;
 using Autine.Application.Contracts.Auths;
 using Autine.Infrastructure.Identity.Authentication;
-using Autine.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Identity.Client;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 

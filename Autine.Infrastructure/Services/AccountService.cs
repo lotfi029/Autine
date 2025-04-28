@@ -2,8 +2,6 @@
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
-using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 
 namespace Autine.Infrastructure.Services;
 

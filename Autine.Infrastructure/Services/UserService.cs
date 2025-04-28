@@ -1,28 +1,71 @@
 ﻿using Autine.Application.Contracts.Users;
+using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,
     IRoleService roleService,
+    IFileService fileService,
     IUrlGenratorService urlGenratorService) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
 
 
-    public Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
+    public async Task<Result<string>> DeleteUserAsync(string userId, CancellationToken ct = default)
     {
-        //var role = await roleService.GetUserRoleAsync(userId);
+        var userRole = await roleService.GetUserRoleAsync(userId);
 
-        //if (role.IsFailure)
-        //    return role.Error;
+        if (userRole.IsFailure)
+            return UserErrors.UserNotFound;
 
-        //if(role.Value.Equals("parent", StringComparison.OrdinalIgnoreCase) || role.Value.Equals("doctor", StringComparison.OrdinalIgnoreCase))
-        //{
+        var image = await context.Users
+            .Where(e => e.Id == userId)
+            .Select(e => e.ProfilePicture)
+            .SingleOrDefaultAsync(ct);
 
-        //}
 
-        throw new NotImplementedException();
+        try 
+        {
+            if (userRole.Value.Equals(DefaultRoles.Admin.Name))
+            {
+                await context.Database.ExecuteSqlRawAsync(
+                    AdminSPs.DeleteAdminWithRelationCall,
+                    [AdminSPs.DeleteAdminWithRelationParamter(userId)],
+                    ct
+                    );
+
+                return Result.Success(userRole.Value);
+            }
+            if (userRole.Value.Equals("supervisor"))
+                await context.Database.ExecuteSqlRawAsync(
+                    SupervisorSPs.DeleteSupervisorRelationsCall,
+                    [SupervisorSPs.DeleteSupervisorRelationsParamter(userId)],
+                    ct
+                    );
+
+            else if (userRole.Value.Equals(DefaultRoles.Patient.Name))
+                await context.Database.ExecuteSqlRawAsync(
+                    AdminSPs.DeleteAdminWithRelationCall,
+                    [AdminSPs.DeleteAdminWithRelationParamter(userId)],
+                    ct
+                    );
+
+            await context.Database.ExecuteSqlRawAsync(
+                    UserSPs.DeleteUserWithRelationCall,
+                    [UserSPs.DeleteUserWithRelationParamter(userId)],
+                    ct
+                    );
+
+            await fileService.DeleteImageAsync(image!, ct);
+
+            return Result.Success(userRole.Value);
+        }
+        catch
+        {
+            // TODO: log error
+            return Error.BadRequest("Error.DeleteUser", "error occure while deleting user.");
+        }
     }
     
 

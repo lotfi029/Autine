@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Autine.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250428114641_AddUserDeletionObject")]
+    [Migration("20250428122418_AddUserDeletionObject")]
     partial class AddUserDeletionObject
     {
         /// <inheritdoc />
