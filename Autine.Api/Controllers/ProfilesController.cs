@@ -1,5 +1,4 @@
-﻿using Autine.Application.Contracts.Auth;
-using Autine.Application.Contracts.Files;
+﻿using Autine.Application.Contracts.Files;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.Features.Profiles.Commands.ChangePassword;
 using Autine.Application.Features.Profiles.Commands.ChangeProfilePicture;
@@ -16,13 +15,6 @@ namespace Autine.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status400BadRequest)]
 public class ProfilesController(ISender sender) : ControllerBase
 {
-
-    //[HttpPost("logout")]
-    //public Task<IActionResult> Logout(CancellationToken cancellationToken)
-    //{
-    //    var userId = User.GetUserId()!;
-    //    throw new NotImplementedException();
-    //}
     [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileRequest request,CancellationToken ct = default)
@@ -86,6 +78,4 @@ public class ProfilesController(ISender sender) : ControllerBase
             ? NoContent()
             : result.ToProblem();
     }
-
-
 }

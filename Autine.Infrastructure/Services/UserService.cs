@@ -3,6 +3,7 @@
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,
+    IRoleService roleService,
     IUrlGenratorService urlGenratorService) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
@@ -11,6 +12,16 @@ public class UserService(
 
     public Task<Result> DeleteUserAsync(string userId, CancellationToken ct = default)
     {
+        //var role = await roleService.GetUserRoleAsync(userId);
+
+        //if (role.IsFailure)
+        //    return role.Error;
+
+        //if(role.Value.Equals("parent", StringComparison.OrdinalIgnoreCase) || role.Value.Equals("doctor", StringComparison.OrdinalIgnoreCase))
+        //{
+
+        //}
+
         throw new NotImplementedException();
     }
     

@@ -1,8 +1,10 @@
 ﻿using Autine.Application.Contracts.Auth;
 using Autine.Application.Contracts.Auths;
 using Autine.Infrastructure.Identity.Authentication;
+using Autine.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Identity.Client;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -52,12 +54,12 @@ public class AuthService(
         var userId = _jwtProvider.ValidateToken(token);
 
         if (userId == null || await _userManager.FindByIdAsync(userId) is not { } user)
-            return UserErrors.UserNotFound;
+            return UserErrors.InvalidToken;
 
         var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
 
         if (userRefreshToken == null)
-            return UserErrors.UserNotFound;
+            return UserErrors.InvalidToken;
 
         userRefreshToken.RevokedOn = DateTime.UtcNow;
 
@@ -195,7 +197,7 @@ public class AuthService(
         {
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             if (await _userManager.CheckPasswordAsync(user, request.Password))
-                return Error.Conflict("User.InvalidPassword", "this password is used before Select another one.");
+                return UserErrors.InvalidPassword;
             result = await _userManager.ResetPasswordAsync(user, code, request.Password);
         }
         catch (FormatException)
@@ -267,5 +269,24 @@ public class AuthService(
         var response = new AuthResponse(AccessToken: newToken, ExpiresIn: expireIn, RefreshToken: refreshToken, RefreshTokenExpiration: refreshTokenExpriation);
 
         return response;
+    }
+
+    public async Task<Result> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+    {
+        var userId = _jwtProvider.ValidateToken(token);
+
+        if (userId == null || await _userManager.FindByIdAsync(userId) is not { } user)
+            return UserErrors.InvalidToken;
+
+        var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
+
+        if (userRefreshToken == null)
+            return UserErrors.InvalidToken;
+
+        userRefreshToken.RevokedOn = DateTime.UtcNow;
+
+        await _userManager.UpdateAsync(user);
+
+        return Result.Success();
     }
 }

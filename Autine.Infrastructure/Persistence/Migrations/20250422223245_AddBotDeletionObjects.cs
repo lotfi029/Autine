@@ -49,7 +49,7 @@ namespace Autine.Infrastructure.Migrations
                     END CATCH
                 END");
 
-                // Create the trigger
+                // Create the trigger 
                 migrationBuilder.Sql(@"
                     CREATE TRIGGER tr_BotMessage_Delete
                     ON BotMessages

@@ -24,4 +24,10 @@ public class UserErrors
 
     public static readonly Error UserIsDisabled
         = Error.Unauthorized(nameof(UserIsDisabled), "User is disabled contact with adminstrator");
+
+    public static readonly Error InvalidToken
+        = Error.Unauthorized($"Users.{InvalidToken}", "invalid token");
+
+    public static readonly Error InvalidPassword
+        = Error.Conflict($"User.{nameof(InvalidPassword)}", "this password is used before Select another one.");
 }

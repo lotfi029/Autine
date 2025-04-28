@@ -61,5 +61,10 @@ public class AIAuthService(
                 Data: request
         ), ct);
     }
-
+    public async Task<Result> DeleteUserAsync(string username, string password, CancellationToken ct = default)
+        => await baseService.SendAsync(
+            new Request(
+                $"{_apiSetting.AIApi}/auth/user/delete?username={username}&password={password}&session_id=1",
+                ApiMethod.Delete
+        ), ct);
 }

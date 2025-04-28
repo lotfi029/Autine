@@ -5,6 +5,7 @@ public interface IAuthService
 {
     Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);
     Task<Result<AuthResponse>> GetRefreshTokenAsync(string token, string refreshTokne, CancellationToken cancellationToken = default);
+    Task<Result> RevokeRefreshTokenAsync(string token, string refreshTokne, CancellationToken cancellationToken = default);
     Task<Result<RegisterResponse>> RegisterSupervisorAsync(CreateSupervisorRequest request, CancellationToken cancellationToken = default);
     Task<Result<string>> RegisterPatient(RegisterRequest request, CancellationToken ct = default);
     Task<Result<AuthResponse>> GetTokenAsync(TokenRequest loginRequest, CancellationToken cancellationToken = default);

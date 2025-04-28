@@ -2,12 +2,15 @@
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 
 namespace Autine.Infrastructure.Services;
 
 public class AccountService(
     ApplicationDbContext context, 
     UserManager<ApplicationUser> userManager,
+    IRoleService roleService,
     IFileService fileService,
     IUrlGenratorService urlGenratorService) : IAccountService
 {
@@ -109,5 +112,32 @@ public class AccountService(
             );
 
         return Result.Success();
+    }
+
+    public async Task<Result> DeleteAccountAsync(string userId, CancellationToken ct = default)
+    {
+        if (await context.Users.FindAsync([userId], ct) is not { } user)
+            return UserErrors.UserNotFound;
+
+        var imageName = user.ProfilePicture;
+
+        var role = await roleService.GetUserRoleAsync(userId);
+
+        if (role.IsFailure)
+            return role.Error;
+        try
+        { 
+            //await context.Database.ExecuteSqlRawAsync(
+            //    $"EXEC {UserSPs.DeleteUserProfile}",
+            //    [new SqlParameter("@UserId", userId), new SqlParameter("@Role", role.Value)],
+            //    ct);
+            return Result.Success();
+        }
+        catch
+        {
+            // TODO: log error
+            return UserErrors.UserNotFound;
+        }
+
     }
 }

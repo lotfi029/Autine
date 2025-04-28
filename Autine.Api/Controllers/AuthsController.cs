@@ -7,6 +7,7 @@ using Autine.Application.Features.Auth.Commands.RefreshTokens;
 using Autine.Application.Features.Auth.Commands.Register;
 using Autine.Application.Features.Auth.Commands.RegisterSupervisor;
 using Autine.Application.Features.Auth.Commands.ResetPassword;
+using Autine.Application.Features.Auth.Commands.RevokeRefreshToken;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Autine.Api.Controllers;
@@ -46,7 +47,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     [HttpPost("get-token")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetToken(TokenRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetToken([FromBody] TokenRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateTokenCommand(request);
 
@@ -79,7 +80,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     [HttpPost("forgot-password")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
         var command = new ForgotPasswordCommand(request);
 
@@ -93,7 +94,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     [HttpPost("reset-password")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         var command = new ResetPasswordCommand(request);
         var result = await _sender.Send(command);
@@ -103,13 +104,23 @@ public class AuthsController(ISender _sender) : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh(RefreshTokenRequest request, CancellationToken ct = default)
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request, CancellationToken ct = default)
     {
         var command = new RefreshTokenCommand(request);
         var result = await _sender.Send(command, ct);
 
         return result.IsSuccess
             ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpPost("revoke-refresh-token")]
+    public async Task<IActionResult> RevokeRefresh([FromBody] RefreshTokenRequest request, CancellationToken ct = default)
+    {
+        var command = new RevokeRefreshTokenCommand(request);
+        var result = await _sender.Send(command, ct);
+
+        return result.IsSuccess
+            ? NoContent()
             : result.ToProblem();
     }
 }
