@@ -8,7 +8,6 @@ namespace Autine.Infrastructure.Services;
 public class AccountService(
     ApplicationDbContext context, 
     UserManager<ApplicationUser> userManager,
-    IRoleService roleService,
     IFileService fileService,
     IUrlGenratorService urlGenratorService) : IAccountService
 {
@@ -25,7 +24,7 @@ public class AccountService(
                 x.Gender, 
                 x.Country, 
                 x.City, 
-                urlGenratorService.GetImageUrl(x.ProfilePicture),
+                urlGenratorService.GetImageUrl(x.ProfilePicture, false),
                 x.DateOfBirth
             )).SingleOrDefaultAsync(ct);
 
@@ -87,20 +86,10 @@ public class AccountService(
         if(await context.Users.FindAsync([userId], ct)is not { } user)
             return UserErrors.UserNotFound;
 
-
-        if (!string.IsNullOrEmpty(user.ProfilePicture))
-        {
-            var result = await fileService.DeleteImageAsync(user.ProfilePicture, ct);
-
-            if (result.IsFailure)
-                return result.Error;
-        }
-
-        var imageUrl = await fileService.UploadImageAsync(image, ct);
+        var imageUrl = await fileService.UpdateImageAsync(user.ProfilePicture, image, false, ct);
 
         if (imageUrl.IsFailure)
             return imageUrl.Error;
-
 
         await context.Users
             .Where(e => e.Id == userId)
@@ -110,32 +99,5 @@ public class AccountService(
             );
 
         return Result.Success();
-    }
-
-    public async Task<Result> DeleteAccountAsync(string userId, CancellationToken ct = default)
-    {
-        if (await context.Users.FindAsync([userId], ct) is not { } user)
-            return UserErrors.UserNotFound;
-
-        var imageName = user.ProfilePicture;
-
-        var role = await roleService.GetUserRoleAsync(userId);
-
-        if (role.IsFailure)
-            return role.Error;
-        try
-        { 
-            //await context.Database.ExecuteSqlRawAsync(
-            //    $"EXEC {UserSPs.DeleteUserProfile}",
-            //    [new SqlParameter("@UserId", userId), new SqlParameter("@Role", role.Value)],
-            //    ct);
-            return Result.Success();
-        }
-        catch
-        {
-            // TODO: log error
-            return UserErrors.UserNotFound;
-        }
-
     }
 }

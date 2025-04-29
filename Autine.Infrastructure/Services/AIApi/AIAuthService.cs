@@ -29,13 +29,6 @@ public class AIAuthService(
                 $"{_apiSetting.AIApi}/auth/supervisor/user/add?username={username}&session_id={1}",
                 Data: request
         ), ct);
-    public async Task<Result> RemovePatientAsync(string username, string user_username, CancellationToken ct = default)
-        => await baseService.SendAsync(
-            new Request(
-                $"{_apiSetting.AIApi}/auth/supervisor/user/delete?username={username}&user_username={user_username}&session_id=1",
-                ApiMethod.Delete
-        ), ct);
-
     public async Task<Result> UpdateUserAsync(string username, AIUpdateRequest request, string password, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request(
@@ -61,6 +54,13 @@ public class AIAuthService(
                 Data: request
         ), ct);
     }
+    public async Task<Result> RemovePatientAsync(string username, string user_username, CancellationToken ct = default)
+        => await baseService.SendAsync(
+            new Request(
+                $"{_apiSetting.AIApi}/auth/supervisor/user/delete?username={username}&user_username={user_username}&session_id=1",
+                ApiMethod.Delete
+        ), ct);
+
     public async Task<Result> DeleteUserAsync(string role, string username, string password, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request(

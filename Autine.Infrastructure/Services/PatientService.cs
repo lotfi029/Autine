@@ -31,7 +31,7 @@ public class PatientService(
             u.Country!,
             u.City!,
             t.CreatedAt,
-            urlGenratorService.GetImageUrl(u.ProfilePicture)!
+            urlGenratorService.GetImageUrl(u.ProfilePicture, true)!
             )).ToListAsync(cancellationToken: ct);
 
         if (query is null)
@@ -57,7 +57,7 @@ public class PatientService(
                     u.Country!,
                     u.City!,
                     t.CreatedAt,
-                    urlGenratorService.GetImageUrl(u.ProfilePicture)!
+                    urlGenratorService.GetImageUrl(u.ProfilePicture, false)!
             ))
             .SingleOrDefaultAsync(ct);
 
@@ -73,7 +73,7 @@ public class PatientService(
                 u.Id,
                 $"{u.FirstName} {u.LastName}",
                 bp.CreatedAt,
-                urlGenratorService.GetImageUrl(u.ProfilePicture)!
+                urlGenratorService.GetImageUrl(u.ProfilePicture, false)!
                 )
             ).ToListAsync(ct);
 

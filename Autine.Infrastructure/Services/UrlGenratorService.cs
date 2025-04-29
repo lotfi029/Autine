@@ -5,7 +5,7 @@ namespace Autine.Infrastructure.Services;
 
 public class UrlGenratorService(IHttpContextAccessor httpContextAccessor, LinkGenerator linkGenerator) : IUrlGenratorService
 {
-    public string? GetImageUrl(string fileName)
+    public string? GetImageUrl(string fileName, bool isBot)
     {
         if (string.IsNullOrEmpty(fileName))
             return null!;
@@ -16,7 +16,7 @@ public class UrlGenratorService(IHttpContextAccessor httpContextAccessor, LinkGe
             httpContext,
             action: "GetImage",
             controller: "Files",
-            values: new { imageName = fileName },
+            values: new { imageName = fileName, isBot },
             scheme: httpContext.Request.Scheme,
             host: httpContext.Request.Host
             );

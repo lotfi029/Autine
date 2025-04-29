@@ -57,7 +57,7 @@ public class UserService(
                     ct
                     );
 
-            await fileService.DeleteImageAsync(image!, ct);
+            await fileService.DeleteImageAsync(image!,false);
 
             return Result.Success(userRole.Value);
         }
@@ -98,7 +98,7 @@ public class UserService(
                 x.Key.UserName,
                 x.Key.Bio,
                 x.Key.Gender,
-                urlGenratorService.GetImageUrl(x.Key.ProfilePicture)!,
+                urlGenratorService.GetImageUrl(x.Key.ProfilePicture, false)!,
                 x.SelectMany(e => e.roles).ToList()
             ))
             .SingleOrDefaultAsync(ct);

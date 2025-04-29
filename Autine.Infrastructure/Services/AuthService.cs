@@ -226,7 +226,7 @@ public class AuthService(
         user.Bio ??= string.Empty;
         if (request.ProfilePic is not null)
         {
-            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, ct);
+            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, false, ct);
 
             if (imagePath.IsFailure)
                 return imagePath.Error;

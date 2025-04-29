@@ -1,9 +1,11 @@
 ﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.Contracts.Files;
 using Autine.Application.Features.Bots.Commands.Assign;
 using Autine.Application.Features.Bots.Commands.Create;
 using Autine.Application.Features.Bots.Commands.Remove;
 using Autine.Application.Features.Bots.Commands.UnAssign;
 using Autine.Application.Features.Bots.Commands.Update;
+using Autine.Application.Features.Bots.Commands.UpdateBotImage;
 using Autine.Application.Features.Bots.Queries.GetAll;
 using Autine.Application.Features.Bots.Queries.GetById;
 using Autine.Application.Features.Bots.Queries.GetPatients;
@@ -18,8 +20,8 @@ namespace Autine.Api.Controllers;
 public class BotsController(ISender sender) : ControllerBase
 {
     [HttpPost("")]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddBot([FromForm] CreateBotRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
@@ -33,8 +35,8 @@ public class BotsController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateBot([FromRoute] Guid id, [FromBody] UpdateBotRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
@@ -42,6 +44,19 @@ public class BotsController(ISender sender) : ControllerBase
         var result = await sender.Send(command, ct);
         return result.IsSuccess
             ? NoContent()
+            : result.ToProblem();
+    }
+    [HttpPut("{id:guid}/change-bot-image")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateBotImage([FromRoute] Guid id, [FromBody] ImageRequest request, CancellationToken ct = default)
+    {
+        var userId = User.GetUserId()!;
+
+        var command = new UpdateBotImageCommand(userId, request.Image, id);
+        var result = await sender.Send(command, ct);
+        return result.IsSuccess
+            ? NoContent() 
             : result.ToProblem();
     }
     [HttpPost("{botId:guid}/assign-bot")]
@@ -88,7 +103,7 @@ public class BotsController(ISender sender) : ControllerBase
     }
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(BotResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetBotById([FromRoute] Guid id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
@@ -102,7 +117,7 @@ public class BotsController(ISender sender) : ControllerBase
     }
     [HttpGet("my-bots")]
     [ProducesResponseType(typeof(ICollection<BotResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetBots(CancellationToken ct)
     {
         var userId = User.GetUserId()!;
@@ -113,6 +128,7 @@ public class BotsController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
     [HttpGet("{id:guid}/bot-patients")]
+    [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
     [ProducesResponseType(typeof(ICollection<BotPatientsResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBotPatients([FromRoute] Guid id, CancellationToken ct)
     {

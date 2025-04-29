@@ -3,6 +3,7 @@
 namespace Autine.Application.Features.Bots.Queries.GetById;
 public class GetBotByIdQueryHandler(
     IUnitOfWork unitOfWork,
+    IUrlGenratorService urlGenratorService,
     IPatientService patientService) : IQueryHandler<GetBotByIdQuery, DetailedBotResponse>
 {
     public async Task<Result<DetailedBotResponse>> Handle(GetBotByIdQuery request, CancellationToken cancellationToken)
@@ -14,7 +15,7 @@ public class GetBotByIdQueryHandler(
             return BotErrors.BotNotFound;
 
         var patients = await patientService.GetBotPatientAsync(request.BotId, cancellationToken);
-
+        bot.BotImage = urlGenratorService.GetImageUrl(bot.BotImage!, true) ?? null;
         var response = (bot, patients).Adapt<DetailedBotResponse>();
 
         return response;

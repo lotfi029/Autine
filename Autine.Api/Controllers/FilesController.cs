@@ -1,5 +1,4 @@
 ﻿using Autine.Application.Features.FIles.Queries;
-using Autine.Application.Interfaces;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -9,9 +8,9 @@ public class FilesController(ISender sender) : ControllerBase
 {
 
     [HttpGet("image/{imageName}")]
-    public async Task<IActionResult> GetImage(string imageName, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetImage([FromRoute]string imageName, [FromQuery]bool isBot, CancellationToken cancellationToken)
     {
-        var query = new GetImageQuery(imageName);
+        var query = new GetImageQuery(imageName, isBot);
         var result = await sender.Send(query, cancellationToken);
 
         return result.IsSuccess

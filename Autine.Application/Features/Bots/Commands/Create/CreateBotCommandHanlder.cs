@@ -25,7 +25,7 @@ public class CreateBotCommandHanlder(
             var savedImage = string.Empty;
             if (image is not null)
             {
-                var imageResult = await fileService.UploadImageAsync(request.Request.Image!, cancellationToken);
+                var imageResult = await fileService.UploadImageAsync(request.Request.Image!, true, cancellationToken);
                 if (imageResult.IsFailure)
                 {
                     await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);

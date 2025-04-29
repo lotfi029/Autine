@@ -28,7 +28,7 @@ public class GetBotsQueryHandler(
                 Id: b.Id,
                 Name: b.Name,
                 Bio: b.Bio,
-                Image: urlGenratorService.GetImageUrl(b.BotImage!)!,
+                Image: urlGenratorService.GetImageUrl(b.BotImage!, true)!,
                 Patients: botPatients?.ToList() ?? []
                 );
 

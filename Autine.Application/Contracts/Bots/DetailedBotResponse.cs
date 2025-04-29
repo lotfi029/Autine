@@ -5,6 +5,7 @@ public record DetailedBotResponse(
     string Name,
     string Bio,
     string Context,
+    string Image,
     DateTime CreateAt,
     IList<BotPatientsResponse> Patients
     );
