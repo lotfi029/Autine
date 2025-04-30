@@ -59,7 +59,9 @@ public class AccountService(
                 .SetProperty(e => e.LastName, request.LastName)
                 .SetProperty(e => e.Bio, request.Bio)
                 .SetProperty(e => e.City, request.City)
-                .SetProperty(e => e.Country, request.Country),
+                .SetProperty(e => e.Country, request.Country)
+                .SetProperty(e => e.Gender, request.Gender)
+                .SetProperty(e => e.DateOfBirth, request.DateOfBirth),
                 ct
             );
 

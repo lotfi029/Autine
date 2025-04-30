@@ -4,6 +4,8 @@ public record UpdatePatientRequest(
     string FirstName,
     string LastName,
     string Bio,
+    string Gender,
+    DateTime DateOfBirth,
     string? Country,
     string? City,
     DateTime NextSession,

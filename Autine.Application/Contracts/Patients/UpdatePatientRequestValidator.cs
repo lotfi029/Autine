@@ -47,5 +47,20 @@ public class UpdatePatientRequestValidator : AbstractValidator<UpdatePatientRequ
         RuleFor(e => e.LastSession)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
             .LessThanOrEqualTo(DateTime.Today).WithMessage("{PropertyName} must be a past date.");
+
+        RuleFor(e => e.Gender)
+            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+            .Must(g =>
+            {
+                if (g == null) return false;
+                var gender = g.ToLower();
+
+                return gender == "male" || g == "female";
+            })
+            .WithMessage("{PropertyName} must be Male, Female.");
+
+        RuleFor(e => e.DateOfBirth)
+            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+            .LessThan(DateTime.Today).WithMessage("{PropertyName} must be a past date.");
     }
 }

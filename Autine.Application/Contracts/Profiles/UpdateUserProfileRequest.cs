@@ -5,5 +5,7 @@ public record UpdateUserProfileRequest(
     string LastName,
     string Bio,
     string? Country,
-    string? City
+    string? City,
+    string Gender,
+    DateTime DateOfBirth
     );

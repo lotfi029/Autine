@@ -21,7 +21,9 @@ public class UpdatePatientCommandHandler(
             request.UpdateRequest.LastName,
             request.UpdateRequest.Bio,
             request.UpdateRequest.Country,
-            request.UpdateRequest.City
+            request.UpdateRequest.City,
+            request.UpdateRequest.Gender,
+            request.UpdateRequest.DateOfBirth
             );
 
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
