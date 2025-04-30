@@ -8,7 +8,6 @@ public record CreateSupervisorRequest(
     string Password,
     string Gender,
     string? Bio,
-    IFormFile? ProfilePic,
     string Country,
     string City,
     string SuperviorRole,

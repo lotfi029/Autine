@@ -26,7 +26,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             {
                 if (g == null) return false;
                 var gender = g.ToLower();
-                
+
                 return gender == "male" || g == "female";
             })
             .WithMessage("{PropertyName} must be Male, Female.");
@@ -47,7 +47,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
         RuleFor(e => e.Bio)
             .Must(e =>
             {
-                if (e == null) 
+                if (e == null)
                     return true;
 
                 if (1 <= e.Length && e.Length <= 2500)
@@ -57,9 +57,6 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             })
             .WithMessage(ValidationConstants.LengthErrorMesssage);
 
-        RuleFor(x => x.ProfilePic)
-            .Must(ValidImage)
-            .WithMessage("{PropertyName} allowed image .jpg, .jpeg, .png, .gif");
 
 
         RuleFor(e => e.Password)
@@ -70,26 +67,36 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
             .Matches(@"[\W_]").WithMessage("Password must contain at least one special character.");
     }
-    private bool ValidImage(IFormFile? image)
-    {
-        if (image == null)
-            return true;
-
-        const long maxSize = 5 * 1024 * 1024;
-        if (image.Length > maxSize)
-            return false;
-
-        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
-        if (!allowedExtensions.Contains(extension))
-            return false;
-
-        var allowedContentTypes = new[]
-        {
-            "image/jpeg",
-            "image/png",
-            "image/gif"
-        };
-        return allowedContentTypes.Contains(image.ContentType.ToLowerInvariant());
-    }
 }
+//public class DefaultValueInterCeptor : IValidatorInterceptor
+//{
+//    public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
+//    {
+//        var instance = commonContext.InstanceToValidate;
+//        if (instance is RegisterRequest request)
+//        {
+//            var newReq = request with
+//            {
+//                Bio = request.Bio ?? "not implemented",
+//                City = request.City ?? "not implemented",
+//                Country = request.Country ?? "not implemented"
+//            };
+
+
+//            var newContext = new ValidationContext<RegisterRequest>(
+//                newReq,
+//                commonContext.PropertyChain,
+//                commonContext.Selector);
+
+
+//            return newContext;
+//        }
+
+//        return commonContext;
+//    }
+//    public ValidationResult AfterAspNetValidation(ActionContext actionContext, IValidationContext validationContext, ValidationResult result)
+//    {
+//        return result;
+//    }
+
+//}

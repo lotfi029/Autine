@@ -8,7 +8,6 @@ public record PatientRequest(
     string Password,
     string Gender,
     string? Bio,
-    IFormFile? ProfilePic,
     string Country,
     string City,
     DateTime DateOfBirth,

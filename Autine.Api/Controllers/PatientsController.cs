@@ -17,7 +17,7 @@ namespace Autine.Api.Controllers;
 public class PatientsController(ISender sender) : ControllerBase
 {
     [HttpPost("")]
-    public async Task<IActionResult> AddPatient([FromForm] PatientRequest request, CancellationToken ct)
+    public async Task<IActionResult> AddPatient([FromBody] PatientRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var command = new AddPatientCommand(userId, request);

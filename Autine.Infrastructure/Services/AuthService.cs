@@ -10,8 +10,7 @@ public class AuthService(
     UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
     ApplicationDbContext context,
-    IJwtProvider jwtProvider, 
-    IFileService _fileService) : IAuthService
+    IJwtProvider jwtProvider) : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
@@ -75,15 +74,6 @@ public class AuthService(
         var user = request.Adapt<ApplicationUser>();
         user.EmailConfirmed = true;
         user.Bio ??= string.Empty;
-        if (request.ProfilePic is not null)
-        {
-            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, false, cancellationToken);
-
-            if (imagePath.IsFailure)
-                return imagePath.Error;
-
-            user.ProfilePicture = imagePath.Value;
-        }
         var result = await _userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)
@@ -125,11 +115,10 @@ public class AuthService(
             request.UserName,
             request.Password,
             request.Gender,
-            request.Bio,
-            request.ProfilePic,
+            request.DateOfBirth,
             request.Country,
             request.City,
-            request.DateOfBirth
+            request.Bio
             );
 
         var user = await RegisterValidationAsync(registerRequest,ct: cancellationToken);
@@ -275,15 +264,6 @@ public class AuthService(
         var user = request.Adapt<ApplicationUser>();
         user.EmailConfirmed = IsConfirmed;
         user.Bio ??= string.Empty;
-        if (request.ProfilePic is not null)
-        {
-            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, false, ct);
-
-            if (imagePath.IsFailure)
-                return imagePath.Error;
-
-            user.ProfilePicture = imagePath.Value;
-        }
         var result = await _userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)

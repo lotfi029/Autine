@@ -1,4 +1,5 @@
-﻿using Autine.Application.Mapster;
+﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.Mapster;
 using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;

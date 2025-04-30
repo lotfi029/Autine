@@ -20,7 +20,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromForm] RegisterRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
         var command = new RegisterCommand(request);
 
@@ -34,7 +34,7 @@ public class AuthsController(ISender _sender) : ControllerBase
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> SupervisorRegister([FromForm] CreateSupervisorRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SupervisorRegister([FromBody] CreateSupervisorRequest request, CancellationToken cancellationToken)
     {
         var command = new RegisterSupervisorCommand(request);
 

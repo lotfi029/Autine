@@ -19,11 +19,11 @@ public class AddPatientCommandHandler(
                 request.Request.UserName,
                 request.Request.Password,
                 request.Request.Gender,
-                request.Request.Bio,
-                request.Request.ProfilePic,
+                request.Request.DateOfBirth,
                 request.Request.Country,
                 request.Request.City,
-                request.Request.DateOfBirth);
+                request.Request.Bio
+                );
             var authResult = await authService.RegisterPatient(registerRequest, ct);
 
             if (authResult.IsFailure)

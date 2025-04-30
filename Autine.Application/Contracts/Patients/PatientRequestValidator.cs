@@ -73,11 +73,7 @@ public class PatientRequestValidator : AbstractValidator<PatientRequest>
             })
             .WithMessage(ValidationConstants.LengthErrorMesssage);
 
-        RuleFor(x => x.ProfilePic)
-            .Must(ValidImage)
-            .WithMessage("{PropertyName} allowed image .jpg, .jpeg, .png, .gif");
-
-
+        
         RuleFor(e => e.Password)
             .NotEmpty().WithMessage("Password is required.")
             .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
@@ -85,27 +81,5 @@ public class PatientRequestValidator : AbstractValidator<PatientRequest>
             .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter.")
             .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
             .Matches(@"[\W_]").WithMessage("Password must contain at least one special character.");
-    }
-    private bool ValidImage(IFormFile? image)
-    {
-        if (image == null)
-            return true;
-
-        const long maxSize = 5 * 1024 * 1024;
-        if (image.Length > maxSize)
-            return false;
-
-        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
-        if (!allowedExtensions.Contains(extension))
-            return false;
-
-        var allowedContentTypes = new[]
-        {
-            "image/jpeg",
-            "image/png",
-            "image/gif"
-        };
-        return allowedContentTypes.Contains(image.ContentType.ToLowerInvariant());
     }
 }

@@ -68,10 +68,7 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
             })
             .WithMessage("{PropertyName} must be doctor or parent");
 
-        RuleFor(x => x.ProfilePic)
-            .Must(BeValidImage)
-            .WithMessage("pal");
-
+        
 
         RuleFor(e => e.Password)
             .NotEmpty().WithMessage("Password is required.")
