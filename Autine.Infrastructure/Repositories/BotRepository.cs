@@ -1,6 +1,5 @@
 ﻿using Autine.Infrastructure.Persistence.DBCommands;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Autine.Infrastructure.Repositories;
 public class BotRepository(ApplicationDbContext context) : Repository<Bot>(context), IBotRepository

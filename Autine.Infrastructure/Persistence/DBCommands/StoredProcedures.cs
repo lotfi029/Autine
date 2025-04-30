@@ -87,82 +87,73 @@ public class StoredProcedures
             AS   
             BEGIN
                 SET NOCOUNT, XACT_ABORT ON;
-                BEGIN TRANSACTION;
-                                    
-                BEGIN TRY
+                
         
-                    DELETE tm
-                    FROM dbo.ThreadMessages AS tm
-                    INNER JOIN dbo.ThreadMembers AS m 
-                        ON tm.ThreadMemberId = m.Id
-                    INNER JOIN dbo.Patients AS p 
-                        ON m.ThreadId = p.Id
-                    WHERE p.CreatedBy = @SupervisorId;
+                DELETE tm
+                FROM dbo.ThreadMessages AS tm
+                INNER JOIN dbo.ThreadMembers AS m 
+                    ON tm.ThreadMemberId = m.Id
+                INNER JOIN dbo.Patients AS p 
+                    ON m.ThreadId = p.Id
+                WHERE p.CreatedBy = @SupervisorId;
 
         
-                    DELETE bm
-                    FROM dbo.BotMessages AS bm
-                    INNER JOIN dbo.BotPatients AS bp 
-                        ON bm.BotPatientId = bp.Id
-                    INNER JOIN dbo.Patients AS p2 
-                        ON bp.UserId = p2.PatientId
-                    WHERE p2.CreatedBy = @SupervisorId;
+                DELETE bm
+                FROM dbo.BotMessages AS bm
+                INNER JOIN dbo.BotPatients AS bp 
+                    ON bm.BotPatientId = bp.Id
+                INNER JOIN dbo.Patients AS p2 
+                    ON bp.UserId = p2.PatientId
+                WHERE p2.CreatedBy = @SupervisorId;
 
         
-                    ;WITH MsgsToDelete AS (
-                        SELECT tm.MessageId
-                        FROM dbo.ThreadMessages tm
-                        JOIN dbo.ThreadMembers m ON tm.ThreadMemberId = m.Id
-                        JOIN dbo.Patients p      ON m.ThreadId       = p.Id
-                        WHERE p.CreatedBy = @SupervisorId
+                ;WITH MsgsToDelete AS (
+                    SELECT tm.MessageId
+                    FROM dbo.ThreadMessages tm
+                    JOIN dbo.ThreadMembers m ON tm.ThreadMemberId = m.Id
+                    JOIN dbo.Patients p      ON m.ThreadId       = p.Id
+                    WHERE p.CreatedBy = @SupervisorId
 
-                        UNION ALL
+                    UNION ALL
 
-                        SELECT bm.MessageId
-                        FROM dbo.BotMessages bm
-                        JOIN dbo.BotPatients bp ON bm.BotPatientId = bp.Id
-                        JOIN dbo.Patients p2    ON bp.UserId        = p2.PatientId
-                        WHERE p2.CreatedBy = @SupervisorId
-                    )
-                    DELETE msg
-                    FROM dbo.Messages AS msg
-                    JOIN MsgsToDelete d ON msg.Id = d.MessageId;
-
-        
-                    DELETE mbr
-                    FROM dbo.ThreadMembers AS mbr
-                    WHERE mbr.CreatedBy = @SupervisorId;
+                    SELECT bm.MessageId
+                    FROM dbo.BotMessages bm
+                    JOIN dbo.BotPatients bp ON bm.BotPatientId = bp.Id
+                    JOIN dbo.Patients p2    ON bp.UserId        = p2.PatientId
+                    WHERE p2.CreatedBy = @SupervisorId
+                )
+                DELETE msg
+                FROM dbo.Messages AS msg
+                JOIN MsgsToDelete d ON msg.Id = d.MessageId;
 
         
-                    DELETE bp
-                    FROM dbo.BotPatients AS bp
-                    INNER JOIN dbo.Patients AS p3 
-                        ON bp.UserId = p3.PatientId
-                    WHERE p3.CreatedBy = @SupervisorId;
+                DELETE mbr
+                FROM dbo.ThreadMembers AS mbr
+                WHERE mbr.CreatedBy = @SupervisorId;
 
-                    DELETE b
-                    FROM dbo.Bots AS b
-                    WHERE b.CreatedBy = @SupervisorId;
+        
+                DELETE bp
+                FROM dbo.BotPatients AS bp
+                INNER JOIN dbo.Patients AS p3 
+                    ON bp.UserId = p3.PatientId
+                WHERE p3.CreatedBy = @SupervisorId;
 
-                    DELETE ur
-		            FROM dbo.AspNetUserRoles    AS ur
-		            INNER JOIN dbo.AspNetRoles   AS r  ON ur.RoleId = r.Id
-		            INNER JOIN dbo.Patients      AS p  ON ur.UserId = p.PatientId
-		            WHERE r.Name     = 'patient'
-		              AND p.CreatedBy = @SupervisorId;
+                DELETE b
+                FROM dbo.Bots AS b
+                WHERE b.CreatedBy = @SupervisorId;
+
+                DELETE ur
+		        FROM dbo.AspNetUserRoles    AS ur
+		        INNER JOIN dbo.AspNetRoles   AS r  ON ur.RoleId = r.Id
+		        INNER JOIN dbo.Patients      AS p  ON ur.UserId = p.PatientId
+		        WHERE r.Name     = 'patient'
+		            AND p.CreatedBy = @SupervisorId;
                     
-                    DELETE pat
-                    FROM dbo.Patients AS pat
-                    WHERE pat.CreatedBy = @SupervisorId;
+                DELETE pat
+                FROM dbo.Patients AS pat
+                WHERE pat.CreatedBy = @SupervisorId;
 
-                    COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                    IF XACT_STATE() <> 0
-                        ROLLBACK TRANSACTION;
-
-                    THROW;  
-                END CATCH
+                    
             END
             GO";
     }
@@ -182,50 +173,43 @@ public class StoredProcedures
             AS
             BEGIN
                 SET NOCOUNT, XACT_ABORT ON;
-                BEGIN TRANSACTION;
-                BEGIN TRY
+                
 		            
-                    DELETE bm
-		            from dbo.BotMessages as bm
-		            inner join dbo.BotPatients as bp
-			            on bp.Id = bm.BotPatientId
-		            where bp.UserId = @UserId
+                DELETE bm
+		        from dbo.BotMessages as bm
+		        inner join dbo.BotPatients as bp
+			        on bp.Id = bm.BotPatientId
+		        where bp.UserId = @UserId
 		
-		            DELETE msg
-		            from dbo.Messages as msg
-		            inner join BotMessages as bm
-			            on msg.Id = bm.MessageId
-		            inner join dbo.BotPatients as bp
-			            on bp.Id = bm.BotPatientId
-		            where bp.UserId = @UserId
+		        DELETE msg
+		        from dbo.Messages as msg
+		        inner join BotMessages as bm
+			        on msg.Id = bm.MessageId
+		        inner join dbo.BotPatients as bp
+			        on bp.Id = bm.BotPatientId
+		        where bp.UserId = @UserId
 
 
-		            DELETE bp
-		            from dbo.BotPatients as bp
-		            where bp.UserId = @UserId
+		        DELETE bp
+		        from dbo.BotPatients as bp
+		        where bp.UserId = @UserId
 
-                    DELETE FROM dbo.AspNetUserTokens 
-                    WHERE UserId = @UserId;
+                DELETE FROM dbo.AspNetUserTokens 
+                WHERE UserId = @UserId;
 
-                    DELETE FROM dbo.AspNetUserLogins 
-                    WHERE UserId = @UserId;
+                DELETE FROM dbo.AspNetUserLogins 
+                WHERE UserId = @UserId;
 
-                    DELETE FROM dbo.AspNetUserRoles  
-                    WHERE UserId = @UserId;
+                DELETE FROM dbo.AspNetUserRoles  
+                WHERE UserId = @UserId;
 
-                    DELETE FROM dbo.AspNetUserClaims 
-                    WHERE UserId = @UserId;
+                DELETE FROM dbo.AspNetUserClaims 
+                WHERE UserId = @UserId;
 
-                    DELETE FROM dbo.AspNetUsers      
-                    WHERE Id = @UserId;
+                DELETE FROM dbo.AspNetUsers      
+                WHERE Id = @UserId;
 
-                    COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                    IF XACT_STATE() <> 0
-                        ROLLBACK TRANSACTION;
-                    THROW;  -- re‐throw the original error
-                END CATCH
+                    
             END
             GO";
     }
@@ -244,52 +228,51 @@ public class StoredProcedures
             AS
             BEGIN
                 SET NOCOUNT, XACT_ABORT ON;
-                BEGIN TRANSACTION;
-                BEGIN TRY
 
-		            DELETE bm
-		            from dbo.BotMessages as bm
-		            inner join dbo.BotPatients as bp
-			            on bp.Id = bm.BotPatientId
-		            where bp.UserId = @PatientId;
+		        DELETE bm
+		        from dbo.BotMessages as bm
+		        inner join dbo.BotPatients as bp
+			        on bp.Id = bm.BotPatientId
+		        where bp.UserId = @PatientId;
 	
-		            DELETE msg
-		            from dbo.Messages as msg
-		            inner join BotMessages as bm
-			            on msg.Id = bm.MessageId
-		            inner join dbo.BotPatients as bp
-			            on bp.Id = bm.BotPatientId
-		            where bp.UserId = @PatientId;
+		        DELETE msg
+		        from dbo.Messages as msg
+		        inner join BotMessages as bm
+			        on msg.Id = bm.MessageId
+		        inner join dbo.BotPatients as bp
+			        on bp.Id = bm.BotPatientId
+		        where bp.UserId = @PatientId;
 
-		            DELETE bp
-		            from dbo.BotPatients as bp
-		            where bp.UserId = @PatientId;
+		        DELETE bp
+		        from dbo.BotPatients as bp
+		        where bp.UserId = @PatientId;
 
-		            DELETE p
-		            from dbo.Patients as p
-		            where p.PatientId = @PatientId;
+                DELETE mbr
+                FROM dbo.ThreadMembers AS mbr
+                inner join dbo.patients as p
+                    on p.id = mbr.threadid
+                where p.patientId = @patientId
 
-                    DELETE FROM dbo.AspNetUserTokens 
-                    WHERE UserId = @PatientId;
 
-                    DELETE FROM dbo.AspNetUserLogins 
-                    WHERE UserId = @PatientId;
+		        DELETE p
+		        from dbo.Patients as p
+		        where p.PatientId = @PatientId;
 
-                    DELETE FROM dbo.AspNetUserRoles  
-                    WHERE UserId = @PatientId;
+                DELETE FROM dbo.AspNetUserTokens 
+                WHERE UserId = @PatientId;
 
-                    DELETE FROM dbo.AspNetUserClaims 
-                    WHERE UserId = @PatientId;
+                DELETE FROM dbo.AspNetUserLogins 
+                WHERE UserId = @PatientId;
 
-                    DELETE FROM dbo.AspNetUsers      
-                    WHERE Id = @PatientId;
-                  COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                    IF XACT_STATE() <> 0
-                        ROLLBACK TRANSACTION;
-                    THROW;  -- re‐throw the original error
-                END CATCH
+                DELETE FROM dbo.AspNetUserRoles  
+                WHERE UserId = @PatientId;
+
+                DELETE FROM dbo.AspNetUserClaims 
+                WHERE UserId = @PatientId;
+
+                DELETE FROM dbo.AspNetUsers      
+                WHERE Id = @PatientId;
+                
             END
             GO";
     }
@@ -308,51 +291,43 @@ public class StoredProcedures
             AS
             BEGIN
                 SET NOCOUNT, XACT_ABORT ON;
-                BEGIN TRANSACTION;
-                BEGIN TRY
+                
 		
-		            DELETE bm
-		            from dbo.BotMessages as bm
-		            inner join dbo.BotPatients as bp on bm.BotPatientId = bp.Id
-		            inner join dbo.Bots as b on b.Id = bp.BotId
-		            where b.CreatedBy = @AdminId
+		        DELETE bm
+		        from dbo.BotMessages as bm
+		        inner join dbo.BotPatients as bp on bm.BotPatientId = bp.Id
+		        inner join dbo.Bots as b on b.Id = bp.BotId
+		        where b.CreatedBy = @AdminId
 
-		            ;WITH MsgsToDelete AS (
-                        SELECT bm.MessageId
-                        FROM dbo.BotMessages bm
-                        JOIN dbo.BotPatients bp ON bm.BotPatientId = bp.Id
-                        JOIN dbo.Patients p2    ON bp.UserId        = p2.PatientId
-                        WHERE p2.CreatedBy = @AdminId
-                    )
-                    DELETE msg
-                    FROM dbo.Messages AS msg
-                    JOIN MsgsToDelete d ON msg.Id = d.MessageId;
+		        ;WITH MsgsToDelete AS (
+                    SELECT bm.MessageId
+                    FROM dbo.BotMessages bm
+                    JOIN dbo.BotPatients bp ON bm.BotPatientId = bp.Id
+                    JOIN dbo.Patients p2    ON bp.UserId        = p2.PatientId
+                    WHERE p2.CreatedBy = @AdminId
+                )
+                DELETE msg
+                FROM dbo.Messages AS msg
+                JOIN MsgsToDelete d ON msg.Id = d.MessageId;
 
-		            DELETE b
-		            from dbo.Bots as b
-		            where b.CreatedBy = @AdminId
+		        DELETE b
+		        from dbo.Bots as b
+		        where b.CreatedBy = @AdminId
 
-                    DELETE FROM dbo.AspNetUserTokens 
-                    WHERE UserId = @AdminId;
+                DELETE FROM dbo.AspNetUserTokens 
+                WHERE UserId = @AdminId;
 
-                    DELETE FROM dbo.AspNetUserLogins 
-                    WHERE UserId = @AdminId;
+                DELETE FROM dbo.AspNetUserLogins 
+                WHERE UserId = @AdminId;
 
-                    DELETE FROM dbo.AspNetUserRoles  
-                    WHERE UserId = @AdminId;
+                DELETE FROM dbo.AspNetUserRoles  
+                WHERE UserId = @AdminId;
 
-                    DELETE FROM dbo.AspNetUserClaims 
-                    WHERE UserId = @AdminId;
+                DELETE FROM dbo.AspNetUserClaims 
+                WHERE UserId = @AdminId;
 
-                    DELETE FROM dbo.AspNetUsers      
-                    WHERE Id = @AdminId;
-                  COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                    IF XACT_STATE() <> 0
-                        ROLLBACK TRANSACTION;
-                    THROW;  -- re‐throw the original error
-                END CATCH
+                DELETE FROM dbo.AspNetUsers      
+                WHERE Id = @AdminId;
             END
             GO";
     }

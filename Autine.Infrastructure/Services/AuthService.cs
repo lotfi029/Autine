@@ -66,7 +66,43 @@ public class AuthService(
             ? response.Error
             : response.Value;
     }
-    
+    public async Task<Result<string>> RegisterAdminAsync(RegisterRequest request, CancellationToken cancellationToken = default)
+    {
+
+        if (await _context.Users.AnyAsync(e => e.Email == request.Email || e.UserName == request.UserName, cancellationToken))
+            return UserErrors.DuplicatedEmail;
+
+        var user = request.Adapt<ApplicationUser>();
+        user.EmailConfirmed = true;
+        user.Bio ??= string.Empty;
+        if (request.ProfilePic is not null)
+        {
+            var imagePath = await _fileService.UploadImageAsync(request.ProfilePic!, false, cancellationToken);
+
+            if (imagePath.IsFailure)
+                return imagePath.Error;
+
+            user.ProfilePicture = imagePath.Value;
+        }
+        var result = await _userManager.CreateAsync(user, request.Password);
+
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+
+            return Error.BadRequest(error.Code, error.Description);
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(user, DefaultRoles.Admin.Name);
+        if (!roleResult.Succeeded)
+        {
+            var error = result.Errors.First();
+
+            return Error.BadRequest(error.Code, error.Description);
+        }
+
+        return Result.Success(user.Id);
+    }
     public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
         var user = await RegisterValidationAsync(request, ct: cancellationToken);
@@ -82,7 +118,19 @@ public class AuthService(
     public async Task<Result<RegisterResponse>> RegisterSupervisorAsync(CreateSupervisorRequest request, CancellationToken cancellationToken = default)
     {
 
-        var registerRequest = request.Adapt<RegisterRequest>();
+        var registerRequest = new RegisterRequest(
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.UserName,
+            request.Password,
+            request.Gender,
+            request.Bio,
+            request.ProfilePic,
+            request.Country,
+            request.City,
+            request.DateOfBirth
+            );
 
         var user = await RegisterValidationAsync(registerRequest,ct: cancellationToken);
 
@@ -125,6 +173,9 @@ public class AuthService(
     {
         if (await _userManager.FindByIdAsync(request.UserId) is not { } user)
             return UserErrors.InvalidCode;
+
+        if (user.EmailConfirmed)
+            return UserErrors.EmailConfirmed;
 
         var code = request.Code;
         IdentityResult result;

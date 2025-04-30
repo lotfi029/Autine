@@ -1,2 +1,4 @@
-﻿namespace Autine.Application.Features.Patients.Commads.Add;
-public record AddPatientCommand(string UserId, RegisterRequest Request) : ICommand<string>;
+﻿using Autine.Application.Contracts.Patients;
+
+namespace Autine.Application.Features.Patients.Commads.Add;
+public record AddPatientCommand(string UserId, PatientRequest Request) : ICommand<string>;

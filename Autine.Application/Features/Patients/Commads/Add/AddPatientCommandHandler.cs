@@ -1,4 +1,7 @@
-﻿namespace Autine.Application.Features.Patients.Commads.Add;
+﻿using Autine.Application.Contracts.Auths;
+using Microsoft.AspNetCore.Server.HttpSys;
+
+namespace Autine.Application.Features.Patients.Commads.Add;
 public class AddPatientCommandHandler(
     IUnitOfWork unitOfWork, 
     IAuthService authService, 
@@ -9,7 +12,19 @@ public class AddPatientCommandHandler(
         var transaction = await unitOfWork.BeginTransactionAsync(ct);
         try
         {
-            var authResult = await authService.RegisterPatient(request.Request, ct);
+            var registerRequest = new RegisterRequest(
+                request.Request.FirstName,
+                request.Request.LastName,
+                request.Request.Email,
+                request.Request.UserName,
+                request.Request.Password,
+                request.Request.Gender,
+                request.Request.Bio,
+                request.Request.ProfilePic,
+                request.Request.Country,
+                request.Request.City,
+                request.Request.DateOfBirth);
+            var authResult = await authService.RegisterPatient(registerRequest, ct);
 
             if (authResult.IsFailure)
             {
@@ -18,11 +33,17 @@ public class AddPatientCommandHandler(
             }
             string userPatientId = authResult.Value;
 
-
+            var age = (DateTime.Today - request.Request.DateOfBirth).Days;
             var patient = new Patient()
             {
                 IsSupervised = true,
                 PatientId = authResult.Value,
+                Diagnosis = request.Request.Diagnosis,
+                Status = request.Request.Status,
+                Notes = request.Request.Notes,
+                NextSession = request.Request.NextSession,
+                LastSession = request.Request.LastSession,
+                Age = age / 365,
                 ThreadTitle = $"{request.Request.FirstName} {request.Request.LastName}"
             };
             await unitOfWork.Patients.AddAsync(patient, ct);
@@ -62,6 +83,3 @@ public class AddPatientCommandHandler(
         }
     }
 }
-// d90f0c57-4f7f-460b-9ff7-d2d866f7d028
-// 2bd69410-3540-4512-a9d1-e3d675675096
-// 724993ca-b9ad-4582-be2e-0bfe4aea5b7a

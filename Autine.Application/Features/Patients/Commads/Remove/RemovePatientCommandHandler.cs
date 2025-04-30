@@ -6,33 +6,33 @@ public class RemovePatientCommandHandler(
 {
     public async Task<Result> Handle(RemovePatientCommand request, CancellationToken cancellationToken)
     {
-        if (await unitOfWork.Patients.FindByIdAsync(cancellationToken, [request.Id]) is not { } patient)
-            return PatientErrors.PatientsNotFound;
-
-        if (patient.CreatedBy != request.UserId)
+        if (await unitOfWork.Patients.GetAsync(e => e.PatientId == request.Id && e.CreatedBy == request.UserId && e.IsSupervised, ct: cancellationToken) is not { } patient)
             return PatientErrors.PatientsNotFound;
 
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+
         try
         {
-            await unitOfWork.Patients.DeletePatientAsync(request.Id, cancellationToken);
+            var deleteResult = await userService.DeleteUserAsync(patient.PatientId, cancellationToken, transaction);
+            if (deleteResult.IsFailure)
+            {
+                await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
+                return deleteResult;
+            }
 
-            await userService.DeleteUserAsync(patient.PatientId, cancellationToken);
-        
-            
-            var aiResult = await aIAuthService.RemovePatientAsync(request.UserId, patient.PatientId, cancellationToken);
-
+            var aiResult = await aIAuthService.RemovePatientAsync(request.UserId, request.Id, cancellationToken);
             if (aiResult.IsFailure)
             {
                 await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
                 return aiResult;
             }
-            // TODO: log error
+
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
             return Result.Success();
         }
         catch
         {
+            // TODO: log error
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.BadRequest("Error", "An error occurred while removing the patient.");
         }

@@ -5,15 +5,3 @@ public record UserResponse(
     string LastName,
     string ProfilePic
     );
-
-
-public record DetailedUserResponse(
-    string Id,
-    string FirstName,
-    string LastName,
-    string UserName,
-    string Bio,
-    string Gender,
-    string ProfilePic,
-    IList<string> Roles
-    );

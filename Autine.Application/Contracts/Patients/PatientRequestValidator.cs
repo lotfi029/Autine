@@ -1,8 +1,8 @@
-﻿namespace Autine.Application.Contracts.Auths;
+﻿namespace Autine.Application.Contracts.Patients;
 
-public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervisorRequest>
+public class PatientRequestValidator : AbstractValidator<PatientRequest>
 {
-    public CreateSupervisorRequestValidator()
+    public PatientRequestValidator()
     {
         RuleFor(e => e.FirstName)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
@@ -15,10 +15,18 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
         RuleFor(e => e.City)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
             .Length(ValidationConstants.MinLength, ValidationConstants.MaxLength).WithMessage(ValidationConstants.LengthErrorMesssage);
-
-        RuleFor(e => e.Country)
+        
+        RuleFor(e => e.Status)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
             .Length(ValidationConstants.MinLength, ValidationConstants.MaxLength).WithMessage(ValidationConstants.LengthErrorMesssage);
+        
+        RuleFor(e => e.Diagnosis)
+            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+            .Length(ValidationConstants.MinLength, ValidationConstants.MaxLength).WithMessage(ValidationConstants.LengthErrorMesssage);
+
+        RuleFor(e => e.Notes)
+            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+            .Length(3, 10000).WithMessage(ValidationConstants.LengthErrorMesssage);
 
         RuleFor(e => e.Gender)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
@@ -34,6 +42,14 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
         RuleFor(e => e.DateOfBirth)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
             .LessThan(DateTime.Today).WithMessage("{PropertyName} must be a past date.");
+
+        RuleFor(e => e.NextSession)
+            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+            .GreaterThanOrEqualTo(DateTime.Today).WithMessage("{PropertyName} must be a greater than today.");
+
+        RuleFor(e => e.LastSession)
+            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+            .LessThanOrEqualTo(DateTime.Today).WithMessage("{PropertyName} must be a past date.");
 
         RuleFor(e => e.Email)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
@@ -57,20 +73,9 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
             })
             .WithMessage(ValidationConstants.LengthErrorMesssage);
 
-        RuleFor(e => e.SuperviorRole)
-            .NotEmpty().WithMessage("{PropertyName} is required.")
-            .Must(e =>
-            {
-                if (e == null) return false;
-                var role = e.ToLower();
-
-                return role == "doctor" || role == "parent";
-            })
-            .WithMessage("{PropertyName} must be doctor or parent");
-
         RuleFor(x => x.ProfilePic)
-            .Must(BeValidImage)
-            .WithMessage("pal");
+            .Must(ValidImage)
+            .WithMessage("{PropertyName} allowed image .jpg, .jpeg, .png, .gif");
 
 
         RuleFor(e => e.Password)
@@ -81,18 +86,17 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
             .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
             .Matches(@"[\W_]").WithMessage("Password must contain at least one special character.");
     }
-    private static bool BeValidImage(IFormFile? file)
+    private bool ValidImage(IFormFile? image)
     {
-        if (file == null)
+        if (image == null)
             return true;
 
-     
         const long maxSize = 5 * 1024 * 1024;
-        if (file.Length > maxSize)
+        if (image.Length > maxSize)
             return false;
 
         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
         if (!allowedExtensions.Contains(extension))
             return false;
 
@@ -102,7 +106,6 @@ public class CreateSupervisorRequestValidator : AbstractValidator<CreateSupervis
             "image/png",
             "image/gif"
         };
-        return allowedContentTypes.Contains(file.ContentType.ToLowerInvariant());
+        return allowedContentTypes.Contains(image.ContentType.ToLowerInvariant());
     }
 }
-

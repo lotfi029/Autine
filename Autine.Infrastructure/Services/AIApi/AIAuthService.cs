@@ -2,6 +2,7 @@
 using Autine.Application.ExternalContracts.Auth;
 using Autine.Application.Interfaces.AIApi;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic;
 
 namespace Autine.Infrastructure.Services.AIApi;
 public class AIAuthService(
@@ -29,6 +30,16 @@ public class AIAuthService(
                 $"{_apiSetting.AIApi}/auth/supervisor/user/add?username={username}&session_id={1}",
                 Data: request
         ), ct);
+
+    public async Task<Result> AdminAddAdmin(string admin_username, AIRegisterRequest request, CancellationToken ct = default)
+        => await baseService.SendAsync(
+            new Request(
+                $"{_apiSetting.AIApi}/admin/add/admin?{nameof(admin_username)}={admin_username}&session_id={1}",
+                Data: request
+                ),
+            ct
+            );
+
     public async Task<Result> UpdateUserAsync(string username, AIUpdateRequest request, string password, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request(
@@ -54,10 +65,10 @@ public class AIAuthService(
                 Data: request
         ), ct);
     }
-    public async Task<Result> RemovePatientAsync(string username, string user_username, CancellationToken ct = default)
+    public async Task<Result> RemovePatientAsync(string suepervisor_username, string user_username, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request(
-                $"{_apiSetting.AIApi}/auth/supervisor/user/delete?username={username}&user_username={user_username}&session_id=1",
+                $"{_apiSetting.AIApi}/auth/supervisor/user/delete?username={suepervisor_username}&user_username={user_username}&session_id=1",
                 ApiMethod.Delete
         ), ct);
 

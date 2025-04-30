@@ -8,5 +8,6 @@ public record SupervisorsResponse(
     string Email,
     string Gender,
     string Role,
+    string Image,
     bool IsSupervised
     );

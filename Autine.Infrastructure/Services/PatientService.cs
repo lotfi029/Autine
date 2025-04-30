@@ -1,5 +1,6 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
+using static Azure.Core.HttpHeader;
 
 namespace Autine.Infrastructure.Services;
 
@@ -31,7 +32,14 @@ public class PatientService(
             u.Country!,
             u.City!,
             t.CreatedAt,
-            urlGenratorService.GetImageUrl(u.ProfilePicture, true)!
+            urlGenratorService.GetImageUrl(u.ProfilePicture, true)!,
+             t.Age,
+            t.Diagnosis,
+            t.LastSession,
+            t.NextSession,
+            t.Status,
+            t.Notes,
+            t.SessionFrequency
             )).ToListAsync(cancellationToken: ct);
 
         if (query is null)
@@ -57,7 +65,14 @@ public class PatientService(
                     u.Country!,
                     u.City!,
                     t.CreatedAt,
-                    urlGenratorService.GetImageUrl(u.ProfilePicture, false)!
+                    urlGenratorService.GetImageUrl(u.ProfilePicture, false)!,
+                    t.Age,
+                    t.Diagnosis,
+                    t.LastSession,
+                    t.NextSession,
+                    t.Status,
+                    t.Notes,
+                    t.SessionFrequency
             ))
             .SingleOrDefaultAsync(ct);
 

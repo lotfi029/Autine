@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Contracts.Auth;
+﻿namespace Autine.Application.Contracts.Auths;
 public record RegisterRequest (
     string FirstName,
     string LastName,
@@ -8,8 +8,8 @@ public record RegisterRequest (
     string Gender,
     string? Bio, 
     IFormFile? ProfilePic, 
-    string Country,
-    string City,
+    string? Country,
+    string? City,
     DateTime DateOfBirth
 );
 

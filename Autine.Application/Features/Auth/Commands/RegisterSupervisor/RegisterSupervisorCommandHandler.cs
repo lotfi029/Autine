@@ -39,6 +39,7 @@ public class RegisterSupervisorCommandHandler(
         }
         catch
         {
+            // TODO: log error
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.InternalServerError("Error", "An error occure while register user.");
         }

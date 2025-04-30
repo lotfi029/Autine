@@ -108,8 +108,8 @@ public class CreateBotCommandHanlder(
                 }
 
                 await unitOfWork.BotPatients.AddRangeAsync(botPatient, cancellationToken);
-                await unitOfWork.CommitChangesAsync(cancellationToken);
             }
+            await unitOfWork.CommitChangesAsync(cancellationToken);
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
             return Result.Success(modelId);
         }

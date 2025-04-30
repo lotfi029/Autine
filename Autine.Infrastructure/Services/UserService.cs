@@ -1,73 +1,100 @@
 ﻿using Autine.Application.Contracts.Users;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
 using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,
-    IRoleService roleService,
+    UserManager<ApplicationUser> userManager,
     IFileService fileService,
     IUrlGenratorService urlGenratorService) : IUserService
 {
     public async Task<bool> CheckUserExist(string userId, CancellationToken ct = default)
         => await context.Users.AnyAsync(e => e.Id == userId, ct);
 
-
-    public async Task<Result<string>> DeleteUserAsync(string userId, CancellationToken ct = default)
+    
+    public async Task<Result<string>> DeleteUserAsync(string userId, CancellationToken ct = default, IDbContextTransaction? existingTransaction = null)
     {
-        var userRole = await roleService.GetUserRoleAsync(userId);
-
-        if (userRole.IsFailure)
+        if (await context.Users.FindAsync([userId], ct) is not { } user)
             return UserErrors.UserNotFound;
 
+        var userRole = await userManager.GetRolesAsync(user);
+        
         var image = await context.Users
             .Where(e => e.Id == userId)
             .Select(e => e.ProfilePicture)
             .SingleOrDefaultAsync(ct);
 
+        
+        var useLocalTransaction = existingTransaction == null;
+        var transaction = existingTransaction ?? await context.Database.BeginTransactionAsync(ct);
 
-        try 
+        try
         {
-            if (userRole.Value.Equals(DefaultRoles.Admin.Name))
+            if (userRole.Contains(DefaultRoles.Admin.Name, StringComparer.OrdinalIgnoreCase))
             {
                 await context.Database.ExecuteSqlRawAsync(
                     AdminSPs.DeleteAdminWithRelationCall,
                     [AdminSPs.DeleteAdminWithRelationParamter(userId)],
                     ct
-                    );
+                );
 
-                return Result.Success(userRole.Value);
+                if (useLocalTransaction)
+                    await transaction.CommitAsync(ct);
+
+                return Result.Success(DefaultRoles.Admin.Name);
             }
-            if (userRole.Value.Equals("supervisor"))
+
+            var role = string.Empty;
+            if (userRole.Contains("supervisor", StringComparer.OrdinalIgnoreCase))
+            {
                 await context.Database.ExecuteSqlRawAsync(
                     SupervisorSPs.DeleteSupervisorRelationsCall,
                     [SupervisorSPs.DeleteSupervisorRelationsParamter(userId)],
                     ct
-                    );
-
-            else if (userRole.Value.Equals(DefaultRoles.Patient.Name))
+                );
+                role = "supervisor";
+            }
+            else if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
+            {
                 await context.Database.ExecuteSqlRawAsync(
-                    AdminSPs.DeleteAdminWithRelationCall,
-                    [AdminSPs.DeleteAdminWithRelationParamter(userId)],
+                    PatientSPs.DeletePatientWithRelationCall,
+                    [PatientSPs.DeletePatientWithRelationParamter(userId)],
                     ct
-                    );
+                );
+                role = "patient";
+            }
 
-            await context.Database.ExecuteSqlRawAsync(
+            if (role != "patient")
+            {
+                await context.Database.ExecuteSqlRawAsync(
                     UserSPs.DeleteUserWithRelationCall,
                     [UserSPs.DeleteUserWithRelationParamter(userId)],
                     ct
-                    );
+                );
+                role = role == string.Empty ? "user" : role;
+            }
+            
+            await fileService.DeleteImageAsync(image!, false);
 
-            await fileService.DeleteImageAsync(image!,false);
+    
+            if (useLocalTransaction)
+                await transaction.CommitAsync(ct);
 
-            return Result.Success(userRole.Value);
+            return Result.Success(role);
         }
         catch
         {
-            // TODO: log error
+    
+            if (useLocalTransaction)
+                await transaction.RollbackAsync(ct);
+
+    
             return Error.BadRequest("Error.DeleteUser", "error occure while deleting user.");
         }
     }
-    
+
 
     public async Task<Result<DetailedUserResponse>> GetAsync(string id, CancellationToken ct = default)
     {
@@ -77,7 +104,7 @@ public class UserService(
             on u.Id equals ur.UserId
             join r in context.Roles
             on ur.RoleId equals r.Id into rls
-            where u.Id == id
+            where u.Id == id && u.Id != "019409bf-3ae7-7cdf-995b-db4620f2ff5f"
             select new
             {
                 u.Id,
@@ -109,13 +136,14 @@ public class UserService(
 
         return Result.Success(response);
     }
-    public async Task<IEnumerable<UserResponse>> GetAllAsync(string roleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<UserResponse>> GetAllAsync(string userId, string? roleId, CancellationToken cancellationToken = default)
     {
         var response = await (
         from u in context.Users
         join ur in context.UserRoles
         on u.Id equals ur.UserId
-        where ur.RoleId == roleId
+        where u.Id != userId && u.Id != "019409bf-3ae7-7cdf-995b-db4620f2ff5f"
+        where ur.RoleId == roleId || roleId == null
         select new
         {
             u.Id,

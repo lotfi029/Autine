@@ -1,4 +1,4 @@
-﻿using Autine.Application.Contracts.Profiles;
+﻿using Autine.Application.Contracts.Patients;
 
 namespace Autine.Application.Features.Patients.Commads.Update;
-public record UpdatePatientCommand(string UserId, Guid PatientId, UpdateUserProfileRequest UpdateRequest) : ICommand;
+public record UpdatePatientCommand(string UserId, string PatientId, UpdatePatientRequest UpdateRequest) : ICommand;

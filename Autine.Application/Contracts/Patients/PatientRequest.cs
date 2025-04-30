@@ -1,20 +1,20 @@
 ﻿namespace Autine.Application.Contracts.Patients;
-public record PatientResponse (
-    string Id,
+
+public record PatientRequest(
     string FirstName,
     string LastName,
+    string Email,
     string UserName,
-    DateTime BirthOfDate,
+    string Password,
     string Gender,
+    string? Bio,
+    IFormFile? ProfilePic,
     string Country,
     string City,
-    DateTime CreatedAt,
-    string Image,
-    int Age, 
-    string Diagnosis,
-    DateTime LastSession,
+    DateTime DateOfBirth,
     DateTime NextSession,
+    DateTime LastSession,
     string Status,
     string Notes,
-    string SessionFrequency
+    string Diagnosis
     );

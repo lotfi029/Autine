@@ -19,6 +19,17 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
         builder.Property(e => e.IsSupervised)
             .HasDefaultValue(false);
 
+        builder.Property(e => e.Notes)
+            .HasMaxLength(10000);
+
+        builder.Property(e => e.Status)
+            .HasMaxLength(100);
+
+        builder.Property(e => e.SessionFrequency)
+            .HasMaxLength(100);
+        
+        builder.Property(e => e.Diagnosis)
+            .HasMaxLength(100);
 
         builder.HasIndex(p => new { p.PatientId, p.CreatedBy })
             .IsUnique();
