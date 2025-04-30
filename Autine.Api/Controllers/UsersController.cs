@@ -52,17 +52,17 @@ public class UsersController(ISender sender) : ControllerBase
                 )
             : result.ToProblem();
     }
-    //[HttpDelete("{id:guid}/delete-user")]
-    //public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken ct)
-    //{
-    //    var userId = User.GetUserId()!;
+    [HttpDelete("{id:guid}/delete-user")]
+    public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
 
-    //    var query = new DeleteUserByIdCommand(userId, id);
-    //    var result = await sender.Send(query, ct);
+        var query = new DeleteUserByIdCommand(userId, id);
+        var result = await sender.Send(query, ct);
 
-    //    return result.IsSuccess
-    //        ? NoContent()
-    //        : result.ToProblem();
-    //}
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
+    }
 
 }

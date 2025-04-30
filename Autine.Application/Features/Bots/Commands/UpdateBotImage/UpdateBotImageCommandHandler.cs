@@ -12,8 +12,7 @@ public class UpdateBotImageCommandHandler(
 
         try
         {
-            if (!string.IsNullOrEmpty(bot.BotImage))
-            {
+            
                 var result = await fileService.UpdateImageAsync(bot.BotImage, request.Image, true, cancellationToken);
                 
                 if (result.IsFailure)
@@ -24,7 +23,7 @@ public class UpdateBotImageCommandHandler(
                     e => e.Id == request.BotId, 
                     setter => setter.SetProperty(e => e.BotImage, result.Value),
                     cancellationToken);
-            }
+            
             return Result.Success();
         }
         catch

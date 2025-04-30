@@ -40,10 +40,25 @@ public class UserService(
                     ct
                 );
 
+                await fileService.DeleteImageAsync(image!, false);
                 if (useLocalTransaction)
                     await transaction.CommitAsync(ct);
 
-                return Result.Success(DefaultRoles.Admin.Name);
+                return DefaultRoles.Admin.Name;
+            }
+            if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                await context.Database.ExecuteSqlRawAsync(
+                    PatientSPs.DeletePatientWithRelationCall,
+                    [PatientSPs.DeletePatientWithRelationParamter(userId)],
+                    ct
+                );
+
+                await fileService.DeleteImageAsync(image!, false);
+                if (useLocalTransaction)
+                    await transaction.CommitAsync(ct);
+
+                return DefaultRoles.User.Name;
             }
 
             var role = string.Empty;
@@ -56,29 +71,16 @@ public class UserService(
                 );
                 role = "supervisor";
             }
-            else if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                await context.Database.ExecuteSqlRawAsync(
-                    PatientSPs.DeletePatientWithRelationCall,
-                    [PatientSPs.DeletePatientWithRelationParamter(userId)],
-                    ct
-                );
-                role = "patient";
-            }
 
-            if (role != "patient")
-            {
-                await context.Database.ExecuteSqlRawAsync(
-                    UserSPs.DeleteUserWithRelationCall,
-                    [UserSPs.DeleteUserWithRelationParamter(userId)],
-                    ct
-                );
-                role = role == string.Empty ? "user" : role;
-            }
+            await context.Database.ExecuteSqlRawAsync(
+                UserSPs.DeleteUserWithRelationCall,
+                [UserSPs.DeleteUserWithRelationParamter(userId)],
+                ct
+            );
+            role = role == string.Empty ? "user" : role;
             
             await fileService.DeleteImageAsync(image!, false);
 
-    
             if (useLocalTransaction)
                 await transaction.CommitAsync(ct);
 
@@ -90,11 +92,9 @@ public class UserService(
             if (useLocalTransaction)
                 await transaction.RollbackAsync(ct);
 
-    
             return Error.BadRequest("Error.DeleteUser", "error occure while deleting user.");
         }
     }
-
 
     public async Task<Result<DetailedUserResponse>> GetAsync(string id, CancellationToken ct = default)
     {

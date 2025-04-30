@@ -49,7 +49,7 @@ public class BotsController(ISender sender) : ControllerBase
     [HttpPut("{id:guid}/change-bot-image")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateBotImage([FromRoute] Guid id, [FromBody] ImageRequest request, CancellationToken ct = default)
+    public async Task<IActionResult> UpdateBotImage([FromRoute] Guid id, [FromForm] ImageRequest request, CancellationToken ct = default)
     {
         var userId = User.GetUserId()!;
 

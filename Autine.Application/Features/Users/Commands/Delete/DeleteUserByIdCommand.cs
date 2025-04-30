@@ -8,7 +8,7 @@ public class DeleteUserByIdCommandHandler(IUserService userService, IAIAuthServi
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var serverResult = await userService.DeleteUserAsync(request.UserId, cancellationToken);
+            var serverResult = await userService.DeleteUserAsync(request.UserId, ct: cancellationToken, transaction);
 
             if (serverResult.IsFailure)
             {
