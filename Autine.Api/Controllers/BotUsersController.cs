@@ -20,7 +20,7 @@ public class BotUsersController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SendMessage(
         [FromRoute] Guid botId,
-        [FromBody] MessageRequest request,
+        [FromBody] BotMessageRequest request,
         CancellationToken cancellationToken)
     {
         string userId = User.GetUserId()!;

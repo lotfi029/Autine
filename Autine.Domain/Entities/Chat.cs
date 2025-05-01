@@ -1,13 +1,10 @@
-﻿namespace Autine.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
-public class Chat
+namespace Autine.Domain.Entities;
+
+public class Chat : AuditableEntity
 {
-    public int Id { get; set; }
-
-    //fk to user
-    public string UserId { get; set; } = string.Empty;
-    public User ApplicationUser { get; set; } = null!;
-
-    public ICollection<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
-
+    public string UserIdOne { get; set; } = string.Empty;
+    public string UserIdTwo {  get; set; } = string.Empty;
+    public ICollection<Message> Messages { get; set; } = [];
 }

@@ -34,7 +34,7 @@ public class DeleteUserByIdCommandHandler(IUserService userService, IAIAuthServi
         }
         catch
         {
-
+            // TODO: log error
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.BadRequest("Error.DeleteUser", "error occure while deleting user");
         }

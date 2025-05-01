@@ -4,5 +4,5 @@ public record MessageResponse(
     string Content,
     DateTime Timestamp,
     MessageStatus Status,
-    bool IsBot
+    bool Direction
     );

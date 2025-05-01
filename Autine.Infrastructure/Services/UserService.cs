@@ -1,8 +1,7 @@
 ﻿using Autine.Application.Contracts.Users;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Data.Common;
 using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
-
+using static Autine.Infrastructure.Identity.Consts.DefaultRoles;
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,
@@ -32,7 +31,7 @@ public class UserService(
 
         try
         {
-            if (userRole.Contains(DefaultRoles.Admin.Name, StringComparer.OrdinalIgnoreCase))
+            if (userRole.Contains(Admin.Name, StringComparer.OrdinalIgnoreCase))
             {
                 await context.Database.ExecuteSqlRawAsync(
                     AdminSPs.DeleteAdminWithRelationCall,
@@ -44,7 +43,7 @@ public class UserService(
                 if (useLocalTransaction)
                     await transaction.CommitAsync(ct);
 
-                return DefaultRoles.Admin.Name;
+                return Admin.Name;
             }
             if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
             {
@@ -88,7 +87,7 @@ public class UserService(
         }
         catch
         {
-    
+            // TODO: log error
             if (useLocalTransaction)
                 await transaction.RollbackAsync(ct);
 

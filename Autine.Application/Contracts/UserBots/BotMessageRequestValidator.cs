@@ -1,7 +1,7 @@
 ﻿namespace Autine.Application.Contracts.UserBots;
-public class MessageRequestValidator : AbstractValidator<MessageRequest>
+public class BotMessageRequestValidator : AbstractValidator<BotMessageRequest>
 {
-    public MessageRequestValidator()
+    public BotMessageRequestValidator()
     {
         RuleFor(e => e.Content)
             .NotEmpty();
