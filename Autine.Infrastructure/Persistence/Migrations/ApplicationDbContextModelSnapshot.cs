@@ -132,29 +132,29 @@ namespace Autine.Infrastructure.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserIdOne")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserIdTwo")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserIdOne");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("UserIdTwo");
+                    b.HasIndex("UserId", "CreatedBy")
+                        .IsUnique();
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chats");
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BotId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ChatId")
@@ -168,8 +168,8 @@ namespace Autine.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DeliveredAt")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("datetime2");
@@ -181,6 +181,8 @@ namespace Autine.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BotId");
 
                     b.HasIndex("ChatId");
 
@@ -663,19 +665,23 @@ namespace Autine.Infrastructure.Migrations
                 {
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
                         .WithMany()
-                        .HasForeignKey("UserIdOne")
+                        .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
                         .WithMany()
-                        .HasForeignKey("UserIdTwo")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
                 {
+                    b.HasOne("Autine.Domain.Entities.Bot", "Bot")
+                        .WithMany()
+                        .HasForeignKey("BotId");
+
                     b.HasOne("Autine.Domain.Entities.Chat", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatId");
@@ -684,6 +690,8 @@ namespace Autine.Infrastructure.Migrations
                         .WithMany("Messages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Bot");
 
                     b.Navigation("Chat");
                 });

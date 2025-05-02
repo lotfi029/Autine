@@ -99,6 +99,7 @@ public class PatientsController(ISender sender) : ControllerBase
     public async Task<IActionResult> DeletePatient([FromRoute] string patientId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
+        
         var command = new RemovePatientCommand(userId, patientId);
         var result = await sender.Send(command, ct);
         return result.IsSuccess

@@ -7,6 +7,7 @@ public interface IUnitOfWork : IDisposable
     //IUserRepository<T> GetUserRepository<T>() where T : class;
 
     IPatientRespository Patients { get; }
+    IChatRepository Chats { get; }
     IThreadMemberRepository ThreadMembers { get; }
     IBotRepository Bots { get; }
     IBotPatientRepository BotPatients { get; }

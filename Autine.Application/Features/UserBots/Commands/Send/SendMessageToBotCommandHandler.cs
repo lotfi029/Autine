@@ -52,7 +52,6 @@ public class SendMessageToBotCommandHandler(
                 SenderId = request.UserId,
                 Content = request.Content,
                 CreatedDate = DateTime.UtcNow,
-                DeliveredAt = DateTime.UtcNow,
                 ReadAt = DateTime.UtcNow,
                 Status = MessageStatus.Read
             };
@@ -80,7 +79,6 @@ public class SendMessageToBotCommandHandler(
             {
                 Content = botResponse.Value.model_msg,
                 CreatedDate = DateTime.UtcNow,
-                DeliveredAt = DateTime.UtcNow,
                 ReadAt = DateTime.UtcNow,
                 Status = MessageStatus.Read
             };

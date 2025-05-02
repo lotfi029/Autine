@@ -12,6 +12,8 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
     
     public IPatientRespository Patients
         => new PatientRepository(_context);
+    public IChatRepository Chats
+        => new ChatRepository(_context);
     
     public IThreadMemberRepository ThreadMembers 
         => new ThreadMemberRepository(_context);

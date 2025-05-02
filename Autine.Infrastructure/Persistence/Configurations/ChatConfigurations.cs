@@ -8,15 +8,19 @@ internal class ChatConfigurations : IEntityTypeConfiguration<Chat>
 
         builder.HasOne<ApplicationUser>()
             .WithMany()
-            .HasForeignKey(cm => cm.UserIdOne)
+            .HasForeignKey(cm => cm.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasOne<ApplicationUser>()
             .WithMany()
-            .HasForeignKey(cm => cm.UserIdTwo)
+            .HasForeignKey(cm => cm.CreatedBy)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+
+
+        builder.HasIndex(x => new { x.UserId, x.CreatedBy })
+            .IsUnique();
     }
 }
 

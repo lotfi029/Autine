@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+﻿namespace Autine.Domain.Entities;
 
-namespace Autine.Domain.Entities;
-
-public class Chat : AuditableEntity
+public class Chat
 {
-    public string UserIdOne { get; set; } = string.Empty;
-    public string UserIdTwo {  get; set; } = string.Empty;
+    public Guid Id { get; set; } = Guid.CreateVersion7();
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string CreatedBy { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
     public ICollection<Message> Messages { get; set; } = [];
 }

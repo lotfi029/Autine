@@ -16,9 +16,8 @@ public class ApplicationDbContext(
     public DbSet<BotMessage> BotMessages { get; set; }
     public DbSet<ThreadMessage> ThreadMessages { get; set; }
     public DbSet<Message> Messages { get; set; }
-
-    //public DbSet<ChatMessage> ChatMessage { get; set; }
-    //public DbSet<Chat> Chat { get; set; }
+    public DbSet<Chat> Chats { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(typeof(UserConfigurations).Assembly);

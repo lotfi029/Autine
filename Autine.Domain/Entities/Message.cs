@@ -6,10 +6,13 @@ public class Message
     public MessageStatus Status { get; set; } = MessageStatus.Sent;
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-    public DateTime? DeliveredAt { get; set; }
+    public bool IsRead { get; set; } = false;
     public DateTime? ReadAt { get; set; }
     public string? SenderId { get; set; }
 
     public Guid? ChatId { get; set; }
     public Chat? Chat { get; set; }
+
+    public Guid? BotId { get; set; }
+    public Bot? Bot { get; set; }
 }

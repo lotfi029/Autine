@@ -1,6 +1,5 @@
 using Autine.Api;
 using Autine.Api.Hubs;
-using Microsoft.Extensions.DependencyInjection;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,10 +22,18 @@ builder.Services.AddCors(options =>
             .WithOrigins(
                 "http://localhost:3000",
                 "http://127.0.0.1:5500",
-                "https://127.0.0.1:5500") // Added your client URLs
+                "https://127.0.0.1:5500")
             .AllowCredentials();
     });
 });
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "ChatApp:";
+});
+
+builder.Services.AddHybridCache();
+
 var app = builder.Build();
 
 
@@ -44,5 +51,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<DMChatHub>("/my-chat");
 
 app.Run();

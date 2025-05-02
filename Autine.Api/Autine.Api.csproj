@@ -9,11 +9,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.4.0" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.4" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore" Version="2.1.13" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup>
