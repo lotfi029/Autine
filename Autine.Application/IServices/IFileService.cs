@@ -1,4 +1,4 @@
-﻿namespace Autine.Application.Interfaces;
+﻿namespace Autine.Application.IServices;
 
 public interface IFileService
 {

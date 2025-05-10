@@ -1,4 +1,6 @@
 ﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
 
 namespace Autine.Application.Features.Users.Commands.AddAdmin;
 public record AddAdminCommand(string AdminId, RegisterRequest Request) : ICommand<string>;

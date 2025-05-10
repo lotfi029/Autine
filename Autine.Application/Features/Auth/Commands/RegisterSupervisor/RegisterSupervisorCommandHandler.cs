@@ -1,4 +1,7 @@
-﻿namespace Autine.Application.Features.Auth.Commands.RegisterSupervisor;
+﻿using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.Auth.Commands.RegisterSupervisor;
 public class RegisterSupervisorCommandHandler(
     IUnitOfWork unitOfWork,
     IAuthService authService, 

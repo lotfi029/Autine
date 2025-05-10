@@ -1,7 +1,7 @@
 ﻿using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
 
-namespace Autine.Application.Interfaces;
+namespace Autine.Application.IServices;
 
 public interface IAccountService
 {

@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Auth.Commands.RevokeRefreshToken;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Application.Features.Auth.Commands.RevokeRefreshToken;
 
 public class RevokeRefreshTokenCommandHandler(IAuthService authService) : ICommandHandler<RevokeRefreshTokenCommand>
 {

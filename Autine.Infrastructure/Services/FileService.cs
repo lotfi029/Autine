@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Abstractions;
+using Autine.Application.IServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
@@ -83,7 +84,7 @@ public class FileService(
     public Task<Result> DeleteImageAsync(string image, bool isBot = false)
     {
         if (string.IsNullOrEmpty(image))
-            return Task.FromResult(Result.Failure(Error.BadRequest("EmptyFileName", "File name cannot be empty")));
+            return Task.FromResult(Result.Success());
 
         var path = isBot ? _botBath : _profilePath;
         
@@ -93,16 +94,16 @@ public class FileService(
             var imagePath = Path.Combine(path, fileName);
 
             if (!File.Exists(imagePath))
-                return Task.FromResult(Result.Failure(Error.BadRequest("FileNotFound", "Image file does not exist")));
+                return Task.FromResult(Result.Success());
 
 
             File.Delete(imagePath);
             return Task.FromResult(Result.Success());
         }
-        catch (Exception ex)
+        catch
         {
 
-            return Task.FromResult(Result.Failure(Error.BadRequest("DeleteFailed", $"Failed to delete image: {ex.Message}")));
+            return Task.FromResult(Result.Success());
         }
     }
 }

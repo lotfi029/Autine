@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.ThreadMember.Commands.Add;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Application.Features.ThreadMember.Commands.Add;
 public class AddThreadMemberCommandHandler(
     IUnitOfWork unitOfWork,
     IRoleService roleService) : ICommandHandler<AddThreadMemberCommand, Guid>

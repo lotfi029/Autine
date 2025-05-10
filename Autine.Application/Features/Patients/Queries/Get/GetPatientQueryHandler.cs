@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.Patients;
+using Autine.Application.IServices;
 
 namespace Autine.Application.Features.Patients.Queries.Get;
 public class GetPatientQueryHandler(IPatientService patientService) : IQueryHandler<GetPatientQuery, PatientResponse>

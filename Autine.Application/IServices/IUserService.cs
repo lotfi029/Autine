@@ -1,7 +1,7 @@
 ﻿using Autine.Application.Contracts.Users;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Autine.Application.Interfaces;
+namespace Autine.Application.IServices;
 public interface IUserService
 {
     Task<bool> CheckUserExist(string userId, CancellationToken ct = default);

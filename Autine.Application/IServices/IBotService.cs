@@ -1,6 +1,6 @@
 ﻿using Autine.Application.Contracts.Bots;
 
-namespace Autine.Application.Interfaces;
+namespace Autine.Application.IServices;
 
 public interface IBotService
 {

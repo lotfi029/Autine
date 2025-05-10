@@ -7,11 +7,12 @@ public class GetChatByIdQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<Get
 {
     public async Task<Result<DetailedChatResponse>> Handle(GetChatByIdQuery request, CancellationToken ct)
     {
-        if (await unitOfWork.Chats.GetAsync(e => e.Id == request.ChatId, includes: "Messages", ct: ct) is not { } chat)
-            return ChatErrors.ChatNotFound;
+        var n = string.CompareOrdinal(request.UserId, request.ReceiverId) > 0;
+        var userId = n ? request.UserId : request.ReceiverId;
+        var receiverId = !n ? request.UserId : request.ReceiverId;
 
-        if (request.UserId == chat.UserId || request.UserId == chat.CreatedBy)
-            return ChatErrors.UserNotExist;
+        if (await unitOfWork.Chats.GetAsync(e => e.UserId == receiverId && e.CreatedBy == userId, includes: "Messages", ct: ct) is not { } chat)
+            return ChatErrors.ChatNotFound;
 
         var messages = new DetailedChatResponse(
             chat.Id,

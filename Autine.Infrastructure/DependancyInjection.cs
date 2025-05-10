@@ -1,4 +1,5 @@
-﻿using Autine.Application.Interfaces.AIApi;
+﻿using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
 using Autine.Infrastructure.Identity.Authentication;
 using Autine.Infrastructure.Repositories;
 using Autine.Infrastructure.Services;
@@ -47,12 +48,24 @@ public static class DependancyInjection
     }
     private static IServiceCollection AddDbConfig(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
+        
+        try
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                a => a.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
-        });
+            var connectionString = configuration
+                .GetConnectionStringOrThrow("DefaultConnection");
 
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString,
+                    a => a.MigrationsAssembly(typeof(ApplicationDbContext).Assembly));
+            });
+
+        }
+        catch
+        {
+            //TODO: log error
+        }
         return services;
     }
     private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfigurationManager configuration)

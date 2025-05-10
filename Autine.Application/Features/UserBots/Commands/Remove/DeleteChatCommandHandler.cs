@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.UserBots.Commands.Remove;
+﻿using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.UserBots.Commands.Remove;
 
 public class DeleteChatCommandHandler(
     IUnitOfWork unitOfWork,

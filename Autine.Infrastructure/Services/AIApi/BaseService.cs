@@ -1,5 +1,5 @@
 ﻿using Autine.Application.ExternalContracts;
-using Autine.Application.Interfaces.AIApi;
+using Autine.Application.IServices.AIApi;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;

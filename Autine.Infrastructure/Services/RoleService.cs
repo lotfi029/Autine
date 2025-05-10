@@ -1,4 +1,6 @@
-﻿namespace Autine.Infrastructure.Services;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Infrastructure.Services;
 public class RoleService(
     UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager) : IRoleService

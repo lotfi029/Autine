@@ -1,8 +1,7 @@
 ﻿using Autine.Application.ExternalContracts;
 using Autine.Application.ExternalContracts.Auth;
-using Autine.Application.Interfaces.AIApi;
+using Autine.Application.IServices.AIApi;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic;
 
 namespace Autine.Infrastructure.Services.AIApi;
 public class AIAuthService(
@@ -40,10 +39,10 @@ public class AIAuthService(
             ct
             );
 
-    public async Task<Result> UpdateUserAsync(string username, AIUpdateRequest request, string password, CancellationToken ct = default)
+    public async Task<Result> UpdateUserAsync(string role, string username, AIUpdateRequest request, string password, CancellationToken ct = default)
         => await baseService.SendAsync(
             new Request(
-                $"{_apiSetting.AIApi}/auth/user/update?username={username}&password={password}&session_id=1",
+                $"{_apiSetting.AIApi}/auth/{role}/update?username={username}&password={password}&session_id=1",
                 ApiMethod.Put,
                 Data: request
         ), ct);

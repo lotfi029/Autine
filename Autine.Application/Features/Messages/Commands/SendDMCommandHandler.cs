@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.UserBots;
+using Autine.Application.IServices;
 
 namespace Autine.Application.Features.Messages.Commands;
 
@@ -26,7 +27,7 @@ public class SendDMCommandHandler(
                 chat = new Chat
                 {
                     CreatedBy = userId,
-                    UserId = userId
+                    UserId = memberId
                 };
                 await unitOfWork.Chats.AddAsync(chat, ct);
                 chatId = chat.Id;

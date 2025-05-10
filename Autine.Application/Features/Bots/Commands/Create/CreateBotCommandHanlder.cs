@@ -1,4 +1,7 @@
-﻿namespace Autine.Application.Features.Bots.Commands.Create;
+﻿using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.Bots.Commands.Create;
 public class CreateBotCommandHanlder(
     IUnitOfWork unitOfWork, 
     IRoleService roleService,

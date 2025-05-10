@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Profiles.Commands.ChangeProfilePicture;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Application.Features.Profiles.Commands.ChangeProfilePicture;
 
 public class ChagneProfilePictureCommandHandler(
     IAccountService accountService) : ICommandHandler<ChagneProfilePictureCommand>

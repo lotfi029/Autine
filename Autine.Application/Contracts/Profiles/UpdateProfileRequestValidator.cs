@@ -23,16 +23,17 @@ public class UpdateProfileRequestValidator : AbstractValidator<UpdateUserProfile
         RuleFor(e => e.Bio)
             .NotEmpty()
             .Length(1, 2500);
-        RuleFor(e => e.Gender)
-            .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
-            .Must(g =>
-            {
-                if (g == null) return false;
-                var gender = g.ToLower();
 
-                return gender == "male" || g == "female";
-            })
-            .WithMessage("{PropertyName} must be Male, Female.");
+        //RuleFor(e => e.Gender)
+        //    .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)
+        //    .Must(g =>
+        //    {
+        //        if (g == null) return false;
+        //        var gender = g.ToLower();
+
+        //        return gender == "male" || g == "female";
+        //    })
+        //    .WithMessage("{PropertyName} must be Male, Female.");
 
         RuleFor(e => e.DateOfBirth)
             .NotEmpty().WithMessage(ValidationConstants.RequiredErrorMessage)

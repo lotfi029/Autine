@@ -7,7 +7,7 @@ public class UserMessageRequestValidator : AbstractValidator<UserMessageRequest>
         RuleFor(e => e.Content)
             .NotEmpty();
         
-        RuleFor(e => e.ReciverId)
+        RuleFor(e => e.ReceiverId)
             .NotEmpty();
     }
 }

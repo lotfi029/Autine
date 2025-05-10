@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Bots.Commands.Assign;
+﻿using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.Bots.Commands.Assign;
 public class AssignModelCommandHandler(
     IUnitOfWork unitOfWork,
     IAIModelService aIModelService) : ICommandHandler<AssignModelCommand>

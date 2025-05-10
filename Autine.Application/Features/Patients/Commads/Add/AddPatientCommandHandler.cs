@@ -1,4 +1,6 @@
 ﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
 using Microsoft.AspNetCore.Server.HttpSys;
 
 namespace Autine.Application.Features.Patients.Commads.Add;

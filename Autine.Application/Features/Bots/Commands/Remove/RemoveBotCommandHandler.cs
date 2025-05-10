@@ -1,4 +1,7 @@
-﻿namespace Autine.Application.Features.Bots.Commands.Remove;
+﻿using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.Bots.Commands.Remove;
 public class RemoveBotCommandHandler(
     IUnitOfWork unitOfWork,
     IRoleService roleService,

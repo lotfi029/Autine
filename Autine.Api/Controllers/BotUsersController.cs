@@ -1,10 +1,13 @@
-﻿using Autine.Application.Contracts.UserBots;
+﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.Contracts.UserBots;
 using Autine.Application.Features.Bots.Queries.GetAll;
 using Autine.Application.Features.UserBots.Commands.Remove;
 using Autine.Application.Features.UserBots.Commands.Send;
 using Autine.Application.Features.UserBots.Queries.GetBots;
+using Autine.Application.Features.UserBots.Queries.GetById;
 using Autine.Application.Features.UserBots.Queries.GetMessages;
 using Autine.Application.Features.UserBots.Queries.GetMyBots;
+using Autine.Infrastructure.Repositories;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -48,6 +51,7 @@ public class BotUsersController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
     [HttpGet("my-bots")]
+    [ProducesResponseType(typeof(IEnumerable<PatientBotsResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMyBots(CancellationToken ct = default)
     {
         var userId = User.GetUserId()!;
@@ -61,6 +65,7 @@ public class BotUsersController(ISender sender) : ControllerBase
     [HttpDelete("{botId:guid}/delete-chat")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteById([FromRoute] Guid botId, CancellationToken ct = default)
     {
         var userId = User.GetUserId()!;
@@ -73,11 +78,20 @@ public class BotUsersController(ISender sender) : ControllerBase
     }
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct = default)
+    [Produces<UserBotDetailedResponse>()]
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var userId = User.GetUserId()!;
+
+        var query = new GetBotUserByIdQuery(User.GetUserId()!, id);
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+
     }
     [HttpGet("")]
+    [Produces<PatientBotsResponse>()]
     public async Task<IActionResult> GetBots(CancellationToken ct = default)
     {
         var query = new GetAllBotsQuery();

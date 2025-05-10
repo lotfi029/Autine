@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Bots.Commands.UpdateBotImage;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Application.Features.Bots.Commands.UpdateBotImage;
 
 public class UpdateBotImageCommandHandler(
     IFileService fileService, 

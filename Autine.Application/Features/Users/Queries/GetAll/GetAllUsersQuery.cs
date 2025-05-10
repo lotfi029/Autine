@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.Users;
+using Autine.Application.IServices;
 
 namespace Autine.Application.Features.Users.Queries.GetAll;
 public record GetAllUsersQuery(string UserId) : IQuery<IEnumerable<UserResponse>>;

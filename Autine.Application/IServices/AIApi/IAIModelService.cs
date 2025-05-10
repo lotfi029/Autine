@@ -1,6 +1,6 @@
 ﻿using Autine.Application.ExternalContracts.Bots;
 
-namespace Autine.Application.Interfaces.AIApi;
+namespace Autine.Application.IServices.AIApi;
 public interface IAIModelService
 {
     Task<Result> AddModelAsync(string userId, ModelRequest request, bool isAdmin = false, CancellationToken ct = default);

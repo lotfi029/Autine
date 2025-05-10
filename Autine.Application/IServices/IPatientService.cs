@@ -2,7 +2,7 @@
 using Autine.Application.Contracts.Patients;
 using Microsoft.EntityFrameworkCore;
 
-namespace Autine.Application.Interfaces;
+namespace Autine.Application.IServices;
 
 public interface IPatientService
 {

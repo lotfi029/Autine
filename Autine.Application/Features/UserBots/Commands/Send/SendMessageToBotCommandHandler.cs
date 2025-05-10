@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.UserBots;
+using Autine.Application.IServices.AIApi;
 
 namespace Autine.Application.Features.UserBots.Commands.Send;
 public class SendMessageToBotCommandHandler(

@@ -19,17 +19,9 @@ builder.Services.AddCors(options =>
         policy
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .WithOrigins(
-                "http://localhost:3000",
-                "http://127.0.0.1:5500",
-                "https://127.0.0.1:5500")
-            .AllowCredentials();
+
+            .AllowAnyOrigin();
     });
-});
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = "localhost:6379";
-    options.InstanceName = "ChatApp:";
 });
 
 builder.Services.AddHybridCache();
@@ -50,7 +42,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chatHub");
-app.MapHub<DMChatHub>("/my-chat");
+//app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ChatHub>("/my-chat");
 
 app.Run();

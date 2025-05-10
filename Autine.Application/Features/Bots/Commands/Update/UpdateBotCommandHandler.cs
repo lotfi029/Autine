@@ -1,4 +1,7 @@
-﻿namespace Autine.Application.Features.Bots.Commands.Update;
+﻿using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.Bots.Commands.Update;
 public class UpdateBotCommandHandler(
     IRoleService roleService,
     IAIModelService aIModelService,

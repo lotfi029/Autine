@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.FIles.Queries;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Application.Features.FIles.Queries;
 public record GetImageQuery(string ImageUrl, bool IsBot) : IQuery<(FileStream? stream, string? contentType, string? fileName)>;
 
 public class GetImageQueryHandler(IFileService fileService) : IQueryHandler<GetImageQuery, (FileStream? stream, string? contentType, string? fileName)>

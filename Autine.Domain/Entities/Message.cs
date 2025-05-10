@@ -14,5 +14,8 @@ public class Message
     public Chat? Chat { get; set; }
 
     public Guid? BotId { get; set; }
-    public Bot? Bot { get; set; }
+    public BotMessage? Bot { get; set; }
 }
+
+
+// botuser - thread - dm

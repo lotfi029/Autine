@@ -1,6 +1,6 @@
 ﻿using Autine.Application.Contracts.Auths;
 
-namespace Autine.Application.Interfaces;
+namespace Autine.Application.IServices;
 public interface IAuthService
 {
     Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);

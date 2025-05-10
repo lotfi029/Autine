@@ -9,7 +9,7 @@ global using Autine.Domain.Interfaces;
 global using Autine.Domain.Abstractions;
 
 global using Autine.Application.Errors;
-global using Autine.Application.Interfaces;
+global using Autine.Application.IServices;
 global using Autine.Infrastructure.Persistence;
 global using Autine.Infrastructure.Identity.Consts;
 global using Autine.Infrastructure.Identity.Entities;

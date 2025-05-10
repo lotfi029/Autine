@@ -1,5 +1,7 @@
 ﻿using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
+using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
 
 namespace Autine.Application.Features.Patients.Commads.Update;
 public class UpdatePatientCommandHandler(
@@ -55,6 +57,7 @@ public class UpdatePatientCommandHandler(
                 );
 
             var aiResult = await aIAuthService.UpdateUserAsync(
+                        "user",
                             request.PatientId,
                             aiUpdateRequest,
                             Consts.FixedPassword,

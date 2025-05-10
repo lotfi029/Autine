@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 using static Autine.Infrastructure.Identity.Consts.DefaultRoles;
+using Autine.Application.IServices;
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,

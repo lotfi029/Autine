@@ -1,4 +1,7 @@
 ﻿
+using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
+
 namespace Autine.Application.Features.Profiles.Commands.Delete;
 public class DeleteProfileCommandHandler(
     IAIAuthService aIAuthService,
@@ -10,7 +13,7 @@ public class DeleteProfileCommandHandler(
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var serverResult = await userService.DeleteUserAsync(request.UserId, cancellationToken);
+            var serverResult = await userService.DeleteUserAsync(request.UserId,cancellationToken, transaction);
 
             if (serverResult.IsFailure)
             {

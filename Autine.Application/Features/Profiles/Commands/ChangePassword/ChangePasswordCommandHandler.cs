@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Profiles.Commands.ChangePassword;
+﻿using Autine.Application.IServices;
+
+namespace Autine.Application.Features.Profiles.Commands.ChangePassword;
 public class ChangePasswordCommandHandler(
     IAccountService accountService) : ICommandHandler<ChangePasswordCommand>
 {

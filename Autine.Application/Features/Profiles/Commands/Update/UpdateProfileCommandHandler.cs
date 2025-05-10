@@ -1,4 +1,8 @@
-﻿namespace Autine.Application.Features.Profiles.Commands.Update;
+﻿using Autine.Application.IServices;
+using Autine.Application.IServices.AIApi;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace Autine.Application.Features.Profiles.Commands.Update;
 public class UpdateProfileCommandHandler(
     IAccountService accountService, 
     IUnitOfWork unitOfWork,
@@ -19,11 +23,12 @@ public class UpdateProfileCommandHandler(
                 return serverResult;
             }
 
-            var role = await roleService.IsUserAsync(request.UserId);
+            var role = await roleService.GetUserRoleAsync(request.UserId);
 
             if (role.IsSuccess) 
             {
                 var aiResult = await aIAuthService.UpdateUserAsync(
+                    role.Value,
                     request.UserId,
                     new(fname: request.UpdateRequest.FirstName, lname: request.UpdateRequest.LastName),
                     Consts.FixedPassword,

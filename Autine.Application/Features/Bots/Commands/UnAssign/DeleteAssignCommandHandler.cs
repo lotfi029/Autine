@@ -1,4 +1,6 @@
-﻿namespace Autine.Application.Features.Bots.Commands.UnAssign;
+﻿using Autine.Application.IServices.AIApi;
+
+namespace Autine.Application.Features.Bots.Commands.UnAssign;
 public class DeleteAssignCommandHandler(
     IUnitOfWork unitOfWork,
     IAIModelService aIModelService) : ICommandHandler<DeleteAssignCommand>

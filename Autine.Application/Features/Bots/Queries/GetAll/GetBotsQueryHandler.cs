@@ -1,4 +1,5 @@
 ﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.IServices;
 
 namespace Autine.Application.Features.Bots.Queries.GetAll;
 public class GetBotsQueryHandler(
