@@ -1,4 +1,6 @@
-﻿namespace Autine.Infrastructure.Persistence.Configurations;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Autine.Infrastructure.Persistence.Configurations;
 
 public class UserConfigurations : IEntityTypeConfiguration<ApplicationUser>
 {
@@ -29,27 +31,51 @@ public class UserConfigurations : IEntityTypeConfiguration<ApplicationUser>
             .WithOwner()
             .HasForeignKey("UserId");
 
-        var adminUser = new ApplicationUser
+        var users = new List<ApplicationUser>
         {
-            Id = DefaultUsers.Id,
-            FirstName = DefaultUsers.FirstName,
-            LastName = DefaultUsers.LastName,
-            Bio = DefaultUsers.LastName,
-            ProfilePicture = "none",
-            Gender = "male",
-            DateOfBirth = new DateTime(2025, 2, 27),
-            Country = "Egypt",
-            City = "Kafr elsheikh",
-            UserName = DefaultUsers.UserName,
-            NormalizedUserName = DefaultUsers.UserName.ToUpper(),
-            Email = DefaultUsers.Email,
-            NormalizedEmail = DefaultUsers.Email.ToUpper(),
-            EmailConfirmed = true,
-            SecurityStamp = DefaultUsers.SecurityStamp,
-            ConcurrencyStamp = DefaultUsers.ConcurrencyStamp,
-            PasswordHash = "AQAAAAIAAYagAAAAEBbWjL8coqX4W28rbExSdO9oxmhKHv6wM4FPUC7EA+NPus+zl7GH7agHyr/+5JzfJQ=="
+            new()
+            {
+                Id = DefaultUsers.Admin.Id,
+                FirstName = DefaultUsers.Admin.FirstName,
+                LastName = DefaultUsers.Admin.LastName,
+                Bio = DefaultUsers.Admin.LastName,
+                ProfilePicture = "none",
+                Gender = "male",
+                DateOfBirth = new DateTime(2025, 2, 27),
+                Country = "Egypt",
+                City = "Kafr elsheikh",
+                UserName = DefaultUsers.Admin.UserName,
+                NormalizedUserName = DefaultUsers.Admin.UserName.ToUpper(),
+                Email = DefaultUsers.Admin.Email,
+                NormalizedEmail = DefaultUsers.Admin.Email.ToUpper(),
+                EmailConfirmed = true,
+                SecurityStamp = DefaultUsers.Admin.SecurityStamp,
+                ConcurrencyStamp = DefaultUsers.Admin.ConcurrencyStamp,
+                PasswordHash = "AQAAAAIAAYagAAAAEBbWjL8coqX4W28rbExSdO9oxmhKHv6wM4FPUC7EA+NPus+zl7GH7agHyr/+5JzfJQ=="
+            },
+            new()
+            {
+                Id = DefaultUsers.AnonymousUser.Id,
+                FirstName = DefaultUsers.AnonymousUser.FirstName,
+                LastName = DefaultUsers.AnonymousUser.LastName,
+                Bio = DefaultUsers.AnonymousUser.LastName,
+                ProfilePicture = "none",
+                Gender = "male",
+                DateOfBirth = new DateTime(2025, 2, 27),
+                Country = "Egypt",
+                City = "Kafr elsheikh",
+                UserName = DefaultUsers.AnonymousUser.UserName,
+                NormalizedUserName = DefaultUsers.AnonymousUser.UserName.ToUpper(),
+                Email = DefaultUsers.AnonymousUser.Email,
+                NormalizedEmail = DefaultUsers.AnonymousUser.Email.ToUpper(),
+                EmailConfirmed = true,
+                SecurityStamp = DefaultUsers.AnonymousUser.SecurityStamp,
+                ConcurrencyStamp = DefaultUsers.AnonymousUser.ConcurrencyStamp,
+                PasswordHash = "AQAAAAIAAYagAAAAENM3gPuLzFgxltA0DcYSDrTPi1XWJhEkzbxXO6/EAxO9qqTV6hBNn1GSHo0VmGJT1A=="
+
+            }
         };
 
-        builder.HasData(adminUser);
+        builder.HasData(users);
     }
 }

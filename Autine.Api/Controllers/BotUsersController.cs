@@ -42,9 +42,7 @@ public class BotUsersController(ISender sender) : ControllerBase
         [FromRoute] Guid botId,
         CancellationToken cancellationToken)
     {
-        string userId = User.GetUserId()!;
-
-        var query = new GetChatBotsQuery(userId, botId);
+        var query = new GetChatBotsQuery(User.GetUserId()!, botId);
         var result = await sender.Send(query, cancellationToken);
         return result.IsSuccess
             ? Ok(result.Value)
@@ -54,9 +52,7 @@ public class BotUsersController(ISender sender) : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<PatientBotsResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMyBots(CancellationToken ct = default)
     {
-        var userId = User.GetUserId()!;
-
-        var query = new GetMyBotsQuery(userId);
+        var query = new GetMyBotsQuery(User.GetUserId()!);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? Ok(result.Value)
@@ -68,9 +64,7 @@ public class BotUsersController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteById([FromRoute] Guid botId, CancellationToken ct = default)
     {
-        var userId = User.GetUserId()!;
-
-        var query = new DeleteChatCommand(userId, botId);
+        var query = new DeleteChatCommand(User.GetUserId()!, botId);
         var result = await sender.Send(query, ct);
         return result.IsSuccess
             ? NoContent()
@@ -81,8 +75,6 @@ public class BotUsersController(ISender sender) : ControllerBase
     [Produces<UserBotDetailedResponse>()]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct = default)
     {
-        var userId = User.GetUserId()!;
-
         var query = new GetBotUserByIdQuery(User.GetUserId()!, id);
         var result = await sender.Send(query, ct);
         return result.IsSuccess

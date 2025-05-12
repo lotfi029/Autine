@@ -1,5 +1,4 @@
 ﻿using Autine.Application.Contracts.UserBots;
-using Autine.Application.IServices.AIApi;
 
 namespace Autine.Application.Features.UserBots.Commands.Send;
 public class SendMessageToBotCommandHandler(
@@ -16,7 +15,6 @@ public class SendMessageToBotCommandHandler(
             includes: "Bot",
             ct: cancellationToken);
 
-
         var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
@@ -24,8 +22,8 @@ public class SendMessageToBotCommandHandler(
             Guid botPatientId = Guid.Empty;
             if (botPatient == null)
             {
-                var bot = await unitOfWork.Bots
-                    .GetAsync(e => e.Id == request.BotId, ct: cancellationToken);
+                if (await unitOfWork.Bots.GetAsync(e => e.Id == request.BotId, ct: cancellationToken) is not { } bot)
+                    return BotErrors.BotNotFound;
 
                 if (!bot.IsPublic)
                     return BotErrors.InvalidBot;
@@ -48,21 +46,6 @@ public class SendMessageToBotCommandHandler(
                 botPatientId = botPatient.Id;
             }
 
-            var userMessage = new Message()
-            {
-                SenderId = request.UserId,
-                Content = request.Content,
-                CreatedDate = DateTime.UtcNow,
-                ReadAt = DateTime.UtcNow,
-                Status = MessageStatus.Read
-            };
-
-            var userBotMessage = new BotMessage()
-            {
-                MessageId = userMessage.Id,
-                BotPatientId = botPatientId
-            };
-
             var botResponse = await aIModelService.SendMessageToModelAsync(
                 userId: request.UserId,
                 modelName: botName,
@@ -76,31 +59,39 @@ public class SendMessageToBotCommandHandler(
                 return BotMessageError.FailedToSendMessage;
             }
 
-            var botMessage = new Message()
+
+            var messages = new List<Message>
             {
-                Content = botResponse.Value.model_msg,
-                CreatedDate = DateTime.UtcNow,
-                ReadAt = DateTime.UtcNow,
-                Status = MessageStatus.Read
+                new()
+                {
+                    SenderId = request.UserId,
+                    Content = request.Content,
+                    CreatedDate = DateTime.UtcNow,
+                    ReadAt = DateTime.UtcNow,
+                    Status = MessageStatus.Read,
+                    BotPatientId = botPatientId
+                },
+                new()
+                {
+                    Content = botResponse.Value.model_msg,
+                    CreatedDate = DateTime.UtcNow,
+                    ReadAt = DateTime.UtcNow.AddSeconds(1),
+                    Status = MessageStatus.Read,
+                    BotPatientId = botPatientId
+                }
             };
 
-            var botBotMessage = new BotMessage()
-            {
-                MessageId = botMessage.Id,
-                BotPatientId = botPatientId
-            };
 
+            await unitOfWork.Messages.AddRangeAsync(messages, cancellationToken);
 
-            await unitOfWork.Messages.AddRangeAsync([userMessage, botMessage], cancellationToken);
-            await unitOfWork.BotMessages.AddRangeAsync([userBotMessage, botBotMessage], cancellationToken);
             await unitOfWork.CommitChangesAsync(cancellationToken);
 
             var response = new MessageResponse(
-                botMessage.Id, 
-                botMessage.Content, 
-                botMessage.CreatedDate, 
-                botMessage.Status, 
-                true);
+                messages[1].Id,
+                messages[1].Content, 
+                messages[1].CreatedDate, 
+                messages[1].Status, 
+                false);
 
             await unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
             return Result.Success(response);

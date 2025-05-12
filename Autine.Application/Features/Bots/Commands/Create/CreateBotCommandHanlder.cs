@@ -1,11 +1,7 @@
-﻿using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
-
-namespace Autine.Application.Features.Bots.Commands.Create;
+﻿namespace Autine.Application.Features.Bots.Commands.Create;
 public class CreateBotCommandHanlder(
     IUnitOfWork unitOfWork, 
     IRoleService roleService,
-    IFileService fileService,
     IAIModelService aIModelService) : ICommandHandler<CreateBotCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateBotCommand request, CancellationToken cancellationToken)
@@ -24,19 +20,7 @@ public class CreateBotCommandHanlder(
         using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            var image = request.Request.Image;
-            var savedImage = string.Empty;
-            if (image is not null)
-            {
-                var imageResult = await fileService.UploadImageAsync(request.Request.Image!, true, cancellationToken);
-                if (imageResult.IsFailure)
-                {
-                    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-                    return imageResult.Error;
-                }
-                savedImage = imageResult.Value;
-
-            }
+            
             var modelId = await unitOfWork.Bots.AddAsync(new()
             {
                 Name = request.Request.Name,
@@ -44,7 +28,7 @@ public class CreateBotCommandHanlder(
                 Bio = request.Request.Bio,
                 IsPublic = isAdmin.IsSuccess,
                 CreatedBy = request.UserId,
-                BotImage = savedImage
+                BotImage = "non"
             }, cancellationToken);
 
             var result = await aIModelService.AddModelAsync(

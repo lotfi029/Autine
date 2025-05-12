@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Autine.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250424214806_RenameColumnAndUpdateBotPatientEntity")]
-    partial class RenameColumnAndUpdateBotPatientEntity
+    [Migration("20250511155050_ProjectMigration")]
+    partial class ProjectMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,11 @@ namespace Autine.Infrastructure.Migrations
                         .HasMaxLength(10000)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BotImage")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Context")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -46,9 +51,6 @@ namespace Autine.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsDisabled")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
@@ -68,22 +70,14 @@ namespace Autine.Infrastructure.Migrations
             modelBuilder.Entity("Autine.Domain.Entities.BotMessage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BotPatientId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MessageId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("MessageId")
-                        .IsUnique();
-
-                    b.HasIndex("BotPatientId", "MessageId")
-                        .IsUnique();
+                    b.HasIndex("BotPatientId");
 
                     b.ToTable("BotMessages");
                 });
@@ -103,16 +97,11 @@ namespace Autine.Infrastructure.Migrations
                     b.Property<bool>("IsUser")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
 
                     b.HasIndex("UserId");
 
@@ -122,40 +111,7 @@ namespace Autine.Infrastructure.Migrations
                     b.ToTable("BotPatients");
                 });
 
-            modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeliveredAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SenderId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
+            modelBuilder.Entity("Autine.Domain.Entities.Chat", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,17 +124,107 @@ namespace Autine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("IsDisabled")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("UserId", "CreatedBy")
+                        .IsUnique();
+
+                    b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ChatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Diagnosis")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsSupervised")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<DateTime>("LastSession")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NextSession")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PatientId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SessionFrequency")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ThreadTitle")
                         .IsRequired()
@@ -292,9 +338,6 @@ namespace Autine.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("IsDisabled")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -355,19 +398,18 @@ namespace Autine.Infrastructure.Migrations
                         {
                             Id = "019409bf-3ae7-7cdf-995b-db4620f2ff5f",
                             AccessFailedCount = 0,
-                            Bio = "grad",
+                            Bio = "Admin",
                             City = "Kafr elsheikh",
                             ConcurrencyStamp = "019409C1-DB8B-7B6F-A8A1-8E35FB4D0748",
                             Country = "Egypt",
                             DateOfBirth = new DateTime(2025, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@graduation.edu",
+                            Email = "admin@autine.com",
                             EmailConfirmed = true,
-                            FirstName = "Admin",
+                            FirstName = "Autine",
                             Gender = "male",
-                            IsDisabled = false,
-                            LastName = "grad",
+                            LastName = "Admin",
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@GRADUATION.EDU",
+                            NormalizedEmail = "ADMIN@AUTINE.COM",
                             NormalizedUserName = "ADMIN",
                             PasswordHash = "AQAAAAIAAYagAAAAEBbWjL8coqX4W28rbExSdO9oxmhKHv6wM4FPUC7EA+NPus+zl7GH7agHyr/+5JzfJQ==",
                             PhoneNumberConfirmed = false,
@@ -573,8 +615,8 @@ namespace Autine.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Autine.Domain.Entities.Message", "Message")
-                        .WithOne()
-                        .HasForeignKey("Autine.Domain.Entities.BotMessage", "MessageId")
+                        .WithOne("BotMessage")
+                        .HasForeignKey("Autine.Domain.Entities.BotMessage", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -591,10 +633,6 @@ namespace Autine.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Autine.Domain.Entities.Patient", null)
-                        .WithMany("Bots")
-                        .HasForeignKey("PatientId");
-
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
                         .WithMany("BotUsers")
                         .HasForeignKey("UserId")
@@ -604,12 +642,33 @@ namespace Autine.Infrastructure.Migrations
                     b.Navigation("Bot");
                 });
 
+            modelBuilder.Entity("Autine.Domain.Entities.Chat", b =>
+                {
+                    b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
                 {
+                    b.HasOne("Autine.Domain.Entities.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId");
+
                     b.HasOne("Autine.Infrastructure.Identity.Entities.ApplicationUser", null)
                         .WithMany("Messages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
@@ -661,6 +720,43 @@ namespace Autine.Infrastructure.Migrations
                     b.Navigation("Message");
 
                     b.Navigation("ThreadMember");
+                });
+
+            modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>
+                {
+                    b.OwnsMany("Autine.Infrastructure.Identity.Entities.RefreshToken", "RefreshTokens", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<DateTime>("CreateOn")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("ExpiresOn")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime?>("RevokedOn")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Token")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("UserId", "Id");
+
+                            b1.ToTable("RefreshTokens", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -724,10 +820,18 @@ namespace Autine.Infrastructure.Migrations
                     b.Navigation("BotMessages");
                 });
 
+            modelBuilder.Entity("Autine.Domain.Entities.Chat", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
+                {
+                    b.Navigation("BotMessage");
+                });
+
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
                 {
-                    b.Navigation("Bots");
-
                     b.Navigation("Members");
                 });
 

@@ -1,4 +1,6 @@
-﻿namespace Autine.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Autine.Domain.Entities;
 
 public class Message
 {
@@ -10,12 +12,23 @@ public class Message
     public DateTime? ReadAt { get; set; }
     public string? SenderId { get; set; }
 
+
     public Guid? ChatId { get; set; }
+    public Guid? BotPatientId { get; set; }
+    public Guid? ThreadMemberId { get; set; }
     public Chat? Chat { get; set; }
+    public BotPatient? BotPatient { get; set; }
+    public ThreadMember? ThreadMember { get; set; }
 
-    public Guid? BotId { get; set; }
-    public BotMessage? Bot { get; set; }
+    [NotMapped]
+    public MessageType MessageType =>
+        ThreadMemberId.HasValue ? MessageType.Thread :
+        BotPatientId.HasValue ? MessageType.Bot :
+        MessageType.DM;
 }
-
-
-// botuser - thread - dm
+public enum MessageType
+{
+    DM,
+    Bot,
+    Thread
+}

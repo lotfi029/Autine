@@ -13,5 +13,4 @@ public class Patient  : AuditableEntity
     public bool IsSupervised { get; set; } = true;
     public string ThreadTitle { get; set; } = string.Empty;
     public ICollection<ThreadMember> Members { get; set; } = [];
-    public ICollection<BotPatient> Bots { get; set; } = [];
 }

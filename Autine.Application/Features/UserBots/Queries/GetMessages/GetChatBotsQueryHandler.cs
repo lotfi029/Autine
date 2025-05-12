@@ -1,9 +1,5 @@
 ﻿using Autine.Application.Contracts.UserBots;
-
 namespace Autine.Application.Features.UserBots.Queries.GetMessages;
-
-public record GetChatBotsQuery(string UserId, Guid BotId) : IQuery<List<MessageResponse>>;
-
 public class GetChatBotsQueryHandler(
     IUnitOfWork unitOfWork) : IQueryHandler<GetChatBotsQuery, List<MessageResponse>>
 {
@@ -17,15 +13,14 @@ public class GetChatBotsQueryHandler(
         if (messages is null || !messages.Any())
             return BotErrors.BotNotFound;
 
-        var result = messages.OrderBy(e => e.Message.CreatedDate).Select(m => new MessageResponse(
+        var result = messages.Select(m => new MessageResponse(
             m.Id,
-            m.Message.Content,
-            m.Message.CreatedDate,
-            m.Message.Status,
-            m.Message.SenderId == null
-            ));
+            m.Content,
+            m.CreatedDate,
+            m.Status,
+            m.SenderId != null
+            )).ToList();
 
-
-        return result.ToList();
+        return result;
     }
 }

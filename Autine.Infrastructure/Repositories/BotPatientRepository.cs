@@ -4,13 +4,12 @@ using Microsoft.Data.SqlClient;
 namespace Autine.Infrastructure.Repositories;
 public class BotPatientRepository(ApplicationDbContext context) : Repository<BotPatient>(context), IBotPatientRepository
 {
-    public async Task<IEnumerable<BotMessage>> GetMessagesAsync(Guid botPatientId, CancellationToken ct = default)
-        => await _context.BotMessages
-            .AsNoTracking()
-            .Include(e => e.Message)
+    public async Task<IEnumerable<Message>> GetMessagesAsync(Guid botPatientId, CancellationToken ct = default)
+        => await _context.Messages
             .Where(e => e.BotPatientId == botPatientId)
+            .OrderBy(e => e.CreatedDate)
             .ToListAsync(ct);
-    
+
 
     public async Task<Result> DeleteBotPatientAsync(Guid id, CancellationToken ct = default)
     {

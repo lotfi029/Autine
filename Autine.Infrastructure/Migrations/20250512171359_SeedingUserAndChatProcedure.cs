@@ -6,21 +6,20 @@ using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 namespace Autine.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddBotMessageDeletingObject : Migration
+    public partial class SeedingUserAndChatProcedure : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(BotMessageSPs.DeleteBotMessagesWithRelationsProcedure);
-            migrationBuilder.Sql(BotMessageSPs.BotMessageDeleteTrigger);
+            migrationBuilder.Sql(DeleteUserSPs.DeleteUserWithAllRelationsProcedure);
+            migrationBuilder.Sql(ChatSPs.ProcessChatOnUserDeleteProcedure);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("DROP TRIGGER IF EXISTS TR_BotMessage_Delete;");
-
-            migrationBuilder.Sql("DROP PROCEDURE IF EXISTS dbo.DeleteBotMessagesWithRelations;");
+            migrationBuilder.Sql($"DROP PROCEDURE {ChatSPs.ProcessChatOnUserDelete}");
+            migrationBuilder.Sql($"DROP PROCEDURE {DeleteUserSPs.DeleteUserWithAllRelations}");
         }
     }
 }

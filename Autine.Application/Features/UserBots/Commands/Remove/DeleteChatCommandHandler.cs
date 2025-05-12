@@ -1,6 +1,4 @@
-﻿using Autine.Application.IServices.AIApi;
-
-namespace Autine.Application.Features.UserBots.Commands.Remove;
+﻿namespace Autine.Application.Features.UserBots.Commands.Remove;
 
 public class DeleteChatCommandHandler(
     IUnitOfWork unitOfWork,
@@ -29,15 +27,6 @@ public class DeleteChatCommandHandler(
                     return serverResult.Error;
                 }
             }
-            else
-            {
-                var serverResult = await unitOfWork.BotMessages.DeleteBotMessageWithRelationAsync(botPatient.Id, cancellationToken);
-                if (serverResult.IsFailure)
-                {
-                    await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-                    return serverResult.Error;
-                }
-            }
 
             var result = await aIModelService.DeleteChatAsync(request.UserId, botPatient.Bot.Name, cancellationToken);
 
@@ -52,7 +41,7 @@ public class DeleteChatCommandHandler(
         }
         catch
         {
-            // DOTO: log error
+            // TODO: log error
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.BadRequest("Error.DeleteChat", "error occure while delete chat bot.");
         }

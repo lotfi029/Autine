@@ -1,7 +1,4 @@
-﻿using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
-
-namespace Autine.Application.Features.Auth.Commands.Register;
+﻿namespace Autine.Application.Features.Auth.Commands.Register;
 public class RegisterCommandHandler(
     IAuthService _authService,
     IAIAuthService _aIAuthService,

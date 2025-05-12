@@ -8,5 +8,5 @@ public class BotPatient
     public bool IsUser { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public Bot Bot { get; set; } = default!;
-    public virtual ICollection<BotMessage>? BotMessages { get; set; } = [];
+    public virtual ICollection<Message>? Messages { get; set; } = [];
 }

@@ -27,9 +27,6 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
     public IMessageRepository Messages 
         => new MessageRepository(_context);
 
-    public IBotMessageRepository BotMessages 
-        => new BotMessageRepository(_context);
-
     private bool _disposed = false;
 
 

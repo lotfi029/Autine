@@ -8,7 +8,7 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<s
             new IdentityUserRole<string>
             {
                 RoleId = DefaultRoles.Admin.Id,
-                UserId = DefaultUsers.Id,
+                UserId = DefaultUsers.Admin.Id,
             }
         ];
 

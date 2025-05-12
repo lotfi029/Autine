@@ -8,7 +8,6 @@ using Autine.Application.Features.Auth.Commands.Register;
 using Autine.Application.Features.Auth.Commands.RegisterSupervisor;
 using Autine.Application.Features.Auth.Commands.ResetPassword;
 using Autine.Application.Features.Auth.Commands.RevokeRefreshToken;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Autine.Api.Controllers;
 

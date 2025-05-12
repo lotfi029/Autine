@@ -22,7 +22,8 @@ public class BotsController(ISender sender) : ControllerBase
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> AddBot([FromForm] CreateBotRequest request, CancellationToken ct)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IActionResult> AddBot([FromBody] CreateBotRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
@@ -37,6 +38,7 @@ public class BotsController(ISender sender) : ControllerBase
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateBot([FromRoute] Guid id, [FromBody] UpdateBotRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
@@ -49,6 +51,7 @@ public class BotsController(ISender sender) : ControllerBase
     [HttpPut("{id:guid}/change-bot-image")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateBotImage([FromRoute] Guid id, [FromForm] ImageRequest request, CancellationToken ct = default)
     {
         var userId = User.GetUserId()!;

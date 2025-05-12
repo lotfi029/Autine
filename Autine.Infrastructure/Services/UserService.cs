@@ -1,8 +1,7 @@
 ﻿using Autine.Application.Contracts.Users;
 using Microsoft.EntityFrameworkCore.Storage;
-using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 using static Autine.Infrastructure.Identity.Consts.DefaultRoles;
-using Autine.Application.IServices;
+using static Autine.Infrastructure.Persistence.DBCommands.StoredProcedures;
 namespace Autine.Infrastructure.Services;
 public class UserService(
     ApplicationDbContext context,
@@ -32,57 +31,71 @@ public class UserService(
 
         try
         {
-            if (userRole.Contains(Admin.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                await context.Database.ExecuteSqlRawAsync(
-                    AdminSPs.DeleteAdminWithRelationCall,
-                    [AdminSPs.DeleteAdminWithRelationParamter(userId)],
-                    ct
-                );
+            //if (userRole.Contains(Admin.Name, StringComparer.OrdinalIgnoreCase))
+            //{
+            //    await context.Database.ExecuteSqlRawAsync(
+            //        AdminSPs.DeleteAdminWithRelationCall,
+            //        [AdminSPs.DeleteAdminWithRelationParamter(userId)],
+            //        ct
+            //    );
 
-                await fileService.DeleteImageAsync(image!, false);
-                if (useLocalTransaction)
-                    await transaction.CommitAsync(ct);
+            //    await fileService.DeleteImageAsync(image!, false);
+            //    if (useLocalTransaction)
+            //        await transaction.CommitAsync(ct);
 
-                return Admin.Name;
-            }
-            if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                await context.Database.ExecuteSqlRawAsync(
-                    PatientSPs.DeletePatientWithRelationCall,
-                    [PatientSPs.DeletePatientWithRelationParamter(userId)],
-                    ct
-                );
+            //    return Admin.Name;
+            //}
+            //if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
+            //{
+            //    await context.Database.ExecuteSqlRawAsync(
+            //        PatientSPs.DeletePatientWithRelationCall,
+            //        [PatientSPs.DeletePatientWithRelationParamter(userId)],
+            //        ct
+            //    );
 
-                await fileService.DeleteImageAsync(image!, false);
-                if (useLocalTransaction)
-                    await transaction.CommitAsync(ct);
+            //    await fileService.DeleteImageAsync(image!, false);
+            //    if (useLocalTransaction)
+            //        await transaction.CommitAsync(ct);
 
-                return DefaultRoles.User.Name;
-            }
+            //    return DefaultRoles.User.Name;
+            //}
 
-            var role = string.Empty;
-            if (userRole.Contains("supervisor", StringComparer.OrdinalIgnoreCase))
-            {
-                await context.Database.ExecuteSqlRawAsync(
-                    SupervisorSPs.DeleteSupervisorRelationsCall,
-                    [SupervisorSPs.DeleteSupervisorRelationsParamter(userId)],
-                    ct
-                );
-                role = "supervisor";
-            }
+            //var role = string.Empty;
+            //if (userRole.Contains("supervisor", StringComparer.OrdinalIgnoreCase))
+            //{
+            //    await context.Database.ExecuteSqlRawAsync(
+            //        SupervisorSPs.DeleteSupervisorRelationsCall,
+            //        [SupervisorSPs.DeleteSupervisorRelationsParamter(userId)],
+            //        ct
+            //    );
+            //    role = "supervisor";
+            //}
+
+            //await context.Database.ExecuteSqlRawAsync(
+            //    UserSPs.DeleteUserWithRelationCall,
+            //    [UserSPs.DeleteUserWithRelationParamter(userId)],
+            //    ct
+            //);
+            //role = role == string.Empty ? "user" : role;
+
 
             await context.Database.ExecuteSqlRawAsync(
-                UserSPs.DeleteUserWithRelationCall,
-                [UserSPs.DeleteUserWithRelationParamter(userId)],
+                DeleteUserSPs.DeleteUserWithAllRelationsCall,
+                DeleteUserSPs.DeleteUserWithAllRelationsParamter(userId),
                 ct
-            );
-            role = role == string.Empty ? "user" : role;
-            
+                );
+
             await fileService.DeleteImageAsync(image!, false);
 
             if (useLocalTransaction)
                 await transaction.CommitAsync(ct);
+
+
+            var role = userRole.Contains(Admin.Name, StringComparer.OrdinalIgnoreCase) ? Admin.Name :
+                userRole.Contains(Doctor.Name, StringComparer.OrdinalIgnoreCase) ? Doctor.Name :
+                userRole.Contains(Parent.Name, StringComparer.OrdinalIgnoreCase) ? Parent.Name :
+                userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase) ? DefaultRoles.Patient.Name :
+                DefaultRoles.User.Name;
 
             return Result.Success(role);
         }

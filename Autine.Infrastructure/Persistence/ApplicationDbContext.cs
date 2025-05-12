@@ -13,8 +13,6 @@ public class ApplicationDbContext(
     public DbSet<Bot> Bots { get; set; }
     public DbSet<BotPatient> BotPatients { get; set; }
     public DbSet<ThreadMember> ThreadMembers { get; set; }
-    public DbSet<BotMessage> BotMessages { get; set; }
-    public DbSet<ThreadMessage> ThreadMessages { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Chat> Chats { get; set; }
     

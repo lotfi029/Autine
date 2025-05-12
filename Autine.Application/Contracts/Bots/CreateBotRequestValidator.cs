@@ -30,30 +30,30 @@ public class CreateBotRequestValidator : AbstractValidator<CreateBotRequest>
             }).WithMessage("{PropertyName} cannot contain empty Ids or duplicated patient.");
 
 
-        RuleFor(x => x.Image)
-            .Must(ValidImage)
-            .WithMessage("{PropertyName} allowed image .jpg, .jpeg, .png, .gif");
+        //RuleFor(x => x.Image)
+        //    .Must(ValidImage)
+        //    .WithMessage("{PropertyName} allowed image .jpg, .jpeg, .png, .gif");
     }
-    private static bool ValidImage(IFormFile? image)
-    {
-        if (image == null)
-            return true;
+    //private static bool ValidImage(IFormFile? image)
+    //{
+    //    if (image == null)
+    //        return true;
 
-        const long maxSize = 5 * 1024 * 1024;
-        if (image.Length > maxSize)
-            return false;
+    //    const long maxSize = 5 * 1024 * 1024;
+    //    if (image.Length > maxSize)
+    //        return false;
 
-        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
-        if (!allowedExtensions.Contains(extension))
-            return false;
+    //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+    //    var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
+    //    if (!allowedExtensions.Contains(extension))
+    //        return false;
 
-        var allowedContentTypes = new[]
-        {
-            "image/jpeg",
-            "image/png",
-            "image/gif"
-        };
-        return allowedContentTypes.Contains(image.ContentType.ToLowerInvariant());
-    }
+    //    var allowedContentTypes = new[]
+    //    {
+    //        "image/jpeg",
+    //        "image/png",
+    //        "image/gif"
+    //    };
+    //    return allowedContentTypes.Contains(image.ContentType.ToLowerInvariant());
+    //}
 }

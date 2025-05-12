@@ -9,22 +9,23 @@ public class UpdateBotImageCommandHandler(
     public async Task<Result> Handle(UpdateBotImageCommand request, CancellationToken cancellationToken)
     {
         var bot = await unitOfWork.Bots.FindByIdAsync(cancellationToken, [request.BotId]);
+        
         if (bot is null)
             return BotErrors.BotNotFound;
 
         try
         {
             
-                var result = await fileService.UpdateImageAsync(bot.BotImage, request.Image, true, cancellationToken);
+            var result = await fileService.UpdateImageAsync(bot.BotImage!, request.Image, true, cancellationToken);
                 
-                if (result.IsFailure)
-                    return result.Error;
+            if (result.IsFailure)
+                return result.Error;
 
-                await unitOfWork.Bots
-                    .ExcuteUpdateAsync(
-                    e => e.Id == request.BotId, 
-                    setter => setter.SetProperty(e => e.BotImage, result.Value),
-                    cancellationToken);
+            await unitOfWork.Bots
+                .ExcuteUpdateAsync(
+                e => e.Id == request.BotId, 
+                setter => setter.SetProperty(e => e.BotImage, result.Value),
+                cancellationToken);
             
             return Result.Success();
         }

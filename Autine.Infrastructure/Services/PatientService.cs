@@ -1,6 +1,5 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.Patients;
-using Autine.Application.IServices;
 
 namespace Autine.Infrastructure.Services;
 
@@ -38,7 +37,7 @@ public class PatientService(
             t.LastSession,
             t.NextSession,
             t.Status,
-            t.Notes,
+            t.Notes!,
             t.SessionFrequency
             )).ToListAsync(cancellationToken: ct);
 
@@ -71,7 +70,7 @@ public class PatientService(
                     t.LastSession,
                     t.NextSession,
                     t.Status,
-                    t.Notes,
+                    t.Notes!,
                     t.SessionFrequency
             ))
             .SingleOrDefaultAsync(ct);
