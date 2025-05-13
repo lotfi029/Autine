@@ -56,7 +56,7 @@ public class SendMessageToBotCommandHandler(
             if (botResponse.IsFailure)
             {
                 await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-                return BotMessageError.FailedToSendMessage;
+                return Error.BadRequest("SendMessage.Failed", botResponse.Error.Description);
             }
 
 

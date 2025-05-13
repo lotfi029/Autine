@@ -322,7 +322,7 @@ public class StoredProcedures
             BEGIN
                 SET NOCOUNT ON;
     
-                CREATE TABLE #ChatsToDelete (ChatId INT);
+                CREATE TABLE #ChatsToDelete (ChatId uniqueidentifier);
     
                 WITH UserChats AS (
                     SELECT DISTINCT c.Id AS ChatId
@@ -526,7 +526,6 @@ public class StoredProcedures
 
                 ELSE IF @IsPatient = 1
                 BEGIN
-                    EXEC dbo.ProcessChatOnUserDelete @UserId = @UserId, @AnonymousUserId = @AnonymousUserId;
         
                     DELETE msg
                     FROM dbo.Messages AS msg
@@ -551,8 +550,6 @@ public class StoredProcedures
 
                 ELSE IF @IsRegularUser = 1
                 BEGIN
-                    EXEC dbo.ProcessChatOnUserDelete @UserId = @UserId, @AnonymousUserId = @AnonymousUserId;
-        
                     DELETE msg
                     FROM dbo.Messages AS msg
                     INNER JOIN dbo.BotPatients AS bp

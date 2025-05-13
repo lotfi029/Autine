@@ -5,6 +5,9 @@ using Autine.Application.Features.ThreadMember.Commands.Remove;
 using Autine.Application.Contracts.Threads;
 using System.Threading;
 using Autine.Application.Features.ThreadMember.Queries.GetAll;
+using Autine.Application.Contracts.Users;
+using Autine.Application.Features.Users.Queries.GetById;
+using Autine.Application.Features.ThreadMember.Queries.GetMemberDetailed;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
@@ -20,7 +23,7 @@ public class ThreadsController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> AddThreadMember([FromRoute] Guid patientId, string memberId, CancellationToken ct)
+    public async Task<IActionResult> AddThreadMember([FromRoute] string patientId, [FromQuery] string memberId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
@@ -33,8 +36,8 @@ public class ThreadsController(ISender sender) : ControllerBase
 
         return result.IsSuccess
             ? CreatedAtAction(
-        nameof(GetThread),
-                new { threadId = result.Value},
+                nameof(GetThread),
+                new { id = result.Value},
                 null
             )
             : result.ToProblem();
@@ -72,7 +75,7 @@ public class ThreadsController(ISender sender) : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ThreadMemberResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThread([FromRoute] Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetThread([FromRoute] string id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var query = new GetThreadQuery(userId, id);
@@ -81,10 +84,10 @@ public class ThreadsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
-    [HttpGet("{id:guid}/thread-member")]
+    [HttpGet("{id:guid}/thread-members")]
     [ProducesResponseType(typeof(IEnumerable<ThreadMemberResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetThreadMembers([FromRoute] Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetThreadMembers([FromRoute] string id, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
         var query = new GetThreadMembersQuery(userId, id);
@@ -93,4 +96,16 @@ public class ThreadsController(ISender sender) : ControllerBase
             ? Ok(result.Value)
             : result.ToProblem();
     }
+    [HttpGet("{id:guid}/thread-member")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetThreadMember([FromRoute] Guid id, CancellationToken ct)
+    {
+        var query = new GetMemberByIdQuery(id);
+        var result = await sender.Send(query, ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+
 }

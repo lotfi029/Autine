@@ -1,7 +1,4 @@
-﻿using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
-
-namespace Autine.Application.Features.Users.Commands.Delete;
+﻿namespace Autine.Application.Features.Users.Commands.Delete;
 public record DeleteUserByIdCommand(string AdminId, string UserId) : ICommand;
 
 public class DeleteUserByIdCommandHandler(IUserService userService, IAIAuthService aIAuthService, IUnitOfWork unitOfWork) : ICommandHandler<DeleteUserByIdCommand>

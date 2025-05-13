@@ -31,54 +31,6 @@ public class UserService(
 
         try
         {
-            //if (userRole.Contains(Admin.Name, StringComparer.OrdinalIgnoreCase))
-            //{
-            //    await context.Database.ExecuteSqlRawAsync(
-            //        AdminSPs.DeleteAdminWithRelationCall,
-            //        [AdminSPs.DeleteAdminWithRelationParamter(userId)],
-            //        ct
-            //    );
-
-            //    await fileService.DeleteImageAsync(image!, false);
-            //    if (useLocalTransaction)
-            //        await transaction.CommitAsync(ct);
-
-            //    return Admin.Name;
-            //}
-            //if (userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase))
-            //{
-            //    await context.Database.ExecuteSqlRawAsync(
-            //        PatientSPs.DeletePatientWithRelationCall,
-            //        [PatientSPs.DeletePatientWithRelationParamter(userId)],
-            //        ct
-            //    );
-
-            //    await fileService.DeleteImageAsync(image!, false);
-            //    if (useLocalTransaction)
-            //        await transaction.CommitAsync(ct);
-
-            //    return DefaultRoles.User.Name;
-            //}
-
-            //var role = string.Empty;
-            //if (userRole.Contains("supervisor", StringComparer.OrdinalIgnoreCase))
-            //{
-            //    await context.Database.ExecuteSqlRawAsync(
-            //        SupervisorSPs.DeleteSupervisorRelationsCall,
-            //        [SupervisorSPs.DeleteSupervisorRelationsParamter(userId)],
-            //        ct
-            //    );
-            //    role = "supervisor";
-            //}
-
-            //await context.Database.ExecuteSqlRawAsync(
-            //    UserSPs.DeleteUserWithRelationCall,
-            //    [UserSPs.DeleteUserWithRelationParamter(userId)],
-            //    ct
-            //);
-            //role = role == string.Empty ? "user" : role;
-
-
             await context.Database.ExecuteSqlRawAsync(
                 DeleteUserSPs.DeleteUserWithAllRelationsCall,
                 DeleteUserSPs.DeleteUserWithAllRelationsParamter(userId),
@@ -92,12 +44,12 @@ public class UserService(
 
 
             var role = userRole.Contains(Admin.Name, StringComparer.OrdinalIgnoreCase) ? Admin.Name :
-                userRole.Contains(Doctor.Name, StringComparer.OrdinalIgnoreCase) ? Doctor.Name :
-                userRole.Contains(Parent.Name, StringComparer.OrdinalIgnoreCase) ? Parent.Name :
-                userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase) ? DefaultRoles.Patient.Name :
+                userRole.Contains(Doctor.Name, StringComparer.OrdinalIgnoreCase) ? "supervisor" :
+                userRole.Contains(Parent.Name, StringComparer.OrdinalIgnoreCase) ? "supervisor" :
+                userRole.Contains(DefaultRoles.Patient.Name, StringComparer.OrdinalIgnoreCase) ? DefaultRoles.User.Name :
                 DefaultRoles.User.Name;
 
-            return Result.Success(role);
+            return Result.Success(role.ToLower());
         }
         catch
         {

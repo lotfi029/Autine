@@ -1,12 +1,15 @@
 ﻿using Autine.Application.Contracts.UserBots;
 namespace Autine.Application.Features.UserBots.Queries.GetMessages;
 public class GetChatBotsQueryHandler(
-    IUnitOfWork unitOfWork) : IQueryHandler<GetChatBotsQuery, List<MessageResponse>>
+    IUnitOfWork unitOfWork,
+    IUrlGenratorService urlGenratorService) : IQueryHandler<GetChatBotsQuery, ChatResponse>
 {
-    public async Task<Result<List<MessageResponse>>> Handle(GetChatBotsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ChatResponse>> Handle(GetChatBotsQuery request, CancellationToken cancellationToken)
     {
-        if (await unitOfWork.BotPatients.GetAsync(e => e.UserId == request.UserId && e.BotId == request.BotId,ct: cancellationToken) is not { } botPatient)
-            return BotErrors.BotNotFound;
+        var botPatient = await unitOfWork.BotPatients
+            .GetAsync(e => e.UserId == request.UserId && e.BotId == request.BotId,
+            includes: "Bot",
+            ct: cancellationToken);
         
         var messages = await unitOfWork.BotPatients.GetMessagesAsync(botPatient.Id, cancellationToken);
 
@@ -21,6 +24,15 @@ public class GetChatBotsQueryHandler(
             m.SenderId != null
             )).ToList();
 
-        return result;
+        var response = new ChatResponse(
+            botPatient.Bot.Id, 
+            botPatient.Bot.Name,
+            urlGenratorService.GetImageUrl(botPatient.Bot.BotImage!, true)!,
+            botPatient.CreatedAt, 
+            result
+            );
+
+
+        return response;
     }
 }

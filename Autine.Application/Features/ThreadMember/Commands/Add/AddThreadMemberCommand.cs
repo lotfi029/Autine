@@ -1,2 +1,2 @@
 ﻿namespace Autine.Application.Features.ThreadMember.Commands.Add;
-public record AddThreadMemberCommand(string UserId, Guid PatientId, string MemberId) : ICommand<Guid>;
+public record AddThreadMemberCommand(string UserId, string PatientId, string MemberId) : ICommand<Guid>;

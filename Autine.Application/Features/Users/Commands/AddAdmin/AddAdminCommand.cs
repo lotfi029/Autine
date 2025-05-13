@@ -1,6 +1,4 @@
 ﻿using Autine.Application.Contracts.Auths;
-using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
 
 namespace Autine.Application.Features.Users.Commands.AddAdmin;
 public record AddAdminCommand(string AdminId, RegisterRequest Request) : ICommand<string>;
@@ -45,7 +43,7 @@ public class AddAdminCommandHandler(IUnitOfWork unitOfWork, IAuthService authSer
         catch
         {
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-            return Error.InternalServerError("Error", "An error occure while register user.");
+            return Error.BadRequest("Error", "An error occure while register user.");
         }
 
     }

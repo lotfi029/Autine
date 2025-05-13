@@ -16,7 +16,7 @@ public class BotPatientRepository(ApplicationDbContext context) : Repository<Bot
         try
         {
             await _context.Database.ExecuteSqlRawAsync(
-                $"EXEC {StoredProcedures.BotPatientSPs.DeleteBotPatientWithRelations}",
+                $"{StoredProcedures.BotPatientSPs.DeleteBotPatientWithRelationsCall}",
                 [new SqlParameter("@BotPatientId", id)],
                 ct);
             return Result.Success();

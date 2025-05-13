@@ -17,7 +17,15 @@ public class GetBotByIdQueryHandler(
 
         var patients = await patientService.GetBotPatientAsync(request.BotId, cancellationToken);
         bot.BotImage = urlGenratorService.GetImageUrl(bot.BotImage!, true) ?? null;
-        var response = (bot, patients).Adapt<DetailedBotResponse>();
+        var response = new DetailedBotResponse(
+            bot.Id,
+            bot.Name,
+            bot.Bio,
+            bot.Context,
+            urlGenratorService.GetImageUrl(bot.BotImage!, true)!,
+            bot.CreatedAt,
+            [.. patients]
+            );
 
         return response;
     }

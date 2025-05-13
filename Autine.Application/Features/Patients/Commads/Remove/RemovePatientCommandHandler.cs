@@ -1,7 +1,4 @@
-﻿using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
-
-namespace Autine.Application.Features.Patients.Commads.Remove;
+﻿namespace Autine.Application.Features.Patients.Commads.Remove;
 public class RemovePatientCommandHandler(
     IUnitOfWork unitOfWork,
     IUserService userService,

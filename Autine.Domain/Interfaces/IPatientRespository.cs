@@ -5,6 +5,6 @@ public interface IPatientRespository : IRepository<Patient>
 {
     Task<IEnumerable<Patient>> ArePatientsAsync(IList<string> ids, CancellationToken ct = default);
     Task<IEnumerable<Patient>> GetAllThreads(string userId, CancellationToken ct = default);
-    Task<Patient?> GetThreadByIdAsync(string userId, Guid id, CancellationToken ct = default);
-    Task<Result> DeletePatientAsync(Guid id, CancellationToken ct = default);
+    Task<Patient?> GetThreadByIdAsync(string userId, string id, CancellationToken ct = default);
+    Task<Result> DeletePatientAsync(string id, CancellationToken ct = default);
 }

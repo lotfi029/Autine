@@ -17,7 +17,6 @@ public class BotConfigurations : IEntityTypeConfiguration<Bot>
            .HasMaxLength(100);
         
         builder.Property(b => b.BotImage)
-           .IsRequired()
            .HasMaxLength(1000);
 
         builder.Property(b => b.Context)

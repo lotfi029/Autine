@@ -77,15 +77,15 @@ public class BotsController(ISender sender) : ControllerBase
             ? NoContent()
             : result.ToProblem();
     }
-    [HttpDelete("{botPatientId:guid}/remove-assign")]
+    [HttpDelete("{botId:guid}/remove-assign")]
     [Authorize(Roles = $"{DefaultRoles.Parent.Name}, {DefaultRoles.Doctor.Name}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> RemoveAssign([FromRoute] Guid botPatientId, CancellationToken ct)
+    public async Task<IActionResult> RemoveAssign([FromRoute] Guid botId, [FromQuery] string patientId, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
-        var command = new DeleteAssignCommand(userId, botPatientId);
+        var command = new DeleteAssignCommand(userId, botId, patientId);
         var result = await sender.Send(command, ct);
         return result.IsSuccess
             ? NoContent()

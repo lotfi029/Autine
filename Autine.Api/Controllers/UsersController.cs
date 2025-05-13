@@ -11,33 +11,11 @@ namespace Autine.Api.Controllers;
 [Authorize(Roles = $"{DefaultRoles.Admin.Name}")]
 public class UsersController(ISender sender) : ControllerBase
 {
-    [HttpGet("all-users")]
-    [Produces<UserResponse>()]
-    public async Task<IActionResult> GetAllUsers(CancellationToken ct)
-    {
-        var userId = User.GetUserId()!;
-
-        var query = new GetAllUsersQuery(userId);
-        var result = await sender.Send(query, ct);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : result.ToProblem();
-    }
-    [HttpGet("{id:guid}/get-user-by-id")]
-    public async Task<IActionResult> Get([FromRoute] string id, CancellationToken ct)
-    {
-        var userId = User.GetUserId()!;
-
-        var query = new GetUserByIdQuery(userId, id);
-        var result = await sender.Send(query, ct);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : result.ToProblem();
-    }
     [HttpPost("add-admin")]
-    public async Task<IActionResult> AddAdmin([FromForm] RegisterRequest request, CancellationToken ct)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IActionResult> AddAdmin([FromBody] RegisterRequest request, CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
@@ -52,12 +30,40 @@ public class UsersController(ISender sender) : ControllerBase
                 )
             : result.ToProblem();
     }
-    [HttpDelete("{id:guid}/delete-user")]
-    public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken ct)
+    [HttpGet("all-users")]
+    [Produces<UserResponse>]
+    public async Task<IActionResult> GetAllUsers(CancellationToken ct)
     {
         var userId = User.GetUserId()!;
 
-        var query = new DeleteUserByIdCommand(userId, id);
+        var query = new GetAllUsersQuery(userId);
+        var result = await sender.Send(query, ct);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpGet("{id:guid}/get-user-by-id")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Produces<DetailedUserResponse>]
+    public async Task<IActionResult> Get([FromRoute] string id, CancellationToken ct)
+    {
+        var userId = User.GetUserId()!;
+
+        var query = new GetUserByIdQuery(userId, id);
+        var result = await sender.Send(query, ct);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpDelete("{id:guid}/delete-user")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken ct)
+    {
+        var query = new DeleteUserByIdCommand(User.GetUserId()!, id);
         var result = await sender.Send(query, ct);
 
         return result.IsSuccess

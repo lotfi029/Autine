@@ -11,15 +11,15 @@ public class PatientRepository(ApplicationDbContext context) : Repository<Patien
     }
     public async Task<IEnumerable<Patient>> GetAllThreads(string userId, CancellationToken ct = default)
         => await GetThreadsAsync(userId, Guid.Empty, ct);
-    public async Task<Patient?> GetThreadByIdAsync(string userId, Guid id, CancellationToken ct = default)
+    public async Task<Patient?> GetThreadByIdAsync(string userId, string id, CancellationToken ct = default)
     {
         var thread = await _context.Patients
             .Include(e => e.Members)
-            .SingleOrDefaultAsync(e => e.Id == id, ct) ?? null!;
+            .SingleOrDefaultAsync(e => e.PatientId == id, ct) ?? null!;
 
         return thread;
     }
-    public Task<Result> DeletePatientAsync(Guid id, CancellationToken ct = default)
+    public Task<Result> DeletePatientAsync(string id, CancellationToken ct = default)
     {
 
         throw new NotImplementedException();

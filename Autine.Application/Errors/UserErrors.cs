@@ -6,6 +6,9 @@ public class UserErrors
 
     public static readonly Error DuplicatedEmail
         = Error.Conflict(nameof(DuplicatedEmail), "This email is exists before select another one!");
+    
+    public static readonly Error DuplicatedUsername
+        = Error.Conflict(nameof(DuplicatedUsername), "This Username is exists before select another one!");
 
     public static readonly Error InvalidCode
         = Error.Unauthorized(nameof(InvalidCode), "Invalid Code");

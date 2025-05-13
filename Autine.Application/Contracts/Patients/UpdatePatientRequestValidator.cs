@@ -55,7 +55,7 @@ public class UpdatePatientRequestValidator : AbstractValidator<UpdatePatientRequ
                 if (g == null) return false;
                 var gender = g.ToLower();
 
-                return gender == "male" || g == "female";
+                return gender == "male" || gender == "female";
             })
             .WithMessage("{PropertyName} must be Male, Female.");
 

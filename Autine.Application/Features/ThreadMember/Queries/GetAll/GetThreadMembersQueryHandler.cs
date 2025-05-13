@@ -5,8 +5,12 @@ public class GetThreadMembersQueryHandler(IUnitOfWork unitOfWork) : IQueryHandle
 {
     public async Task<Result<IEnumerable<ThreadMemberResponse>>> Handle(GetThreadMembersQuery request, CancellationToken cancellationToken)
     {
+        
+        if (await unitOfWork.Patients.GetAsync(e => e.PatientId == request.PatientId, ct: cancellationToken) is not { } thread)
+            return PatientErrors.PatientsNotFound;
+
         var threadMember = await unitOfWork.ThreadMembers
-            .GetAllAsync(e => e.ThreadId == request.PatientId, ct: cancellationToken);
+            .GetAllAsync(e => e.ThreadId == thread.Id, ct: cancellationToken);
 
         var response = threadMember
             .Select(e => new ThreadMemberResponse

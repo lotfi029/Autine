@@ -1,20 +1,19 @@
 ﻿using Autine.Application.Contracts.Bots;
 using Autine.Application.Contracts.UserBots;
-using Autine.Application.Features.Bots.Queries.GetAll;
 using Autine.Application.Features.UserBots.Commands.Remove;
 using Autine.Application.Features.UserBots.Commands.Send;
 using Autine.Application.Features.UserBots.Queries.GetBots;
 using Autine.Application.Features.UserBots.Queries.GetById;
 using Autine.Application.Features.UserBots.Queries.GetMessages;
 using Autine.Application.Features.UserBots.Queries.GetMyBots;
-using Autine.Infrastructure.Repositories;
 
 namespace Autine.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(Roles = $"{DefaultRoles.User.Name}, {DefaultRoles.Parent.Name}")]
 [Produces("application/json")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
 public class BotUsersController(ISender sender) : ControllerBase
 {
     [HttpPost("{botId:guid}/send-to-bot")]

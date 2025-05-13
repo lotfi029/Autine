@@ -1,10 +1,12 @@
 ﻿using Autine.Application.Contracts.Auth;
 using Autine.Application.Contracts.Auths;
 using Autine.Application.IServices;
+using Autine.Domain.Abstractions;
 using Autine.Infrastructure.Identity.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace Autine.Infrastructure.Services;
 public class AuthService(
@@ -69,8 +71,11 @@ public class AuthService(
     public async Task<Result<string>> RegisterAdminAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
 
-        if (await _context.Users.AnyAsync(e => e.Email == request.Email || e.UserName == request.UserName, cancellationToken))
+        if (await _context.Users.AnyAsync(e => e.Email == request.Email, cancellationToken))
             return UserErrors.DuplicatedEmail;
+
+        if (await _context.Users.AnyAsync(e => e.UserName == request.UserName, cancellationToken))
+            return UserErrors.DuplicatedUsername;
 
         var user = request.Adapt<ApplicationUser>();
         user.EmailConfirmed = true;
@@ -100,6 +105,14 @@ public class AuthService(
 
         if (user.IsFailure)
             return user.Error;
+
+        var addToRoleResult = await _userManager.AddToRoleAsync(user.Value, DefaultRoles.User.Name);
+
+        if (!addToRoleResult.Succeeded)
+        {
+            var error = addToRoleResult.Errors.First();
+            return Error.BadRequest(error.Code, error.Description);
+        }
 
         var code = await GenerateEmailConfirmationCodeAync(user.Value);
         var response = new RegisterResponse(code, user.Value.Id);
@@ -185,8 +198,6 @@ public class AuthService(
             return Error.BadRequest(error.Code, error.Description);
         }
 
-        await _userManager.AddToRoleAsync(user, DefaultRoles.User.Name);
-
         return Result.Success();
     }
     public async Task<Result<RegisterResponse>> ReConfirmEmailAsync(ResendConfirmEmailRequest request)
@@ -259,8 +270,11 @@ public class AuthService(
     }
     private async Task<Result<ApplicationUser>> RegisterValidationAsync(RegisterRequest request, bool IsConfirmed = false, CancellationToken ct = default)
     {
-        if (await _context.Users.AnyAsync(e => e.Email == request.Email || e.UserName == request.UserName, ct))
+        if (await _context.Users.AnyAsync(e => e.Email == request.Email, ct))
             return UserErrors.DuplicatedEmail;
+
+        if (await _context.Users.AnyAsync(e => e.UserName == request.UserName, ct))
+            return UserErrors.DuplicatedUsername;
 
         var user = request.Adapt<ApplicationUser>();
         user.EmailConfirmed = IsConfirmed;
