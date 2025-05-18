@@ -3,4 +3,5 @@
 namespace Autine.Domain.Interfaces;
 public interface IChatRepository : IRepository<Chat>
 {
+    
 }

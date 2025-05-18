@@ -60,7 +60,7 @@ namespace Autine.Infrastructure.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.ToTable("Bots");
+                    b.ToTable("Bots", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.BotPatient", b =>
@@ -89,7 +89,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("BotId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("BotPatients");
+                    b.ToTable("BotPatients", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Chat", b =>
@@ -116,7 +116,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("UserId", "CreatedBy")
                         .IsUnique();
 
-                    b.ToTable("Chats");
+                    b.ToTable("Chats", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Message", b =>
@@ -175,7 +175,7 @@ namespace Autine.Infrastructure.Migrations
                         .HasDatabaseName("IX_Message_ThreadMemberId")
                         .HasFilter("ThreadMemberId IS NOT NULL");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.Patient", b =>
@@ -239,7 +239,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("PatientId", "CreatedBy")
                         .IsUnique();
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Domain.Entities.ThreadMember", b =>
@@ -269,7 +269,7 @@ namespace Autine.Infrastructure.Migrations
                     b.HasIndex("ThreadId", "MemberId")
                         .IsUnique();
 
-                    b.ToTable("ThreadMembers");
+                    b.ToTable("ThreadMembers", (string)null);
                 });
 
             modelBuilder.Entity("Autine.Infrastructure.Identity.Entities.ApplicationUser", b =>

@@ -1,2 +1,4 @@
-﻿namespace Autine.Application.Features.Profiles.Commands.ChangePassword;
+﻿using Autine.Application.Contracts.Auths;
+
+namespace Autine.Application.Features.Profiles.Commands.ChangePassword;
 public record ChangePasswordCommand(string UserId, ChangePasswordRequest ChangePasswordRequest) : ICommand;

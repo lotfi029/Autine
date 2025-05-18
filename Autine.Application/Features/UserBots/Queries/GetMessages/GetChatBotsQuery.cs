@@ -1,4 +1,5 @@
-﻿using Autine.Application.Contracts.UserBots;
+﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.Contracts.Chats;
 
 namespace Autine.Application.Features.UserBots.Queries.GetMessages;
-public record GetChatBotsQuery(string UserId, Guid BotId) : IQuery<ChatResponse>;
+public record GetChatBotsQuery(string UserId, Guid BotId) : IQuery<DetailedChatBotResponse>;

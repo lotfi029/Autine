@@ -1,10 +1,12 @@
-﻿using Autine.Application.Contracts.UserBots;
+﻿using Autine.Application.Contracts.Bots;
+using Autine.Application.Contracts.Chats;
+using Autine.Application.Contracts.UserBots;
 namespace Autine.Application.Features.UserBots.Queries.GetMessages;
 public class GetChatBotsQueryHandler(
     IUnitOfWork unitOfWork,
-    IUrlGenratorService urlGenratorService) : IQueryHandler<GetChatBotsQuery, ChatResponse>
+    IUrlGenratorService urlGenratorService) : IQueryHandler<GetChatBotsQuery, DetailedChatBotResponse>
 {
-    public async Task<Result<ChatResponse>> Handle(GetChatBotsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<DetailedChatBotResponse>> Handle(GetChatBotsQuery request, CancellationToken cancellationToken)
     {
         var botPatient = await unitOfWork.BotPatients
             .GetAsync(e => e.UserId == request.UserId && e.BotId == request.BotId,
@@ -24,7 +26,7 @@ public class GetChatBotsQueryHandler(
             m.SenderId != null
             )).ToList();
 
-        var response = new ChatResponse(
+        var response = new DetailedChatBotResponse(
             botPatient.Bot.Id, 
             botPatient.Bot.Name,
             urlGenratorService.GetImageUrl(botPatient.Bot.BotImage!, true)!,

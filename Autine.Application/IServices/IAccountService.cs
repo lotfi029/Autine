@@ -1,4 +1,5 @@
-﻿using Autine.Application.Contracts.Profiles;
+﻿using Autine.Application.Contracts.Auths;
+using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
 
 namespace Autine.Application.IServices;

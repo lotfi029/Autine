@@ -35,7 +35,7 @@ public class BotUsersController(ISender sender) : ControllerBase
             : result.ToProblem();
     }
     [HttpGet("{botId}/chat-bot")]
-    [ProducesResponseType(typeof(IEnumerable<MessageResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<DetailedChatBotResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessageHistory(
         [FromRoute] Guid botId,

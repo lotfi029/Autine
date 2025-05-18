@@ -9,8 +9,8 @@ public class SendDMCommandHandler(
 {
     public async Task<Result<MessageResponse>> Handle(SendDMCommand request, CancellationToken ct)
     {
-        if (!await roleService.UserIsSupervisorAsync(request.RecieverId))
-            return UserErrors.UserNotFound;
+        //if (!await roleService.UserIsSupervisorAsync(request.RecieverId))
+        //    return UserErrors.UserNotFound;
 
         var n = string.CompareOrdinal(request.UserId, request.RecieverId) > 0;
         var userId = n ? request.UserId : request.RecieverId;

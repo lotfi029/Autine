@@ -1,11 +1,10 @@
 ﻿using Autine.Application.Contracts.UserBots;
 
-namespace Autine.Application.Contracts.Chats;
+namespace Autine.Application.Contracts.Bots;
 
-public record DetailedChatResponse(
+public record DetailedChatBotResponse(
     Guid Id,
     string Name,
-    string MemberId,
     string ProfilePic,
     DateTime CreateAt,
     IList<MessageResponse> Messages

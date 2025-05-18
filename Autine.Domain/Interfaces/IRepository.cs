@@ -11,6 +11,7 @@ public interface IRepository<T> where T : class
     Task<int> ExcuteUpdateAsync(Expression<Func<T, bool>> predicate, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCall, CancellationToken ct = default);
     void Delete(T entity);
     Task DeleteByIdAsync(CancellationToken ct = default, params object[] keyValues);
+    Task ExcuteDeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
     Task<bool> CheckExistAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
     Task<T> FindByIdAsync(CancellationToken ct = default, params object[] keyValues);
     Task<T> GetAsync(Expression<Func<T, bool>> predicate, string? includes = null, bool tracked = false, CancellationToken ct = default);

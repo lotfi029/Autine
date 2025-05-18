@@ -8,4 +8,7 @@ public class ChatErrors
     public static readonly Error ChatNotFound
         = Error.NotFound($"Chat.{nameof(ChatNotFound)}", "chat not found");
 
+    public static readonly Error ChatNotBelongToUser
+        = Error.BadRequest($"Chat.{nameof(ChatNotBelongToUser)}", "chat not belong to user");
+
 }

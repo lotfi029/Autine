@@ -70,11 +70,6 @@ namespace Autine.Infrastructure.Migrations
                 column: "ThreadMemberId",
                 filter: "ThreadMemberId IS NOT NULL");
 
-            migrationBuilder.AddCheckConstraint(
-                name: "CK_Message_ExclusiveThreadMemberOrChatOrBotPatient",
-                table: "Messages",
-                sql: "(BotPatientId IS NOT NULL AND ChatId IS NULL AND BotPatientId IS NULL) OR (BotPatientId IS NULL AND ChatId IS NOT NULL AND BotPatientId IS NULL) OR (BotPatientId IS NULL AND ChatId IS NULL AND BotPatientId IS NOT NULL) AND(SenderId Is NOT NULL AND (ChatId IS NOT NULL OR ThreadMemberId IS NOT NULL))");
-
             migrationBuilder.AddForeignKey(
                 name: "FK_Messages_BotPatients_BotPatientId",
                 table: "Messages",
@@ -133,10 +128,6 @@ namespace Autine.Infrastructure.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_Message_ThreadMemberId",
-                table: "Messages");
-
-            migrationBuilder.DropCheckConstraint(
-                name: "CK_Message_ExclusiveThreadMemberOrChatOrBotPatient",
                 table: "Messages");
 
             migrationBuilder.DropColumn(

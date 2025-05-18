@@ -122,4 +122,5 @@ public class AuthsController(ISender _sender) : ControllerBase
             ? NoContent()
             : result.ToProblem();
     }
+
 }

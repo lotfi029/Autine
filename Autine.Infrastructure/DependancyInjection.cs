@@ -1,5 +1,4 @@
-﻿using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
+﻿using Autine.Application.IServices.AIApi;
 using Autine.Infrastructure.Identity.Authentication;
 using Autine.Infrastructure.Repositories;
 using Autine.Infrastructure.Services;
@@ -15,7 +14,7 @@ namespace Autine.Infrastructure;
 public static class DependancyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfigurationManager configuration)
-    {
+    {   
         services.AddDbConfig(configuration);
         services.AddAuthConfig(configuration);
         services.RegisterToDI();
@@ -60,7 +59,6 @@ public static class DependancyInjection
                 options.UseSqlServer(connectionString,
                     a => a.MigrationsAssembly(typeof(ApplicationDbContext).Assembly));
             });
-
         }
         catch
         {

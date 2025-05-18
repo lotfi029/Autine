@@ -19,7 +19,6 @@ builder.Services.AddCors(options =>
         policy
             .AllowAnyHeader()
             .AllowAnyMethod()
-
             .AllowAnyOrigin();
     });
 });
@@ -29,8 +28,6 @@ builder.Services.AddHybridCache();
 var app = builder.Build();
 
 
-app.MapOpenApi();
-app.MapScalarApiReference();
 
 
 app.UseHttpsRedirection();
@@ -39,9 +36,11 @@ app.UseCors("ClientPermission");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 
+app.MapOpenApi();
+app.MapScalarApiReference();
 app.MapControllers();
-
 //app.MapHub<ChatHub>("/chatHub");
 app.MapHub<ChatHub>("/my-chat");
 

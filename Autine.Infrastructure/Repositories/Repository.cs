@@ -55,6 +55,11 @@ public class Repository<T> : IRepository<T> where T : class
             Delete(entity);
         }
     }
+
+    public async Task ExcuteDeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
+    {
+        await _dbSet.Where(predicate).ExecuteDeleteAsync(ct);
+    }
     public async Task<bool> CheckExistAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
     {
         return await _dbSet.AnyAsync(predicate, ct);

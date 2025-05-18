@@ -28,7 +28,7 @@ public class RegisterCommandHandler(
             if (!externalRegisterResult.IsSuccess)
             {
                 await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
-                return externalRegisterResult.Error; 
+                return externalRegisterResult.Error;
             }
 
             var response = new RegisterResponse(result.Value.Code, result.Value.UserId);
@@ -37,6 +37,7 @@ public class RegisterCommandHandler(
         }
         catch
         {
+            // TODO: Log the error
             await unitOfWork.RollbackTransactionAsync(transaction, cancellationToken);
             return Error.InternalServerError("Error", "An error occure while register user.");
         }

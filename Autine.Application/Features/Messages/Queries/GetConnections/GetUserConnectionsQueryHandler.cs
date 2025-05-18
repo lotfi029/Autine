@@ -1,12 +1,15 @@
 ﻿
+using Autine.Application.Contracts.Chats;
+using Autine.Application.Contracts.UserBots;
+
 namespace Autine.Application.Features.Messages.Queries.GetConnections;
 
-public class GetUserConnectionsQueryHandler(IUnitOfWork unitOfWork) : IQueryHandler<GetUserConnectionsQuery, IList<string>>
+public class GetUserConnectionsQueryHandler(IUserService userService) : IQueryHandler<GetUserConnectionsQuery, IEnumerable<UserChatResponse>>
 {
-    public async Task<Result<IList<string>>> Handle(GetUserConnectionsQuery request, CancellationToken ct)
+    public async Task<Result<IEnumerable<UserChatResponse>>> Handle(GetUserConnectionsQuery request, CancellationToken ct)
     {
-        var chats = await unitOfWork.Chats.GetAllAsync(c => c.UserId == request.UserId || c.CreatedBy == request.UserId, ct: ct);
+        var chats = await userService.GetAllUserChatAsync(request.UserId, ct);
 
-        return chats.Select(c => c.UserId.Equals(request.UserId, StringComparison.OrdinalIgnoreCase) ? c.CreatedBy : c.UserId).ToList();
+        return Result.Success(chats);
     }
 }

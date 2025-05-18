@@ -1,7 +1,6 @@
-﻿using Autine.Application.Contracts.Auth;
+﻿using Autine.Application.Contracts.Auths;
 using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
-using Autine.Application.IServices;
 using Microsoft.AspNetCore.Http;
 
 namespace Autine.Infrastructure.Services;
