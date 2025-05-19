@@ -6,5 +6,6 @@ public record AIUpdateRequest(
     string password = "",
     string fname = "",
     string lname = "",
-    string gender = ""
+    string gender = "",
+    DateTime dateofbirth = default
     );

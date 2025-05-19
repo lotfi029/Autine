@@ -1,7 +1,5 @@
 ﻿using Autine.Application.Contracts.Profiles;
 using Autine.Application.ExternalContracts.Auth;
-using Autine.Application.IServices;
-using Autine.Application.IServices.AIApi;
 
 namespace Autine.Application.Features.Patients.Commads.Update;
 public class UpdatePatientCommandHandler(
@@ -51,9 +49,10 @@ public class UpdatePatientCommandHandler(
                 cancellationToken
                 );
             var aiUpdateRequest = new AIUpdateRequest(
-                userUpdateResult.Value.fname,
-                userUpdateResult.Value.lname,
-                userUpdateResult.Value.gender
+                fname: userUpdateResult.Value.fname,
+                lname: userUpdateResult.Value.lname,
+                gender: userUpdateResult.Value.gender,
+                dateofbirth: userUpdateResult.Value.dateofbirth
                 );
 
             var aiResult = await aIAuthService.UpdateUserAsync(
