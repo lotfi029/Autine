@@ -3,7 +3,6 @@
 namespace Autine.Application.Features.ThreadMember.Commands.Messages;
 public record SendMessageCommand(string UserId, ThreadMessageRequest ThreadMessage) : ICommand<Guid>;
 
-
 public class SendMessageCommandHandler(
     IUnitOfWork unitOfWork) : ICommandHandler<SendMessageCommand, Guid>
 {
@@ -25,7 +24,8 @@ public class SendMessageCommandHandler(
             ReadAt = DateTime.UtcNow
         };
         await unitOfWork.Messages.AddAsync(message, ct);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.CommitChangesAsync(ct);
+
         return Result.Success(message.Id);
     }
 }
