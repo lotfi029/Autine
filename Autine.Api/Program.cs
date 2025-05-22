@@ -27,9 +27,6 @@ builder.Services.AddHybridCache();
 
 var app = builder.Build();
 
-
-
-
 app.UseHttpsRedirection();
 
 app.UseCors("ClientPermission");
