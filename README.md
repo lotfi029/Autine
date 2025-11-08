@@ -62,10 +62,12 @@ To ensure scalability and fast response times, the system includes several optim
 Autine/
 │
 ├── Autine.Domain/ # Entities and core domain logic
-├── Autine.Application/ # CQRS Handlers, DTOs, Interfaces
-├── Autine.Infrastructure/ # Database, Repositories, Unit of Work
-├── Autine.API/ # API Endpoints, Controllers, SignalR Hubs
-└── README.md
+├── Autine.Application/ # CQRS handlers, DTOs, and interfaces
+├── Autine.Infrastructure/ # Database context, repositories, and Unit of Work
+├── Autine.API/ # API endpoints, controllers, and SignalR hubs
+└── README.md # Project documentation
+
+---
 
 ## 🧠 Design Principles  
 
@@ -74,19 +76,23 @@ Autine/
 - Dependency Inversion  
 - High Cohesion, Low Coupling  
 
+---
+
 ## 🌍 Future Improvements
 
-- ""🧠 Integrate AI model training for adaptive chatbot behavior.""
+- 🧠 Integrate AI model training for adaptive chatbot behavior.
 
-- ""🎙️ Add voice-based interaction for more natural communication.""
+- ""🎙️ Add voice-based interaction for more natural communication.
 
-- ""📊 Build an analytics dashboard for doctors to track user progress.""
+- 📊 Build an analytics dashboard for doctors to track user progress.
 
-- ""💾 Enhance data security and privacy for medical data compliance.""
+- 💾 Enhance data security and privacy for medical data compliance.
+
+---
 
 ## 🙌 Acknowledgments
 
-- "" Special thanks to the supervising doctors and mentors for their valuable guidance and support in bridging technology with autism therapy. ""
+- Special thanks to the supervising doctors and mentors for their valuable guidance and support in bridging technology with autism therapy. 
 
 ## 👨‍💻 Author
 
