@@ -59,4 +59,39 @@ To ensure scalability and fast response times, the system includes several optim
 ---
 
 ## 📂 Project Architecture  
+Autine/
+│
+├── Autine.Domain/ # Entities and core domain logic
+├── Autine.Application/ # CQRS Handlers, DTOs, Interfaces
+├── Autine.Infrastructure/ # Database, Repositories, Unit of Work
+├── Autine.API/ # API Endpoints, Controllers, SignalR Hubs
+└── README.md
+
+## 🧠 Design Principles  
+
+- Separation of Concerns  
+- Single Responsibility  
+- Dependency Inversion  
+- High Cohesion, Low Coupling  
+
+## 🌍 Future Improvements
+
+- ""🧠 Integrate AI model training for adaptive chatbot behavior.""
+
+- ""🎙️ Add voice-based interaction for more natural communication.""
+
+- ""📊 Build an analytics dashboard for doctors to track user progress.""
+
+- ""💾 Enhance data security and privacy for medical data compliance.""
+
+## 🙌 Acknowledgments
+
+- "" Special thanks to the supervising doctors and mentors for their valuable guidance and support in bridging technology with autism therapy. ""
+
+## 👨‍💻 Author
+
+**Mohamed Lotfi**  
+📧 [mohamed.lotfi.dev@gmail.com](mailto:mohamed.lotfi.dev@gmail.com)  
+📞 +20 103 028 6574  
+🔗 [LinkedIn Profile](http://linkedin.com/in/mohamedlotf)
 
