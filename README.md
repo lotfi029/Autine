@@ -59,13 +59,18 @@ To ensure scalability and fast response times, the system includes several optim
 ---
 
 ## 📂 Project Architecture  
+
+The solution follows a **Clean Architecture** pattern for modularity and maintainability:
+
+```plaintext
 Autine/
 │
-├── Autine.Domain/ # Entities and core domain logic
-├── Autine.Application/ # CQRS handlers, DTOs, and interfaces
-├── Autine.Infrastructure/ # Database context, repositories, and Unit of Work
-├── Autine.API/ # API endpoints, controllers, and SignalR hubs
-└── README.md # Project documentation
+├── Autine.Domain/           # Entities and core domain logic
+├── Autine.Application/      # CQRS Handlers, DTOs, Interfaces
+├── Autine.Infrastructure/   # Database, Repositories, Unit of Work
+├── Autine.API/              # API Endpoints, Controllers, SignalR Hubs
+└── README.md                # Project documentation
+
 
 ---
 
