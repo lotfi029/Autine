@@ -10,6 +10,16 @@ It allows users to communicate with a **trained chatbot** that helps them develo
 
 --- 
 
+## 🧱 Project Architecture – Modular & Clean Design  
+
+**Autine** is built using a **Modular Clean Architecture**, which ensures high scalability, maintainability, and separation of concerns.  
+Each module (or layer) is designed to handle a specific responsibility — making the system flexible for future extensions, easy to test, and ideal for large-scale enterprise applications.  
+
+This modular structure allows each component (Domain, Application, Infrastructure, API) to evolve independently without breaking other parts of the system.  
+It also facilitates **feature-based organization**, making it easier for multiple teams to work concurrently on different modules.
+
+---
+
 ## 🎯 Project Goal  
 
 The goal of **Autine** is to build a **virtualization system** that helps autistic patients prepare for real-world communication by interacting with an intelligent chatbot that simulates realistic conversations.  
