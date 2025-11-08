@@ -70,7 +70,7 @@ Autine/
 ├── Autine.Infrastructure/   # Database, Repositories, Unit of Work
 ├── Autine.API/              # API Endpoints, Controllers, SignalR Hubs
 └── README.md                # Project documentation
-
+```
 
 ---
 
@@ -87,7 +87,7 @@ Autine/
 
 - 🧠 Integrate AI model training for adaptive chatbot behavior.
 
-- ""🎙️ Add voice-based interaction for more natural communication.
+- 🎙️ Add voice-based interaction for more natural communication.
 
 - 📊 Build an analytics dashboard for doctors to track user progress.
 
