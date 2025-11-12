@@ -2,8 +2,6 @@
 
 ![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-active-success)
 
 **Autine** is an intelligent system designed to support children with Autism Spectrum Disorder (ASD) through an interactive, AI-driven environment.  
 It allows users to communicate with a **trained chatbot** that helps them develop communication skills safely and effectively — all under the **supervision of specialized doctors** who can customize the chatbot’s settings according to each patient’s needs.
